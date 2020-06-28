@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="33dp"
+    android:layout_height="33dp"
+    android:background="@drawable/tv_top_head_frame1"
+    android:clipChildren="false">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civ_icon_one"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:src="@mipmap/pic_3"/>
+</FrameLayout>

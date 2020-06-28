@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/rl_base_dialog"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black50"
+    tools:ignore="MissingPrefix"
+    >
+
+  <RelativeLayout
+      android:layout_width="wrap_content"
+      android:layout_height="96dp"
+      android:layout_marginLeft="40dp"
+      android:layout_marginRight="40dp"
+      android:layout_centerInParent="true"
+      android:background="@drawable/down_chorus_music_progress"
+      >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        >
+
+      <ProgressBar
+          android:id="@+id/progressBar"
+          style="?android:attr/progressBarStyleHorizontal"
+          android:layout_width="match_parent"
+          android:layout_height="28dp"
+          android:max="100"
+          android:progress="0"
+          android:secondaryProgress="0"
+          android:progressDrawable="@drawable/progress_down_music"
+          android:visibility="visible"
+          />
+
+      <TextView
+          android:id="@+id/tv_progress"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:ellipsize="end"
+          android:maxLines="6"
+          android:text="0%"
+          android:textColor="@color/white"
+          android:textSize="14sp"
+          android:visibility="visible"
+          />
+
+    </LinearLayout>
+
+  </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <!-- google -->
+  <dimen name="indicator_size">6dp</dimen>
+  <dimen name="indicator_margin">3dp</dimen>
+
+
+  <dimen name="sp_12">12.0dp</dimen>
+  <dimen name="sp_14">14.0dp</dimen>
+  <dimen name="sp_16">16.0dp</dimen>
+  <dimen name="dp_0.5">0.5dip</dimen>
+    <dimen name="dp_1">1.0dip</dimen>
+  <dimen name="dp_3">3.0dip</dimen>
+    <dimen name="dp_4">4.0dip</dimen>
+    <dimen name="dp_5">5.0dip</dimen>
+  <dimen name="dp_6">6.0dip</dimen>
+  <dimen name="dp_10">10.0dip</dimen>
+  <dimen name="dp_14">14.0dip</dimen>
+  <dimen name="dp_15">15.0dip</dimen>
+  <dimen name="dp_20">20.0dip</dimen>
+  <dimen name="dp_22">22.0dip</dimen>
+  <dimen name="dp_24">24.0dip</dimen>
+  <dimen name="dp_30">30.0dip</dimen>
+  <dimen name="dp_32">32.0dip</dimen>
+  <dimen name="dp_34">34.0dip</dimen>
+  <dimen name="dp_37">37.0dip</dimen>
+  <dimen name="dp_40">40.0dip</dimen>
+  <dimen name="dp_50">50.0dip</dimen>
+  <dimen name="dp_65">65.0dip</dimen>
+  <dimen name="dp_70">70.0dip</dimen>
+  <dimen name="dp_72">72.0dip</dimen>
+  <dimen name="dp_100">100.0dip</dimen>
+  <dimen name="dp_200">200.0dip</dimen>
+  <dimen name="dp_270">270.0dip</dimen>
+  <dimen name="dp_360">360.0dip</dimen>
+  <dimen name="dp_600">600.0dip</dimen>
+  <dimen name="dp_720">720.0dip</dimen>
+  <!--连麦尺寸-->
+  
+  <integer name="lrc_animation_duration">1000</integer>
+  <dimen name="lrc_text_size">16sp</dimen>
+  <dimen name="lrc_time_text_size">12sp</dimen>
+  <dimen name="lrc_divider_height">16dp</dimen>
+  <dimen name="lrc_timeline_height">1dp</dimen>
+  <dimen name="lrc_drawable_width">30dp</dimen>
+  <dimen name="lrc_time_width">40dp</dimen>
+
+</resources>

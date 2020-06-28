@@ -1,0 +1,97 @@
+<resources>
+
+  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/black</item>
+    <item name="colorAccent">@color/colorAccent</item>
+    <item name="windowNoTitle">true</item>
+    <item name="windowActionBar">false</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="toolbarStyle">@style/ClubToolbar</item>
+  </style>
+
+
+  <!--去除toolbar间距-->
+  <style name="ClubToolbar" parent="Base.Widget.AppCompat.Toolbar">
+    <item name="contentInsetStart">0dp</item>
+  </style>
+  <!--自定义Dialog样式-->
+  <style name="MyDialog" parent="AlertDialog.AppCompat">
+    <item name="android:background">@android:color/transparent</item>
+    //显示区域背景是否透明
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <!-- <item name="android:backgroundDimEnabled">true</item>-->
+  </style>
+
+  <style name="text">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+  </style>
+
+  <style name="theme_9" parent="text">
+    <item name="android:textColor">@color/theme_color</item>
+    <item name="android:textSize">9sp</item>
+  </style>
+
+
+  <!--右边弹出Dialog动画-->
+
+  <style name="Translucent_NoTitle" parent="android:style/Theme.Dialog">
+    <item name="android:background">#00000000</item> <!-- 设置自定义布局的背景透明 -->
+    <item name="android:windowBackground">@android:color/transparent
+    </item>  <!-- 设置window背景透明，也就是去边框 -->
+    <item name="android:windowFullscreen">true</item>
+    <item name="android:layout_marginTop">0dp</item>
+    <item name="android:layout_marginBottom">10dp</item>
+    <item name="android:paddingLeft">0dp</item>
+    <item name="android:paddingRight">0dp</item>
+    <item name="android:windowAnimationStyle">@style/custom_dialog</item>
+    <item name="android:windowFrame">@null</item>
+    <item name="android:windowIsFloating">true</item>
+    <item name="android:windowContentOverlay">@null</item>
+  </style>
+
+  <style name="custom_dialog" parent="ActionSheetDialogAnimation">
+    <item name="android:inAnimation">@anim/zoomin</item>
+    <item name="android:outAnimation">@anim/zoomout</item>
+  </style>
+  <!-- ActionSheet进出动画 -->
+  <style name="ActionSheetDialogAnimation" parent="@android:style/Animation.Dialog">
+    <item name="android:windowEnterAnimation">@anim/dialog_in</item>
+    <item name="android:windowExitAnimation">@anim/dialog_out</item>
+  </style>
+
+  <declare-styleable name="RedPacketStyle">
+    <attr format="integer" name="count"/>
+    <attr format="integer" name="speed"/>
+    <attr format="float" name="max_size"/>
+  </declare-styleable>
+
+  <style name="title">
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_width">wrap_content</item>
+  </style>
+
+  <declare-styleable name="ViewLive">
+    <attr format="boolean" name="isBigView"/>
+    <attr format="boolean" name="isLalaView"/>
+  </declare-styleable>
+
+  <style name="width_0">
+    <item name="android:layout_height">match_parent</item>
+    <item name="android:layout_width">0dp</item>
+  </style>
+
+
+  <style name="title_17" parent="title">
+    <item name="android:textSize">17sp</item>
+    <item name="android:textColor">@color/deep_gray</item>
+  </style>
+
+  <style name="title.12sp_w" parent="title">
+    <item name="android:textSize">12sp</item>
+    <item name="android:textColor">@color/white</item>
+  </style>
+
+</resources>

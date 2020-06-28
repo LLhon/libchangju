@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">庆庆派对</string>
+    <string name="hint_speak">说点什么呗...</string>
+    <string name="net_err">请检查网络是否连接</string>
+  <string name="anchor_sure_exit_live">确定要退出直播间?</string>
+    <string name="cancel">取消</string>
+    <string name="confirm2">确认</string>
+    <string name="xitong">系统消息</string>
+    <string name="welcome_to">欢迎来到</string>
+    <string name="commmentsone">直播间，点击关注按钮，第一时间收到主播的直播通知，祝您玩的开心。</string>
+    <string name="commmentstwo">官方倡导绿色直播，对直播内容进行24小时巡查，任何传播违法违规低俗暴力等不良信息的行为将会封停账号，切勿与他人私下交易转账，以免上当。</string>
+    <string name="not_network">无网络连接</string>
+    <string name="welcome_use">欢迎使用庆庆派对机</string>
+    <string name="hint_input">请填写摄像设备SSID</string>
+    <string name="sao">扫一扫开启直播</string>
+  <string name="unbind">解绑</string>
+  <string name="unbind_info">派对机已被锁定\是否确定解绑？</string>
+    <string name="loading">加载中</string>
+    <string name="adding">激活中</string>
+    <string name="initing">初始化中</string>
+    <string name="unbinding">解绑中</string>
+    <string name="exit_info">再按一次退出应用程序</string>
+    <string name="anchor_exit">直播已关闭</string>
+    <string name="live_wan">万&#160;热度</string>
+    <string name="live_yi">亿&#160;热度</string>
+    <string name="close_red">是否确定关闭红包雨？</string>
+    <string name="confirm">确定</string>
+    <string name="outroom">退出直播间</string>
+    <string name="inroom">进入直播间</string>
+    <string name="zengsong">赠送</string>
+    <string name="lead_red_info">发了%s元红包，已自动入账</string>
+
+    <string name="determine">确定</string>
+    <string name="demo_version">版本:&#160;</string>
+
+    <string name="play_net_err">当前网络已断开，请重新开播。</string>
+    <string name="net_low">网络连接错误，请稍后尝试。</string>
+
+    <!--权限-->
+    <string name="settings">设置</string>
+    <string name="help">帮助</string>
+    <string name="string_help_text">当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限。\n\n最后点击两次后退按钮，即可返回。</string>
+    <string name="quit">退出</string>
+
+
+  <!-- 直播间 -->
+  <string name="lrc_none">暂不支持歌词</string>
+  <string name="liwu_jiazai">礼物还在加载中...</string>
+  <string name="yue_buzu">你的余额不足</string>
+  <string name="liwu_kong">礼物不能为空</string>
+  
+  <string name="lrc_label">暂无歌词</string>
+
+
+</resources>

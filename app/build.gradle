@@ -1,0 +1,249 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.newproject.hardqing"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 19
+        versionName "2.0.8"
+        flavorDimensions "app"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            //设置支持的SO库架构
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86'
+        }
+        multiDexEnabled true
+        javaCompileOptions {
+            annotationProcessorOptions.includeCompileClasspath = true
+        }
+        resConfigs "zh"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('keystores/release/csxs.keystore')
+            storePassword project.hasProperty("KEYSTORE_PASS") ? KEYSTORE_PASS : System.getenv("KEYSTORE_PASS")
+            keyAlias project.hasProperty("ALIAS_NAME") ? ALIAS_NAME : System.getenv("ALIAS_NAME")
+            keyPassword project.hasProperty("ALIAS_PASS") ? ALIAS_PASS : System.getenv("ALIAS_PASS")
+        }
+    }
+
+    buildTypes {
+        release {
+            zipAlignEnabled true
+            minifyEnabled true
+            shrinkResources true
+            debuggable true
+            buildConfigField "Boolean", "DEBUG_MODE", "false"
+            buildConfigField "Boolean", "ENABLE_LOG", "false"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            debuggable true
+            buildConfigField "Boolean", "DEBUG_MODE", "true"
+            buildConfigField "Boolean", "ENABLE_LOG", "true"
+            ext.alwaysUpdateBuildId = false
+            signingConfig signingConfigs.release
+        }
+    }
+    aaptOptions {
+        cruncherEnabled = false
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+        preDexLibraries = false
+    }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+        disable 'MissingTranslation'
+    }
+
+    repositories {
+        jcenter()
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // 多渠道/多环境
+    productFlavors {
+        //阳光网络摄像头
+        sunnet {
+            applicationId "com.newproject.hardqing"
+            buildConfigField "int", "channel_id", '1'
+        }
+
+        //阳光USB摄像头
+        sunusb {
+            applicationId "com.newproject.hardqing"
+            buildConfigField "int", "channel_id", '2'
+        }
+
+        //音创设备
+        yinchuang {
+            applicationId "com.newproject.hardqing"
+            buildConfigField "int", "channel_id", '3'
+        }
+    }
+
+    sourceSets {
+        main {
+            res.srcDirs =
+                    [
+                            'src/main/res/layouts/activity',
+                            'src/main/res/layouts/comm',
+                            'src/main/res/layouts/fragment',
+                            'src/main/res/layouts/recy_list_item',
+                            'src/main/res/layouts',
+                            'src/main/res'
+                    ]
+            assets.srcDirs =
+                    [
+                            'src/main/assets',
+                            'src/main/assets/'
+                    ]
+            jni.srcDirs = ['src/main/libs']
+        }
+
+        sunnet {
+            res.srcDirs =
+                    [
+                            'src/channel_sunnet/res/layouts/activity',
+                            'src/channel_sunnet/res/layouts/comm',
+                            'src/channel_sunnet/res/layouts/fragment',
+                            'src/channel_sunnet/res/layouts/recy_list_item',
+                            'src/channel_sunnet/res/layouts',
+                            'src/channel_sunnet/res'
+                    ]
+            assets.srcDirs =
+                    [
+                            'src/channel_sunnet/assets',
+                            'src/channel_sunnet/assets/'
+                    ]
+        }
+
+        sunusb {
+            res.srcDirs =
+                    [
+                            'src/channel_sunusb/res/layouts/activity',
+                            'src/channel_sunusb/res/layouts/comm',
+                            'src/channel_sunusb/res/layouts/fragment',
+                            'src/channel_sunusb/res/layouts/recy_list_item',
+                            'src/channel_sunusb/res/layouts',
+                            'src/channel_sunusb/res'
+                    ]
+            assets.srcDirs =
+                    [
+                            'src/channel_sunusb/assets',
+                            'src/channel_sunusb/assets/'
+                    ]
+        }
+
+        yinchuang {
+            res.srcDirs =
+                    [
+                            'src/channel_yinchuang/res/layouts/activity',
+                            'src/channel_yinchuang/res/layouts/comm',
+                            'src/channel_yinchuang/res/layouts/fragment',
+                            'src/channel_yinchuang/res/layouts/recy_list_item',
+                            'src/channel_yinchuang/res/layouts',
+                            'src/channel_yinchuang/res'
+                    ]
+            assets.srcDirs =
+                    [
+                            'src/channel_yinchuang/assets',
+                            'src/channel_yinchuang/assets/'
+                    ]
+        }
+    }
+
+    //处理所有报META-INF/*'的错误
+    packagingOptions {
+        pickFirst 'META-INF/*'
+    }
+
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.aar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:animated-vector-drawable:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation files('libs/zegoliveroom.jar')
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    //图片
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.github.bumptech.glide:annotations:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation "com.github.bumptech.glide:okhttp3-integration:4.9.0"
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    //拦截器
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    //网络
+    implementation 'com.lzy.net:okgo:3.0.4'
+    //通讯 传数据
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    //dialog
+    implementation 'com.github.maning0303:MNProgressHUD:V1.0.5'
+    //沉浸式状态栏
+    implementation 'com.gyf.immersionbar:immersionbar:2.3.1'
+    //圆形图片
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    //适配器
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.40'
+    //webSocket
+    implementation 'org.java-websocket:Java-WebSocket:1.3.8'
+    //键盘
+    implementation 'com.yinglan.keyboard:hidekeyboard:1.1.3'
+    //二维码
+    implementation 'com.mylhyl:zxingscanner:2.1.2'
+    //svga 动画播放器
+    implementation 'com.github.yyued:SVGAPlayer-Android:2.4.2'
+    //帧动画
+    implementation 'com.github.Mr-wangyong:ImageFrame:v1.3.0'
+    //帧动画
+    implementation 'com.xiuyukeji.pictureplayerview:pictureplayerview:0.1.3'
+    //gif 动画
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.6'
+    implementation 'com.blankj:utilcode:1.22.5'
+    implementation 'com.tencent.bugly:crashreport:latest.release'
+
+    //音乐播放器
+    implementation 'com.lzx:MusicLibrary:1.4.7'
+    implementation 'com.android.support:support-media-compat:28.0.0'
+    implementation 'me.wcy:lrcview:2.1.3'
+    implementation 'io.reactivex:rxandroid:1.1.0'
+    implementation 'com.airbnb.android:lottie:2.7.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.0.5'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'tyrantgit:explosionfield:1.0.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/dp_100"
+    android:background="@color/transparent">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/danmu_user_avaster"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@mipmap/bao"/>
+
+        <TextView
+            android:id="@+id/danmu_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_6"
+            android:textColor="@color/theme_color"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            tools:text="我么"/>
+
+        <TextView
+            android:id="@+id/danmu_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/music_title_color"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            tools:text="呼呼"/>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

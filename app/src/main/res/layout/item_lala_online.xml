@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="@dimen/dp_34"
+        android:layout_height="@dimen/dp_34"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/tv_top_head_frame2"
+        android:padding="1dp"
+        android:src="@mipmap/pic_3"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_3"
+        android:layout_below="@+id/iv_avatar"
+        android:layout_centerHorizontal="true"
+        android:scaleType="center"
+        android:src="@mipmap/lejingcai_lala_line"/>
+
+</RelativeLayout>

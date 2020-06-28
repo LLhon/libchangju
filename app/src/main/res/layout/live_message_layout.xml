@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:toos="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/dp_3"
+    android:background="@color/transparent">
+    
+    <LinearLayout
+        android:id="@+id/rl_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible">
+        
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civ_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_6"
+            android:background="@drawable/tv_top_head_frame3"
+            android:padding="1dp"
+            android:src="@mipmap/pic_3" />
+
+        <ImageView
+            android:id="@+id/iv_red_envelpopes"
+            android:layout_width="30dp"
+            android:layout_height="33dp"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/redpc"
+            android:visibility="gone" />
+        
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:paddingTop="@dimen/dp_6"
+            android:paddingRight="5dp"
+            android:paddingBottom="@dimen/dp_6"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            toos:text="用户123：" />
+    
+    </LinearLayout>
+    
+    <RelativeLayout
+        android:id="@+id/rl_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+        
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civ_avatar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_6"
+            android:background="@drawable/tv_top_head_frame3"
+            android:padding="1dp"
+            android:src="@mipmap/pic_3" />
+
+        <!--添加霸屏昵称-->
+        <TextView
+            android:id="@+id/ba_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="6dp"
+            android:paddingLeft="@dimen/dp_6"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_12"
+            toos:text="用户123："
+            android:layout_toRightOf="@+id/civ_avatar"/>
+        
+        <ImageView
+            android:id="@+id/iv_image"
+            android:layout_width="60dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/ba_message"
+            android:scaleType="fitXY"
+            android:src="@drawable/shape_chat_message_bg" />
+        
+        <TextView
+            android:id="@+id/tv_show_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/iv_image"
+            android:layout_alignBottom="@+id/iv_image"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="5s"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+    
+    </RelativeLayout>
+
+
+</RelativeLayout>

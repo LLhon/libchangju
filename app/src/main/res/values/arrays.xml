@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <array name="landscape_cake_xin_bg">
+<!--        <item>@mipmap/cake_xin_bg_1</item>-->
+<!--        <item>@mipmap/cake_xin_bg_2</item>-->
+<!--        <item>@mipmap/cake_xin_bg_3</item>-->
+<!--        <item>@mipmap/cake_xin_bg_4</item>-->
+<!--        <item>@mipmap/cake_xin_bg_5</item>-->
+<!--        <item>@mipmap/cake_xin_bg_6</item>-->
+<!--        <item>@mipmap/cake_xin_bg_7</item>-->
+<!--        <item>@mipmap/cake_xin_bg_8</item>-->
+<!--        <item>@mipmap/cake_xin_bg_9</item>-->
+<!--        <item>@mipmap/cake_xin_bg_10</item>-->
+<!--        <item>@mipmap/cake_xin_bg_11</item>-->
+<!--        <item>@mipmap/cake_xin_bg_12</item>-->
+<!--        <item>@mipmap/cake_xin_bg_13</item>-->
+<!--        <item>@mipmap/cake_xin_bg_14</item>-->
+<!--        <item>@mipmap/cake_xin_bg_15</item>-->
+<!--        <item>@mipmap/cake_xin_bg_16</item>-->
+<!--        <item>@mipmap/cake_xin_bg_17</item>-->
+<!--        <item>@mipmap/cake_xin_bg_18</item>-->
+<!--        <item>@mipmap/cake_xin_bg_19</item>-->
+<!--        <item>@mipmap/cake_xin_bg_20</item>-->
+<!--        <item>@mipmap/cake_xin_bg_21</item>-->
+<!--        <item>@mipmap/cake_xin_bg_22</item>-->
+<!--        <item>@mipmap/cake_xin_bg_23</item>-->
+<!--        <item>@mipmap/cake_xin_bg_24</item>-->
+    </array>
+    <array name="candle_light">
+<!--        <item>@mipmap/candle_light_1</item>-->
+<!--        <item>@mipmap/candle_light_2</item>-->
+<!--        <item>@mipmap/candle_light_3</item>-->
+<!--        <item>@mipmap/candle_light_4</item>-->
+<!--        <item>@mipmap/candle_light_5</item>-->
+<!--        <item>@mipmap/candle_light_6</item>-->
+<!--        <item>@mipmap/candle_light_7</item>-->
+<!--        <item>@mipmap/candle_light_8</item>-->
+<!--        <item>@mipmap/candle_light_9</item>-->
+<!--        <item>@mipmap/candle_light_10</item>-->
+<!--        <item>@mipmap/candle_light_11</item>-->
+<!--        <item>@mipmap/candle_light_12</item>-->
+<!--        <item>@mipmap/candle_light_13</item>-->
+<!--        <item>@mipmap/candle_light_14</item>-->
+<!--        <item>@mipmap/candle_light_15</item>-->
+<!--        <item>@mipmap/candle_light_16</item>-->
+<!--        <item>@mipmap/candle_light_17</item>-->
+<!--        <item>@mipmap/candle_light_18</item>-->
+<!--        <item>@mipmap/candle_light_19</item>-->
+<!--        <item>@mipmap/candle_light_20</item>-->
+<!--        <item>@mipmap/candle_light_21</item>-->
+<!--        <item>@mipmap/candle_light_22</item>-->
+<!--        <item>@mipmap/candle_light_23</item>-->
+<!--        <item>@mipmap/candle_light_24</item>-->
+    </array>
+
+    <declare-styleable name="TagCloudView">
+        <attr name="autoScrollMode">
+            <enum name="disable" value="0"/>
+            <enum name="decelerate" value="1"/>
+            <enum name="uniform" value="2"/>
+        </attr>
+
+        <attr name="radiusPercent" format="float"/>
+        <attr name="scrollSpeed" format="float"/>
+        <attr name="lightColor" format="color"/>
+        <attr name="darkColor" format="color"/>
+    </declare-styleable>
+
+    <!--分类筛选-->
+    <declare-styleable name="Classification">
+        <attr name="title" format="string"/>
+        <attr name="icon" format="reference"/>
+        <attr name="title_color" format="color"/>
+        <attr name="content_title" format="string"/>
+        <attr name="content_title_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="RainbowTextView">
+        <attr name="colorSpeed" format="dimension"/>
+        <attr name="colorSpace" format="dimension"/>
+    </declare-styleable>
+    
+    <!--文字描边-->
+    <declare-styleable name="StrokeTextView">
+        <attr name="outerColor" format="color|reference" />
+        <attr name="innnerColor" format="color|reference" />
+    </declare-styleable>
+    
+    <declare-styleable name="LeftGiftsItemLayout">
+        <attr name="left_gift_layout_index" format="integer"/>
+    </declare-styleable>
+
+</resources>
