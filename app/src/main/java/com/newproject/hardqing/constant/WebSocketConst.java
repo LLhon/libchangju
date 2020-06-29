@@ -55,6 +55,21 @@ public class WebSocketConst {
 
     public static final String keep9h = "keep9h";
 
+    //娱乐活动[显示轮盘]
+    public static final String entertainment = "open_room_activity";
+    //抽到的幸运观众
+    public static final String extractAudience = "lucky_audience";
+    //关闭或者开启自我介绍
+    public static final String close_induction = "close_room_activity";
+    //打开自我介绍
+    public static final String open_room_introduction = "open_room_introduction";
+    //被抽到的幸运观众反馈
+    public static final String lucky_audience_feedback = "lucky_audience_feedback";
+    //自我介绍随机抽几名幸运观众
+    public static final String self_introduction_random_users = "self_introduction_random_users";
+    //自我介绍连麦反馈
+    public static final String self_introduction = "self_introduction";
+
 
     //聊天室发消息
     public static final String send9f = "send9f";

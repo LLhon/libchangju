@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv1_extract"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="用户昵称："
+        android:gravity="center"
+        android:textSize="10sp"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/dp_5"/>
+
+    <TextView
+        android:id="@+id/tv_extract"
+        android:layout_width="@dimen/dp_65"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv1_extract"
+        android:layout_marginTop="@dimen/dp_5"
+        android:textColor="@color/white"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:focusable="true"
+        android:textSize="10sp"/>
+
+    <TextView
+        android:id="@+id/tv2_extract"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_extract"
+        android:text="连麦"
+        android:gravity="center"
+        android:textSize="10sp"
+        android:textColor="#FFBA00"
+        android:layout_marginTop="@dimen/dp_5"
+        android:layout_marginBottom="@dimen/dp_5"/>
+
+</RelativeLayout>

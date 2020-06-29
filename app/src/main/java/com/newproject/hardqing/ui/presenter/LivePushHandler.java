@@ -14,16 +14,22 @@ import com.newproject.hardqing.ui.receivecmd.CandleEntity;
 import com.newproject.hardqing.ui.receivecmd.ChangeLiveStatusEntity;
 import com.newproject.hardqing.ui.receivecmd.CloseAllEntity;
 import com.newproject.hardqing.ui.receivecmd.CloseEntity;
+import com.newproject.hardqing.ui.receivecmd.CloseInductionEntity;
 import com.newproject.hardqing.ui.receivecmd.CurrencyEntity;
+import com.newproject.hardqing.ui.receivecmd.EntertainEntity;
 import com.newproject.hardqing.ui.receivecmd.ErrorEntity;
+import com.newproject.hardqing.ui.receivecmd.ExtractAudienceEntity;
 import com.newproject.hardqing.ui.receivecmd.GiftEntity;
 import com.newproject.hardqing.ui.receivecmd.HardwareFailureEntity;
 import com.newproject.hardqing.ui.receivecmd.InRoomEntity;
+import com.newproject.hardqing.ui.receivecmd.InductionEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteAgreedEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteNoticeEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteRefusedEntity;
 import com.newproject.hardqing.ui.receivecmd.KickEntity;
+import com.newproject.hardqing.ui.receivecmd.LianFeedEntity;
+import com.newproject.hardqing.ui.receivecmd.LuckyAudienceEntity;
 import com.newproject.hardqing.ui.receivecmd.ManageEntity;
 import com.newproject.hardqing.ui.receivecmd.MultiRoomLianMaiEntity;
 import com.newproject.hardqing.ui.receivecmd.MultiRoomMessageEntity;
@@ -31,6 +37,7 @@ import com.newproject.hardqing.ui.receivecmd.NdSendEntity;
 import com.newproject.hardqing.ui.receivecmd.OutRoomEntity;
 import com.newproject.hardqing.ui.receivecmd.PandanEntity;
 import com.newproject.hardqing.ui.receivecmd.PlayBillEntity;
+import com.newproject.hardqing.ui.receivecmd.RandomLuckyEntity;
 import com.newproject.hardqing.ui.receivecmd.ReceiveLeadRedEntity;
 import com.newproject.hardqing.ui.receivecmd.ReceiveRedEntity;
 import com.newproject.hardqing.ui.receivecmd.RedCurrencyEntity;
@@ -250,6 +257,33 @@ public class LivePushHandler extends Handler {
                         MultiRoomMessageEntity entity =
                             GsonConverter.fromJson(str, MultiRoomMessageEntity.class);
                         reciveView.messageByMultiRoom(entity);
+                    } else if (cmd.equals(WebSocketFeedConst.entertainment)) {
+                        //娱乐活动展示轮盘
+                        EntertainEntity entertainEntity = new Gson().fromJson(str, EntertainEntity.class);
+                        reciveView.showEntertainLuck(entertainEntity);
+                    }else if (cmd.equals(WebSocketFeedConst.open_room_introduction)){
+                        InductionEntity inductionEntity = new Gson().fromJson(str,InductionEntity.class);
+                        reciveView.showInduction(inductionEntity);
+                    } else if (cmd.equals(WebSocketFeedConst.extractAudience)) {
+                        //被抽到的幸运观众 功能描述：点击随机抽取幸运观众之后前端返回的用户，服务端推送该用户给房间内所有人
+                        ExtractAudienceEntity extractAudienceEntity = new Gson().fromJson(str, ExtractAudienceEntity.class);
+                        reciveView.showExtractAudience(extractAudienceEntity);
+                    } else if (cmd.equals(WebSocketFeedConst.close_induction)) {
+                        //关闭转盘或自我介绍  功能描述： 通知房间内所有人关闭自我介绍或者转盘
+                        CloseInductionEntity closeInductionEntity = new Gson().fromJson(str,CloseInductionEntity.class);
+                        reciveView.showCloseInduction(closeInductionEntity);
+                    } else if (cmd.equals(WebSocketFeedConst.lucky_audience_feedback)) {
+                        //被抽到的幸运观众反馈
+                        LuckyAudienceEntity luckyAudienceEntity = new Gson().fromJson(str, LuckyAudienceEntity.class);
+                        reciveView.FeedbackLucky(luckyAudienceEntity);
+                    } else if (cmd.equals(WebSocketFeedConst.self_introduction_random_users)) {
+                        //自我介绍随机抽几名幸运观众
+                        RandomLuckyEntity randomLuckyEntity = new Gson().fromJson(str,RandomLuckyEntity.class);
+                        reciveView.FiveAudience(randomLuckyEntity);
+                    } else if (cmd.equals(WebSocketFeedConst.self_introduction)) {
+                        //自我介绍连麦
+                        LianFeedEntity lianFeedEntity = new Gson().fromJson(str,LianFeedEntity.class);
+                        reciveView.lianFeedBack(lianFeedEntity);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

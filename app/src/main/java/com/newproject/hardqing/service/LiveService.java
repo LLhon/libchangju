@@ -142,7 +142,14 @@ public class LiveService extends Service implements NetStatusMonitor {
         liveSocketList.add(WebSocketFeedConst.red_currency);
         liveSocketList.add(WebSocketFeedConst.receive_red);
         liveSocketList.add(WebSocketFeedConst.lead_red);
-
+//娱乐系统
+        liveSocketList.add(WebSocketFeedConst.entertainment);
+        liveSocketList.add(WebSocketFeedConst.extractAudience);
+        liveSocketList.add(WebSocketFeedConst.close_induction);
+        liveSocketList.add(WebSocketFeedConst.open_room_introduction);
+        liveSocketList.add(WebSocketFeedConst.lucky_audience_feedback);
+        liveSocketList.add(WebSocketFeedConst.self_introduction_random_users);
+        liveSocketList.add(WebSocketFeedConst.self_introduction);
 
         liveSocketList.add(WebSocketFeedConst.cake);
         liveSocketList.add(WebSocketFeedConst.candle);
