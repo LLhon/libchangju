@@ -200,6 +200,7 @@ import com.zego.zegoavkit2.mixstream.ZegoCompleteMixStreamInfo;
 import com.zego.zegoavkit2.mixstream.ZegoMixStreamInfo;
 import com.zego.zegoavkit2.mixstream.ZegoStreamMixer;
 import com.zego.zegoavkit2.soundlevel.ZegoSoundLevelMonitor;
+import com.zego.zegoavkit2.videorender.ZegoExternalVideoRender;
 import com.zego.zegoliveroom.ZegoLiveRoom;
 import com.zego.zegoliveroom.callback.IZegoAudioPrepCallback2;
 import com.zego.zegoliveroom.callback.IZegoAudioRecordCallback2;
@@ -266,61 +267,27 @@ public class LivePlayActivity extends BaseActivity implements
 
     ImageView titleBack;
     View topView;
-    EditText commentEt2;
     LinearLayout giftLl2;
     DivergeView zanViewh;
     RelativeLayout rlTop;
-    LinearLayout bottomLayout2;
     TextView tvName;
     ImageView ivShare;
     ImageView ivLove;
     ImageView ivSet;
     RelativeLayout rlContianer;
-    TextView tvWatchNum;
     ImageView ivAudience;
     RecyclerView rvIcon;
     RecyclerView rvMesssage;
     LinearLayout top;
-    ImageView ivInviteLalaStar2;
     ImageView ivTemplate;
     ImageView ivTemplateBg;
     RedPacketView redPacketsView;
     SVGAImageView svgaAnim;
     ImageView ivCloseRed;
-    PLVideoTextureView videoView;
     ImageView ivRedEnvelpopes;
-    ImageView ivWrite;
-    ImageView ivLian;
-    ImageView ivRecord;
-    ImageView ivGift2;
     Toolbar toolbar;
-    PicturePlayerView cakeBg;
-    PicturePlayerView tree;
-    SVGAImageView svgaCake;
     SVGAImageView categoryui;
-    ImageView ivOne;
-    PicturePlayerView ivOneX;
-    FrameLayout flOne;
-    ImageView ivTwo;
-    PicturePlayerView ivTwoX;
-    FrameLayout flTwo;
-    ImageView ivThree;
-    PicturePlayerView ivThreeX;
-    FrameLayout flThree;
-    ImageView ivFour;
-    PicturePlayerView ivFourX;
-    FrameLayout flFour;
-    ImageView ivFive;
-    PicturePlayerView ivFiveX;
-    FrameLayout flFive;
-    ImageView ivSix;
-    PicturePlayerView ivSixX;
-    FrameLayout flSix;
-    RelativeLayout rlCandle;
     RelativeLayout rlAnim;
-    SVGAImageView svgaTemple;
-    VideoView mTreeView;
-    GifImageView ivStar;
     GifImageView giftAnim;
     LinearLayout mLlBaScreenTimer;
     TextView mTvBaScreenTimer;
@@ -340,26 +307,15 @@ public class LivePlayActivity extends BaseActivity implements
     ImageView mLivePicImage;
     FullScreenVideoView mVideoViewBg;
     SVGAImageView mSivSubject;
-    SVGAImageView tags;
     ViewLive tvAudience1;
     ViewLive mLocalPreview;
-
-    private TextureView mMVTextureView;
-
+    TextureView mMVTextureView;
     LinearLayout llSubtitles;
     TextView tvSubtitles;
     private String yq_type;
 
-    ImageView cakeXinBg;
-    ImageView ivOneXin;
-    ImageView ivTwoXin;
-    ImageView ivThreeXin;
-    ImageView ivFourXin;
-    ImageView ivFiveXin;
-    ImageView ivSixXin;
     ImageView mIvChorusTimer;
     SVGAImageView mSivRedPackets;
-    TextureView mPlayTextureView;
     RelativeLayout mRlPlayBillContainer;
     TagCloudView mTagCloudView;
     RelativeLayout mRlPlayBill;
@@ -396,7 +352,6 @@ public class LivePlayActivity extends BaseActivity implements
     private boolean isShowCake = false;
     WindowManager wm;
     int swidth, sheight;
-    private PLVideoPresenter plVideoPresenter;
 
     private MediaPlayer mEffectsMediaPlayer;
 
@@ -707,15 +662,10 @@ public class LivePlayActivity extends BaseActivity implements
         categoryui.startAnimation(animation);
     }
 
-    public void startPlay(View view) {
-        getPermission();
-    }
-
     public void startPreview() {
         titleBack.postDelayed(new Runnable() {
             @Override
             public void run() {
-                LogUtils.d("LivePlayActivity  startPreview ()  222 ");
                 if (isUsbDevice) {
                     ZegoAvConfig config = new ZegoAvConfig(ZegoAvConfig.Level.High);
                     // 设置分辨率，注意此处设置的分辨率需要是uvccamera所支持的
@@ -733,18 +683,17 @@ public class LivePlayActivity extends BaseActivity implements
                     setAppOrientation();
                     mZegoLiveRoom.enableCamera(true);
                 }
-                // 添加本地渲染视图
-                //mVideoRenderer.addView(com.zego.zegoavkit2.ZegoConstants.ZegoVideoDataMainPublishingStream, mPreviewView);
-                mZegoLiveRoom.setPreviewView(mLocalPreview.getTextureView());//设置预览；
+                boolean isPreview = mZegoLiveRoom.setPreviewView(mLocalPreview.getTextureView());//设置预览；
                 setTextureViewAlpha60();
                 mZegoLiveRoom.setPreviewViewMode(ZegoVideoViewMode.ScaleAspectFill);
                 boolean previewSuccess = mZegoLiveRoom.startPreview();
+                Log.d(TAG, "预览是否成功：" + previewSuccess);
                 initLoopBack();
                 //UVCCameraHelper.sharedInstance().removeUVCCameraFrameCallback();
 //                LogUtils.d("LivePlayActivity  startPreview () previewSuccess : " + previewSuccess);
                 if (!mIsStartPublishing) {
                     mIsStartPublishing = mZegoLiveRoom.startPublishing(ZegoRoomUtil.getPublishStreamID(mHostUserId), mHostUserId, ZegoConstants.PublishFlag.MixStream);
-                    LogUtils.d("LivePlayActivity  startPublishing () testPush : " + mIsStartPublishing);
+                    Log.d(TAG, "推流是否成功: " + mIsStartPublishing);
                     mPublishStreamID = ZegoRoomUtil.getPublishStreamID(mHostUserId);
                 }
                 setBeauty();
@@ -809,61 +758,27 @@ public class LivePlayActivity extends BaseActivity implements
     public void initViewId() {
         titleBack = findViewById(R.id.title_back);
         topView = findViewById(R.id.top_view);
-        commentEt2 = findViewById(R.id.comment_et2);
         giftLl2 = findViewById(R.id.gift_ll2);
         zanViewh = findViewById(R.id.zan_viewh);
         rlTop = findViewById(R.id.rl_top);
-        bottomLayout2 = findViewById(R.id.bottom_layout2);
         tvName = findViewById(R.id.tv_name);
         ivShare = findViewById(R.id.iv_share);
         ivLove = findViewById(R.id.iv_love);
         ivSet = findViewById(R.id.iv_set);
         rlContianer = findViewById(R.id.rl_contianer);
-        tvWatchNum = findViewById(R.id.tv_watch_num);
         ivAudience = findViewById(R.id.iv_audience);
         rvIcon = findViewById(R.id.rv_icon);
         rvMesssage = findViewById(R.id.rv);
         top = findViewById(R.id.top);
-        ivInviteLalaStar2 = findViewById(R.id.iv_invite_lala_star2);
         ivTemplate = findViewById(R.id.iv_template);
         ivTemplateBg = findViewById(R.id.iv_template_bg);
         redPacketsView = findViewById(R.id.red_packets_view1);
         svgaAnim = findViewById(R.id.svga_anim);
         ivCloseRed = findViewById(R.id.iv_close_red);
-        videoView = findViewById(R.id.videoView);
         ivRedEnvelpopes = findViewById(R.id.iv_red_envelpopes);
-        ivWrite = findViewById(R.id.iv_write);
-        ivLian = findViewById(R.id.iv_lian);
-        ivRecord = findViewById(R.id.iv_record);
-        ivGift2 = findViewById(R.id.iv_gift2);
         toolbar = findViewById(R.id.toolbar);
-        cakeBg = findViewById(R.id.cake_bg);
-        tree = findViewById(R.id.tree);
-        svgaCake = findViewById(R.id.svga_cake);
         categoryui = findViewById(R.id.svga_categoryui);
-        ivOne = findViewById(R.id.iv_one);
-        ivOneX = findViewById(R.id.iv_one_x);
-        flOne = findViewById(R.id.fl_one);
-        ivTwo = findViewById(R.id.iv_two);
-        ivTwoX = findViewById(R.id.iv_two_x);
-        flTwo = findViewById(R.id.fl_two);
-        ivThree = findViewById(R.id.iv_three);
-        ivThreeX = findViewById(R.id.iv_three_x);
-        flThree = findViewById(R.id.fl_three);
-        ivFour = findViewById(R.id.iv_four);
-        ivFourX = findViewById(R.id.iv_four_x);
-        flFour = findViewById(R.id.fl_four);
-        ivFive = findViewById(R.id.iv_five);
-        ivFiveX = findViewById(R.id.iv_five_x);
-        flFive = findViewById(R.id.fl_five);
-        ivSix = findViewById(R.id.iv_six);
-        ivSixX = findViewById(R.id.iv_six_x);
-        flSix = findViewById(R.id.fl_six);
-        rlCandle = findViewById(R.id.rl_candle);
         rlAnim = findViewById(R.id.rl_anim);
-        svgaTemple = findViewById(R.id.svga_temple);
-        mTreeView = findViewById(R.id.video_view);
-        ivStar = findViewById(R.id.iv_star);
         giftAnim = findViewById(R.id.gift_anim);
         mLlBaScreenTimer = findViewById(R.id.ll_bascreen_timer);
         mTvBaScreenTimer = findViewById(R.id.tv_bascreen_timer);
@@ -883,26 +798,16 @@ public class LivePlayActivity extends BaseActivity implements
         mLivePicImage = findViewById(R.id.iv_live_pic);
         mVideoViewBg = findViewById(R.id.vv_bg);
         mSivSubject = findViewById(R.id.iv_tv_zhu_ti);
-        tags = findViewById(R.id.tags);
         tvAudience1 = findViewById(R.id.tv_audience1);
         mLocalPreview = findViewById(R.id.tv_local_preview);
         llSubtitles = findViewById(R.id.ll_subtitles);
         tvSubtitles = findViewById(R.id.tv_subtitles);
-        cakeXinBg = findViewById(R.id.cake_xin_bg);
-        ivOneXin = findViewById(R.id.iv_one_xin);
-        ivTwoXin = findViewById(R.id.iv_two_xin);
-        ivThreeXin = findViewById(R.id.iv_three_xin);
-        ivFourXin = findViewById(R.id.iv_four_xin);
-        ivFiveXin = findViewById(R.id.iv_five_xin);
-        ivSixXin = findViewById(R.id.iv_six_xin);
         mIvChorusTimer = findViewById(R.id.iv_chorus_timer);
         mSivRedPackets = findViewById(R.id.siv_red_packets);
-        mPlayTextureView = findViewById(R.id.texture_view_preview);
         mRlPlayBill = findViewById(R.id.rl_playbill);
         mRlPlayBillContainer = findViewById(R.id.rl_playbill_container);
         mRoll3DView = findViewById(R.id.roll_view);
         mTagCloudView = findViewById(R.id.tag_cloud);
-
         mMVTextureView = findViewById(R.id.tv_mv_video_view);
 
         mShowGifImageView.setOnClickListener(new View.OnClickListener() {
@@ -1086,10 +991,6 @@ public class LivePlayActivity extends BaseActivity implements
         });
     }
 
-    public List<PicturePlayerView> candleLights = new ArrayList<>();
-    public List<ImageView> candleLight = new ArrayList<>();
-    public List<FrameAnimation> candleXinLights = new ArrayList<>();
-    public List<ImageView> candleXinLight = new ArrayList<>();
     private int llwidth;//霸屏消息
     private int screenWidth;
 
@@ -1110,57 +1011,6 @@ public class LivePlayActivity extends BaseActivity implements
         mList = new ArrayList<>();
         setLayout();
 
-        candleLights.add(ivOneX);
-        candleLights.add(ivTwoX);
-        candleLights.add(ivThreeX);
-        candleLights.add(ivFourX);
-        candleLights.add(ivFiveX);
-        candleLights.add(ivSixX);
-
-
-        candleXinLight.add(ivOneXin);
-        candleXinLight.add(ivTwoXin);
-        candleXinLight.add(ivThreeXin);
-        candleXinLight.add(ivFourXin);
-        candleXinLight.add(ivFiveXin);
-        candleXinLight.add(ivSixXin);
-        for (int i = 0; i < candleXinLight.size(); i++) {
-            candleLights.get(i).setDataSource(PictureInfoUtil.get().getLights(),
-                    PictureInfoUtil.get().getmLightDuration());
-            candleLights.get(i).setLoop(true);
-            candleXinLights.add(new FrameAnimation(candleXinLight.get(i), CustomPoPupAnim.getLightRes(this), 40, true));
-        }
-        candleLight.add(ivOne);
-        candleLight.add(ivTwo);
-        candleLight.add(ivThree);
-        candleLight.add(ivFour);
-        candleLight.add(ivFive);
-        candleLight.add(ivSix);
-        setMagin();
-        //        player.setZOrderMediaOverlay(true);
-        mTreeView.setZOrderMediaOverlay(true);
-
-        setCakeBgRes();
-        //        tree.setDataSource(PictureInfoUtil.get().getmLandsTrees(), PictureInfoUtil.get().getmTreeDuration());
-
-        RelativeLayout.LayoutParams cakeLp = (RelativeLayout.LayoutParams) svgaCake.getLayoutParams();
-        int width = DensityUtil.getScreenWidth(this) * 607 / 1334;
-        int height = 550 * width / 675;
-        //    550  width
-        //    675  height
-
-        cakeLp.width = width;
-        cakeLp.height = height;
-        int topMargin = (DensityUtil.getScreenHeight(this) - height) / 2 - DensityUtil.dip2px(this, 130) / 2;
-        cakeLp.topMargin = topMargin;
-        svgaCake.setLayoutParams(cakeLp);
-        setXinMargin(flOne, topMargin + 45);
-        setXinMargin(flTwo, topMargin + 18);
-        setXinMargin(flThree, topMargin + 18);
-        setXinMargin(flFour, topMargin + 40);
-        setXinMargin(flFive, topMargin + 76);
-        setXinMargin(flSix, topMargin + 82);
-
         int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         llSubtitles.measure(w, h);
@@ -1170,51 +1020,12 @@ public class LivePlayActivity extends BaseActivity implements
         mExplosionField = ExplosionField.attach2Window(this);
     }
 
-    public void setXinMargin(FrameLayout flcandler, int height) {
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) flcandler.getLayoutParams();
-        lp.topMargin = height;
-        flcandler.setLayoutParams(lp);
-    }
-
-    private void setMagin() {
-        setLeftMargin(flOne, 495);//217
-        setLeftMargin(flTwo, 565);//200
-        setLeftMargin(flThree, 695);//201 644
-        setLeftMargin(flFour, 810);//218 713
-        setLeftMargin(flFive, 760);//235
-        setLeftMargin(flSix, 630);//240 832 644
-    }
-
-    private FrameAnimation mCakeBg;
-
-    public void setCakeBgRes() {
-        cakeBg.setDataSource(PictureInfoUtil.get().getLandsPahts(),
-                PictureInfoUtil.get().getDuration());
-        cakeBg.setLoop(true);
-
-        mCakeBg = new FrameAnimation(cakeXinBg, CustomPoPupAnim.getLandsCakeRes(this), 40, true);
-    }
-
-
-    public void setMargin(FrameLayout flcandler, int height) {
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) flcandler.getLayoutParams();
-        lp.topMargin = DensityUtil.getScreenHeight(this) * height / 750;
-        flcandler.setLayoutParams(lp);
-    }
-
-    public void setLeftMargin(FrameLayout flcandler, int height) {
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) flcandler.getLayoutParams();
-        lp.leftMargin = DensityUtil.getScreenWidth(this) * height / 1334;
-        flcandler.setLayoutParams(lp);
-    }
-
     private void initPlay() {
         if (mZegoLiveRoom == null) {
             mZegoLiveRoom = ZegoLiveManager.getInstance().getG_ZegoApi();
         }
         roomId = getIntent().getStringExtra(PreConst.RoomId);
         tourId = getIntent().getStringExtra("uid");
-        plVideoPresenter = new PLVideoPresenter();
         tvAudience1.setZegoLiveRoom(mZegoLiveRoom);
         // step.1 init USB
         UVCCameraHelper.sharedInstance().initUSBMonitor(this, myDevConnectListener);
@@ -1503,9 +1314,6 @@ public class LivePlayActivity extends BaseActivity implements
                     pusherr = 0;
                     isLive = true;
                     handlePublishSuccMix(streamID, streamInfo);
-                    //                    // 拉流
-                    //                    mZegoLiveRoom.startPlayingStream(streamID, mPlayTextureView);
-                    //                    mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
                     //initZegoAudioPrepCallback();
                     mIsStartPublishing = true;
                 } else {
@@ -2154,14 +1962,10 @@ public class LivePlayActivity extends BaseActivity implements
         zanViewh.startDiverges(random.nextInt(6));
     }
 
-
-    private boolean isShowTag;
-    private String pid;
-
     @Override
     public void onFaceBox(int x, int y, int width) {
         //        Log.e(TAG, "onFaceBox:  x = " + x + " y = " + y + " width  = " + width)
-        if (isShowTag) {
+       /* if (isShowTag) {
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) tags.getLayoutParams();
             // 横坐标移动系数
             int mWidth = 0;
@@ -2294,8 +2098,7 @@ public class LivePlayActivity extends BaseActivity implements
 
             }
 
-        }
-
+        }*/
     }
 
     @Override
@@ -2441,12 +2244,6 @@ public class LivePlayActivity extends BaseActivity implements
         LogUtils.d("onDestroy");
         LiveService.setRoomId("");
         clearAnim();
-        clearAnim();
-        cakeBg.release();
-        mTreeView.stopPlayback();
-        for (int i = 0; i < candleXinLights.size(); i++) {
-            candleLights.get(i).release();
-        }
         //销毁礼物动画
         if (giftControl != null) {
             giftControl.cleanAll();
@@ -2462,9 +2259,6 @@ public class LivePlayActivity extends BaseActivity implements
         handler.removeCallbacksAndMessages(null);
         handler = null;
 
-        if (plVideoPresenter != null) {
-            plVideoPresenter.stopPLayBack(videoView);
-        }
         redPacketsView.stopRainNow();
         if (mChorusProgressTimer != null) {
             mChorusProgressTimer.cancel();
@@ -2523,8 +2317,6 @@ public class LivePlayActivity extends BaseActivity implements
             mZegoLiveRoom.stopPublishing();
             mZegoLiveRoom.stopPreview();
             mZegoLiveRoom.setPreviewView(null);
-            //移除渲染视图
-            //mVideoRenderer.removeView(mRoomID);
         }
     }
 
@@ -2715,7 +2507,7 @@ public class LivePlayActivity extends BaseActivity implements
                 new IZegoLoginCompletionCallback() {
                     @Override
                     public void onLoginCompletion(int errorCode, ZegoStreamInfo[] zegoStreamInfos) {
-                        LogUtils.d("LivePlayActivity startPublishing initSDKAndLoginRoom  loginRoom onLoginCompletion errorCode : " + errorCode);
+                        Log.d(TAG, "登录房间是否成功: " + (errorCode == 0));
                         if (errorCode == 0) {
                             //测试电流声问题
                             //configAudioRecord();
@@ -3387,113 +3179,30 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void showLight() {
-        showLightVisibilty(true);
-    }
-
-    public void showLightVisibilty(boolean isSelectd) {
-        for (int i = 0; i < candleXinLights.size(); i++) {
-            if (isSelectd) {
-                //                candleLights.get(i).setAlpha(1f);
-                //                if (!candleLights.get(i).isPlaying()) {
-                //                    candleLights.get(i).start();
-                //                }
-                candleXinLights.get(i).play();
-            } else {
-                //                if (candleLights.get(i).isPlaying()) {
-                //                candleLights.get(i).stop();
-                //                }
-                //                candleLights.get(i).setAlpha(0f);
-                candleXinLights.get(i).pauseAnimation();
-                candleXinLight.get(i).setSelected(false);
-            }
-        }
-    }
-
-    public void removeMessage() {
-        handler.removeMessages(LivePushHandler.showLight);
-        handler.removeMessages(LivePushHandler.showCake);
-        handler.removeMessages(LivePushHandler.clearAnim);
-        handler.removeMessages(LivePushHandler.hiddenTree);
-        handler.removeMessages(LivePushHandler.showTree);
-        handler.removeMessages(LivePushHandler.hiddenLight);
-        handler.removeMessages(LivePushHandler.stopLight);
-        handler.removeMessages(LivePushHandler.showCake);
     }
 
     @Override
     public void clearAnim() {
-        removeMessage();
-        for (int i = 0; i < candleXinLights.size(); i++) {
-            //            if (candleLights.get(i).isPlaying()) {
-            //            candleLights.get(i).stop();
-            //            }
-            //            candleLights.get(i).setAlpha(0f);
-            candleXinLights.get(i).pauseAnimation();
-            candleLights.get(i).setSelected(false);
-        }
-        ivStar.setVisibility(View.GONE);
-        isShowCake = false;
-
-        rlCandle.setVisibility(View.INVISIBLE);
-        svgaCake.stopAnimation();
-
-        //        if (cakeBg.isPlaying()) {
-        //        cakeBg.stop();
-        mCakeBg.pauseAnimation();
-        //        }
-        cakeBg.setAlpha(0f);
-        mTreeView.stopPlayback();
-        mTreeView.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void hiddenTree() {
-        loadAnimation(true);
-        showLightVisibilty(true);
-        setOneAlpha();
     }
 
     @Override
     public void hiddenLight() {
-        showLightVisibilty(false);
-        handler.sendEmptyMessageDelayed(LivePushHandler.clearAnim, 2000);
     }
 
     @Override
     public void showTree() {
-        //clearAnim();
-        //mTreeView.setVisibility(View.VISIBLE);
-        //Uri uri = Uri.parse("android.resource://" + getPackageName() + "/raw/" + R.raw.heng_g);
-        //mTreeView.setVideoURI(uri);
-        //mTreeView.start();
-        //mTreeView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-        //    @Override
-        //    public void onCompletion(MediaPlayer mp) {
-        //        mTreeView.setVisibility(View.INVISIBLE);
-        //    }
-        //});
-        //
-        //handler.sendEmptyMessageDelayed(LivePushHandler.hiddenTree, 7000);
     }
 
     @Override
     public void showCake() {
-        rlAnim.setVisibility(View.VISIBLE);
-        clearAnim();
-        setOneAlpha();
-        loadAnimation(false);
     }
 
     @Override
     public void candle(String candleId) {
-        int mId = Integer.parseInt(candleId);
-        for (int i = 0; i < candleXinLights.size(); i++) {
-            if (i == mId) {
-                //                if (!candleLights.get(i).isPlaying())
-                //                    candleLights.get(i).start();
-                candleXinLights.get(i).play();
-            }
-        }
     }
 
     //收到红包
@@ -3643,18 +3352,13 @@ public class LivePlayActivity extends BaseActivity implements
                         }
                     })
                     .into(ivTemplate);
-            plVideoPresenter.onPause(videoView);
-            plVideoPresenter.stopPLayBack(videoView);
         } else if (TextUtils.equals(seeTemplateEntity.getType(), "1")) {
             playVideo(seeTemplateEntity, 0.5f);
         } else {
-            plVideoPresenter.onPause(videoView);
-            plVideoPresenter.stopPLayBack(videoView);
             ivTemplate.setVisibility(View.INVISIBLE);
             ivTemplateBg.setVisibility(View.INVISIBLE);
             mBaPinAll.setVisibility(View.INVISIBLE);
             svgaUrl = seeTemplateEntity.getUri();
-            CustomPoPupAnim.loadSvgaTem(svgaTemple, svgaUrl);
         }
     }
 
@@ -3666,36 +3370,16 @@ public class LivePlayActivity extends BaseActivity implements
         cover = seeTemplateEntity.getCover();
         GlideUtil.setImage(ivTemplate, this, cover);
         GlideUtil.setImage(ivTemplateBg, this, cover);
-        videoView.setVisibility(View.VISIBLE);
-        videoView.setAlpha(alpha);
-        plVideoPresenter.init(videoView, false);
-        plVideoPresenter.setLoop(videoView);
-        plVideoPresenter.setCover(ivTemplate);
-        plVideoPresenter.setPath(videoView, playerUrl);
-        plVideoPresenter.setListener(videoView);
-        plVideoPresenter.onResume(videoView);
     }
 
     @Override
     public void quitTemplate() {
-        stopVideo();
-        if (!TextUtils.isEmpty(svgaUrl)) {
-            svgaUrl = "";
-            svgaAnim.setLoops(1);
-            svgaTemple.stopAnimation();
-        }
     }
 
     private void stopVideo() {
         ivTemplate.setVisibility(View.INVISIBLE);
         ivTemplateBg.setVisibility(View.INVISIBLE);
         mBaPinAll.setVisibility(View.INVISIBLE);
-        if (!TextUtils.isEmpty(playerUrl)) {
-            plVideoPresenter.onPause(videoView);
-            plVideoPresenter.stopPLayBack(videoView);
-            videoView.setVisibility(View.INVISIBLE);
-            playerUrl = "";
-        }
     }
 
     private long endTime = 0;
@@ -3885,22 +3569,11 @@ public class LivePlayActivity extends BaseActivity implements
                             showBaScreenTimer(baScreenEntity);
                         }
                     });
-            plVideoPresenter.onPause(videoView);
-            plVideoPresenter.stopPLayBack(videoView);
-
         } else if (TextUtils.equals(baScreenEntity.getType(), "1")) {
             ivTemplate.setVisibility(View.INVISIBLE);
             ivTemplateBg.setVisibility(View.INVISIBLE);
             mBaPinAll.setVisibility(View.INVISIBLE);
             playerUrl = baScreenEntity.getUri();
-            videoView.setVisibility(View.VISIBLE);
-            plVideoPresenter.init(videoView, false);
-            plVideoPresenter.setOrigin(2);
-            plVideoPresenter.setOrigin(2);
-            plVideoPresenter.setLoop(videoView);
-            plVideoPresenter.setPath(videoView, playerUrl);
-            plVideoPresenter.setListener(videoView);
-            plVideoPresenter.onResume(videoView);
             showBaScreenTimer(baScreenEntity);
         }
         String text = baScreenEntity.getText();
@@ -4006,12 +3679,6 @@ public class LivePlayActivity extends BaseActivity implements
                 }
             });
         }
-        if (!TextUtils.isEmpty(playerUrl)) {
-            plVideoPresenter.onPause(videoView);
-            plVideoPresenter.stopPLayBack(videoView);
-            videoView.setVisibility(View.INVISIBLE);
-            playerUrl = "";
-        }
         mTvBaScreenTimer.clearAnimation();
         mTvBaScreenTimer.setVisibility(View.GONE);
         mIsBaping = false;
@@ -4035,40 +3702,22 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void showVisibleCake() {
-
-        setZeroAlpha();
     }
 
     @Override
     public void stopLight() {
-        for (int i = 0; i < candleXinLights.size(); i++) {
-            candleXinLights.get(i).pauseAnimation();
-        }
     }
 
     @Override
     public void hiddenTags(boolean isMe) {
-        isShowTag = false;
-        tags.stopAnimation();
     }
 
     @Override
     public void showTags(String pid) {
-        this.pid = pid;
-        if (!isShowTag) {
-            isShowTag = true;
-            for (int i = 0; i < mTagMode.getData().size(); i++) {
-                if (mTagMode.getData().get(i).getId().equals(pid)) {
-                    CustomPoPupAnim.loadSvga(tags, mTagMode.getData().get(i).getImg1());
-                    handler.sendEmptyMessageDelayed(LivePushHandler.hiddenTag, 5000);
-                }
-            }
-        }
     }
 
     @Override
     public void stopUp() {
-
     }
 
     /**
@@ -4131,95 +3780,6 @@ public class LivePlayActivity extends BaseActivity implements
             });
         } catch (Exception e) {
             showDynamicBg(videoUrl);
-        }
-    }
-
-    private void loadAnimation(final boolean isStepToFrame) {
-        svgaCake.setLoops(1);
-        SVGAParser parser = new SVGAParser(this);
-        try {
-            parser.parse("cake.svga", new SVGAParser.ParseCompletion() {
-                @Override
-                public void onComplete(@NotNull SVGAVideoEntity videoItem) {
-                    SVGADrawable drawable = new SVGADrawable(videoItem, new SVGADynamicEntity());
-                    if (svgaCake == null) {
-                        return;
-                    }
-                    svgaCake.setAlpha(1f);
-                    svgaCake.setImageDrawable(drawable);
-                    if (isStepToFrame) {
-                        Log.e(TAG, "isShowCake: false");
-                        svgaCake.stepToFrame(79, true);
-                        setCandleVisibility();
-                    } else {
-                        isShowCake = true;
-                        Log.e(TAG, "isShowCake: true");
-                        svgaCake.startAnimation();
-                    }
-                    svgaCake.setCallback(new MySVGACallback() {
-                        @Override
-                        public void onStep(int i, double v) {
-                            if (i == 23) {
-                                if (svgaCake != null) {
-                                    svgaCake.pauseAnimation();
-                                }
-                            } else if (i == 8) {
-                                if (rlCandle.getVisibility() == View.INVISIBLE) {
-                                    cakeBg.setAlpha(1f);
-                                    //                                    if (!cakeBg.isPlaying()) {
-                                    //                                        cakeBg.start();
-                                    //                                    }
-                                    mCakeBg.play();
-                                    setCandleVisibility();
-                                }
-                            }
-
-                        }
-
-                        @Override
-                        public void onFinished() {
-                            super.onFinished();
-                            Log.e(TAG, "onFinished: ");
-                        }
-                    });
-
-
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-        } catch (Exception e) {
-            System.out.print(true);
-        }
-    }
-
-    public void setCandleVisibility() {
-        if (rlCandle != null) {
-            if (rlCandle.getVisibility() == View.INVISIBLE) {
-                rlCandle.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    public void setOneAlpha() {
-        CustomPoPupAnim.light(cakeBg);
-        CustomPoPupAnim.light(svgaCake);
-        Log.e(TAG, "1f   ");
-        for (int i = 0; i < candleXinLights.size(); i++) {
-            CustomPoPupAnim.light(candleLight.get(i));
-        }
-    }
-
-    public void setZeroAlpha() {
-        CustomPoPupAnim.black(cakeBg);
-        CustomPoPupAnim.black(svgaCake);
-        handler.sendEmptyMessageDelayed(LivePushHandler.stopLight, 500);
-        Log.e(TAG, "0f   ");
-        for (int i = 0; i < candleXinLights.size(); i++) {
-            CustomPoPupAnim.black(candleLight.get(i));
         }
     }
 
@@ -4789,7 +4349,6 @@ public class LivePlayActivity extends BaseActivity implements
                 });
     }
 
-    //播放模板svga
     public void loadSvgaTem(String url) {
         LogUtils.d("getGiftData loadSvgaTem  url : " + url);
         SVGAParser parser = new SVGAParser(BaseApplication.getApp());

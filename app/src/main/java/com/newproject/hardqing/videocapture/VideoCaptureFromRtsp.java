@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  * 网络摄像头采集
  * Created by LLhon
  */
-public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements SurfaceHolder.Callback {
+public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements TextureView.SurfaceTextureListener {
 
     // SDK 内部实现的、同样实现 ZegoVideoCaptureDevice.Client 协议的客户端，用于通知SDK采集结果
     Client mClient = null;
@@ -57,8 +57,8 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Surf
     int mRotation = 0;
 
     private static final String TAG = "VideoCaptureFromRtsp";
-    private SurfaceView mCameraView;
-    private SurfaceHolder mSurfaceHolder;
+    private TextureView mView;
+    private SurfaceTexture mTexture;
     private ByteBuffer mEncodedBuffer;
 
     // Arbitrary queue depth.  Higher number means more memory allocated & held,
@@ -151,14 +151,20 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Surf
     @Override
     protected int setView(View view) {
         Log.d(TAG, "setView()");
-        mCameraView = (SurfaceView) view;
-
-        if (mCameraView != null) {
-            mSurfaceHolder = mCameraView.getHolder();
-            mSurfaceHolder.addCallback(this);
-
+        if (mView != null) {
+            if (mView.getSurfaceTextureListener().equals(this)) {
+                mView.setSurfaceTextureListener(null);
+            }
+            mView = null;
+        }
+        mView = (TextureView) view;
+        if (mView != null) {
+            mView.setSurfaceTextureListener(this);
+            if (mView.isAvailable()) {
+                mTexture = mView.getSurfaceTexture();
+            }
             //为UVC 摄像头设置预览视图
-            RtspCameraHelper.sharedInstance().setCameraView(mCameraView);
+            RtspCameraHelper.sharedInstance().setCameraView(mView);
         }
         return 0;
     }
@@ -268,18 +274,31 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Surf
         }
     };
 
-    // surface 回调监听
-
-    @Override public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceCreated()");
-        RtspCameraHelper.sharedInstance().setCameraView(mCameraView);
+    // TextureView.SurfaceTextureListener 回调
+    @Override public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        Log.d(TAG, "onSurfaceTextureAvailable()");
+        mTexture = surface;
+        // 启动采集
+        startCapture();
+        // 不能使用 restartCam ，因为切后台时再切回时，isCameraRunning 已经被置为 false
+        //restartCam();
     }
 
-    @Override public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        mTexture = surface;
+        // 视图size变化时重启camera
+        //restartCam();
     }
 
-    @Override public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceDestroyed()");
+    @Override public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        mTexture = null;
+        // 停止采集
+        stopCapture();
+        return true;
+    }
+
+    @Override public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
     }
 }

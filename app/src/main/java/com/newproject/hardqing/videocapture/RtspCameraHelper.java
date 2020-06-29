@@ -55,13 +55,12 @@ public class RtspCameraHelper {
     private static RtspCameraHelper uvcCameraHelper = null;
 
     private H264FrameCallBack mIFrameCallback = null;
-    private SurfaceView mCameraView = null;
+    private TextureView mCameraView = null;
     private final Object mSync = new Object();
     private RtspClient mRtspClient;
     private Handler mHandler;
     private HandlerThread mHandlerThread;
 
-    private VideoRenderer mVideoRenderer;
     private ByteBuffer[] mByteBuffers = new ByteBuffer[4];
     private ByteBuffer mByteBuffer;
     private String mStreamID = com.zego.zegoavkit2.ZegoConstants.ZegoVideoDataMainPublishingStream;
@@ -124,13 +123,8 @@ public class RtspCameraHelper {
     }
 
     // 设置采集预览视图
-    public void setCameraView(SurfaceView view) {
+    public void setCameraView(TextureView view) {
         this.mCameraView = view;
-    }
-
-    //设置视频渲染类
-    public void setVideoRenderer(VideoRenderer videoRenderer) {
-        mVideoRenderer = videoRenderer;
     }
 
     //设置流id
@@ -147,6 +141,7 @@ public class RtspCameraHelper {
 
         mHandler.post(new Runnable() {
             @Override public void run() {
+                //欣豪网络摄像头专用代码
                 /*RtspClient.probeDevices(new RtspClient.ProbeDevicesListener() {
                     @Override public void probeResult(ArrayList<String> arrayList) {
                         if (arrayList == null || arrayList.size() == 0) {
@@ -219,16 +214,19 @@ public class RtspCameraHelper {
      * @param height
      */
     private void drawFrame(byte[] data, int width, int height) {
-        Canvas canvas = mCameraView.getHolder().lockCanvas();
-        canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-        //Bitmap cacheBitmap = nv21ToBitmap(data, width, height);
-        canvas.drawBitmap(mBitmap, 0, 0, null);
-        mCameraView.getHolder().unlockCanvasAndPost(canvas);
+        //Canvas canvas = mCameraView.getHolder().lockCanvas();
+        //canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
+        //canvas.drawBitmap(mBitmap, 0, 0, null);
+        //mCameraView.getHolder().unlockCanvasAndPost(canvas);
     }
 
     // 关闭 UVC 摄像头的采集
     public void stopCameraCapture() {
         Log.d(TAG, "stopCameraCapture()");
+        if (mRtspClient != null) {
+            mRtspClient.stop();
+            mRtspClient = null;
+        }
     }
 
     // 释放 UVC 摄像头

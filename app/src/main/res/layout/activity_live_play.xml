@@ -26,7 +26,9 @@
     <TextureView
         android:id="@+id/tv_mv_video_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
     
     <RelativeLayout
         android:layout_width="match_parent"
@@ -98,40 +100,6 @@
                 app:antiAlias="true"
                 app:autoPlay="true"
                 app:loopCount="1" />
-            
-            <com.pili.pldroid.player.widget.PLVideoTextureView
-                android:id="@+id/videoView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="276dp"
-                android:layout_marginTop="71dp"
-                android:layout_marginRight="121dp"
-                android:layout_marginBottom="115dp"
-                android:visibility="invisible" />
-            
-            <!--许愿树-->
-            <com.xiuyukeji.pictureplayerview.PicturePlayerView
-                android:id="@+id/tree"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:picture_opaque="false"
-                app:picture_source="assets" />
-            
-            <VideoView
-                android:id="@+id/video_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="276dp"
-                android:layout_marginTop="71dp"
-                android:layout_marginRight="121dp"
-                android:layout_marginBottom="115dp"
-                android:visibility="invisible" />
-            
-            <pl.droidsonroids.gif.GifImageView
-                android:id="@+id/iv_star"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
             
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv"
@@ -282,117 +250,6 @@
             
             </RelativeLayout>
             
-            
-            <ImageView
-                android:id="@+id/iv_invite_lala_star2"
-                style="@style/title"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:src="@mipmap/invit_lalaxing"
-                android:visibility="gone" />
-            
-            <LinearLayout
-                android:id="@+id/ll_mai"
-                android:layout_width="300dp"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:orientation="vertical">
-                
-                
-                <FrameLayout
-                    android:id="@+id/fl_right"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:visibility="invisible">
-                    
-                    <SurfaceView
-                        android:id="@+id/surface_right"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:visibility="invisible" />
-                    
-                    <ImageView
-                        android:id="@+id/iv_close_right"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right|bottom"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:padding="3dp"
-                        android:src="@mipmap/liveclose"
-                        android:visibility="invisible" />
-                </FrameLayout>
-                
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-                    
-                    <FrameLayout
-                        android:id="@+id/fl_left"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:visibility="invisible">
-                        
-                        <SurfaceView
-                            android:id="@+id/surface_left"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:visibility="invisible" />
-                        
-                        <ImageView
-                            android:id="@+id/iv_close_left"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:padding="3dp"
-                            android:src="@mipmap/liveclose"
-                            android:visibility="visible" />
-                    </FrameLayout>
-                    
-                    <FrameLayout
-                        android:id="@+id/fl_center"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:visibility="invisible">
-                        
-                        <SurfaceView
-                            android:id="@+id/surface_center"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:visibility="invisible" />
-                        
-                        <ImageView
-                            android:id="@+id/iv_close_center"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:padding="3dp"
-                            android:src="@mipmap/liveclose"
-                            android:visibility="invisible" />
-                    </FrameLayout>
-                
-                </LinearLayout>
-            
-            </LinearLayout>
-            
             <LinearLayout
                 android:id="@+id/ll_subtitles"
                 android:layout_width="wrap_content"
@@ -467,83 +324,6 @@
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true" />
-            
-            <LinearLayout
-                android:id="@+id/bottom_layout2"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_alignParentBottom="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:visibility="gone">
-                
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="22dp"
-                    android:layout_marginLeft="25dp"
-                    android:src="@mipmap/peron" />
-                
-                <TextView
-                    android:id="@+id/tv_watch_num"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="6dp"
-                    android:text="1"
-                    android:textColor="@color/white"
-                    android:textSize="22dp" />
-                
-                <ImageView
-                    android:id="@+id/iv_red_envelpopes"
-                    android:layout_width="23dp"
-                    android:layout_height="26dp"
-                    android:layout_marginLeft="25dp"
-                    android:src="@mipmap/redpc" />
-                
-                <EditText
-                    android:id="@+id/comment_et2"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="25dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/border_r4_rectangle_gray"
-                    android:hint="@string/hint_speak"
-                    android:imeOptions="flagNoFullscreen|actionSend"
-                    android:inputType="text"
-                    android:maxLength="50"
-                    android:padding="6dp"
-                    android:singleLine="true"
-                    android:textSize="@dimen/dp_15"
-                    android:visibility="invisible" />
-                
-                <ImageView
-                    android:id="@+id/iv_write"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginLeft="@dimen/dp_24"
-                    android:src="@mipmap/comment" />
-                
-                <ImageView
-                    android:id="@+id/iv_lian"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginLeft="24dp"
-                    android:src="@mipmap/lian" />
-                
-                <ImageView
-                    android:id="@+id/iv_record"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:src="@mipmap/recording_screen" />
-                
-                <ImageView
-                    android:id="@+id/iv_gift2"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="22dp"
-                    android:src="@mipmap/gift_22" />
-            </LinearLayout>
         
         </RelativeLayout>
         
@@ -551,31 +331,6 @@
             android:id="@+id/rl_anim"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            
-            
-            <com.xiuyukeji.pictureplayerview.PicturePlayerView
-                android:id="@+id/cake_bg"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:picture_opaque="false"
-                app:picture_source="assets" />
-            
-            <ImageView
-                android:id="@+id/cake_xin_bg"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-            
-            <com.opensource.svgaplayer.SVGAImageView
-                android:id="@+id/svga_cake"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:scaleType="fitXY"
-                app:antiAlias="true"
-                app:autoPlay="false"
-                app:loopCount="1"
-                app:source="cake.svga" /><!--蜡烛--><!--许愿树-->
             
             <com.opensource.svgaplayer.SVGAImageView
                 android:id="@+id/svga_categoryui"
@@ -603,307 +358,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
-            
-            <com.opensource.svgaplayer.SVGAImageView
-                android:id="@+id/svga_temple"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                app:antiAlias="true"
-                app:autoPlay="true"
-                app:loopCount="0" />
-            
-            <RelativeLayout
-                android:id="@+id/rl_candle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="invisible">
-                
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-                        
-                        
-                        <FrameLayout
-                            android:id="@+id/fl_one"
-                            android:layout_width="30dp"
-                            android:layout_height="150dp">
-                            
-                            
-                            <ImageView
-                                android:id="@+id/iv_one"
-                                android:layout_width="30dp"
-                                android:layout_height="130dp"
-                                android:layout_gravity="bottom" />
-                            
-                            <com.xiuyukeji.pictureplayerview.PicturePlayerView
-                                android:id="@+id/iv_one_x"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                app:picture_opaque="false"
-                                app:picture_scaleType="fitCenter"
-                                app:picture_source="assets" />
-                            
-                            <ImageView
-                                android:id="@+id/iv_one_xin"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                android:scaleType="fitCenter" />
-                        </FrameLayout>
-                    
-                    
-                    </LinearLayout>
-                
-                
-                </FrameLayout>
-                
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    
-                    
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-                        
-                        
-                        <FrameLayout
-                            android:id="@+id/fl_two"
-                            android:layout_width="30dp"
-                            android:layout_height="150dp">
-                            
-                            
-                            <ImageView
-                                android:id="@+id/iv_two"
-                                android:layout_width="30dp"
-                                android:layout_height="130dp"
-                                android:layout_gravity="bottom" />
-                            
-                            
-                            <com.xiuyukeji.pictureplayerview.PicturePlayerView
-                                android:id="@+id/iv_two_x"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                app:picture_opaque="false"
-                                app:picture_scaleType="fitCenter"
-                                app:picture_source="assets" />
-                            
-                            <ImageView
-                                android:id="@+id/iv_two_xin"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                android:scaleType="fitCenter" />
-                        </FrameLayout>
-                    
-                    
-                    </LinearLayout>
-                
-                
-                </FrameLayout>
-                
-                
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    
-                    
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-                        
-                        
-                        <FrameLayout
-                            android:id="@+id/fl_three"
-                            android:layout_width="30dp"
-                            android:layout_height="150dp">
-                            
-                            
-                            <ImageView
-                                android:id="@+id/iv_three"
-                                android:layout_width="30dp"
-                                android:layout_height="130dp"
-                                android:layout_gravity="bottom" />
-                            
-                            <com.xiuyukeji.pictureplayerview.PicturePlayerView
-                                android:id="@+id/iv_three_x"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                app:picture_opaque="false"
-                                app:picture_scaleType="fitCenter"
-                                app:picture_source="assets" />
-                            
-                            <ImageView
-                                android:id="@+id/iv_three_xin"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                android:scaleType="fitCenter" />
-                        </FrameLayout>
-                    
-                    </LinearLayout>
-                
-                
-                </FrameLayout>
-                
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    
-                    
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-                        
-                        
-                        <FrameLayout
-                            android:id="@+id/fl_four"
-                            android:layout_width="30dp"
-                            android:layout_height="150dp">
-                            
-                            
-                            <ImageView
-                                android:id="@+id/iv_four"
-                                android:layout_width="30dp"
-                                android:layout_height="130dp"
-                                android:layout_gravity="bottom" />
-                            
-                            <com.xiuyukeji.pictureplayerview.PicturePlayerView
-                                android:id="@+id/iv_four_x"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                app:picture_opaque="false"
-                                app:picture_scaleType="fitCenter"
-                                app:picture_source="assets" />
-                            
-                            <ImageView
-                                android:id="@+id/iv_four_xin"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                android:scaleType="fitCenter" />
-                        </FrameLayout>
-                    
-                    
-                    </LinearLayout>
-                
-                
-                </FrameLayout>
-                
-                
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    
-                    
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-                        
-                        
-                        <FrameLayout
-                            android:id="@+id/fl_five"
-                            android:layout_width="30dp"
-                            android:layout_height="150dp">
-                            
-                            
-                            <ImageView
-                                android:id="@+id/iv_five"
-                                android:layout_width="30dp"
-                                android:layout_height="130dp"
-                                android:layout_gravity="bottom" />
-                            
-                            
-                            <com.xiuyukeji.pictureplayerview.PicturePlayerView
-                                android:id="@+id/iv_five_x"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                app:picture_opaque="false"
-                                app:picture_scaleType="fitCenter"
-                                app:picture_source="assets" />
-                            
-                            <ImageView
-                                android:id="@+id/iv_five_xin"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                android:scaleType="fitCenter" />
-                        </FrameLayout>
-                    
-                    
-                    </LinearLayout>
-                
-                
-                </FrameLayout>
-                
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    
-                    
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-                        
-                        <FrameLayout
-                            android:id="@+id/fl_six"
-                            android:layout_width="30dp"
-                            android:layout_height="150dp">
-                            
-                            
-                            <ImageView
-                                android:id="@+id/iv_six"
-                                android:layout_width="30dp"
-                                android:layout_height="130dp"
-                                android:layout_gravity="bottom" />
-                            
-                            
-                            <com.xiuyukeji.pictureplayerview.PicturePlayerView
-                                android:id="@+id/iv_six_x"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                app:picture_opaque="false"
-                                app:picture_scaleType="fitCenter"
-                                app:picture_source="assets" />
-                            
-                            <ImageView
-                                android:id="@+id/iv_six_xin"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center_horizontal"
-                                android:scaleType="fitCenter" />
-                        </FrameLayout>
-                    
-                    
-                    </LinearLayout>
-                
-                </FrameLayout>
-            
-            
-            </RelativeLayout>
+
         </RelativeLayout>
     
     </RelativeLayout>
@@ -914,22 +369,21 @@
         android:layout_height="match_parent">
     
     </com.newproject.hardqing.view.GifView>
-    
+
     <LinearLayout
         android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/translate_lucency"
         android:orientation="vertical">
-        
+
         <View
             android:id="@+id/top_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@android:color/transparent" />
-        
+
         <android.support.v7.widget.Toolbar
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -937,13 +391,13 @@
             app:contentInsetStart="0dp"
             app:subtitle=""
             app:title="">
-            
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:visibility="gone">
-                
+
                 <ImageView
                     android:id="@+id/title_back"
                     android:layout_width="wrap_content"
@@ -954,7 +408,7 @@
                     android:scaleType="centerCrop"
                     android:src="@mipmap/more_00"
                     android:visibility="gone" />
-                
+
                 <TextView
                     android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
@@ -967,7 +421,7 @@
                     android:textColor="@color/white"
                     android:textSize="16dp"
                     android:visibility="gone" />
-                
+
                 <ImageView
                     android:id="@+id/iv_share"
                     android:layout_width="wrap_content"
@@ -977,7 +431,7 @@
                     android:layout_marginRight="15dp"
                     android:src="@mipmap/forward"
                     android:visibility="gone" />
-                
+
                 <ImageView
                     android:id="@+id/iv_love"
                     android:layout_width="wrap_content"
@@ -987,7 +441,7 @@
                     android:layout_toLeftOf="@+id/iv_share"
                     android:src="@mipmap/fellow_11"
                     android:visibility="gone" />
-                
+
                 <ImageView
                     android:id="@+id/iv_set"
                     android:layout_width="22dp"
@@ -1000,7 +454,7 @@
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/ll_QRCode"
         android:layout_width="wrap_content"
@@ -1166,22 +620,6 @@
         android:layout_marginTop="26dp"
         android:src="@mipmap/close_red"
         android:visibility="invisible" />
-    
-    <TextureView
-        android:id="@+id/texture_view_preview"
-        android:layout_width="320dp"
-        android:layout_height="180dp"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        app:isBigView="true" />
-    
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:onClick="startPlay"
-        android:text="预览"
-        android:visibility="gone" />
     
     <RelativeLayout
         android:id="@+id/rl_ba_pin_all"
