@@ -338,7 +338,6 @@ public class LivePlayActivity extends BaseActivity implements
 
     private TextureView mMVTextureView;
 
-    TextureView mMVTextureView;
     LinearLayout llSubtitles;
     TextView tvSubtitles;
     private String yq_type;
