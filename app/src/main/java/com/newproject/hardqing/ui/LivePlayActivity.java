@@ -669,8 +669,8 @@ public class LivePlayActivity extends BaseActivity implements
                 if (isUsbDevice) {
                     ZegoAvConfig config = new ZegoAvConfig(ZegoAvConfig.Level.High);
                     // 设置分辨率，注意此处设置的分辨率需要是uvccamera所支持的
-                    config.setVideoCaptureResolution(1280, 720); //1280, 720 / 640x480
-                    config.setVideoEncodeResolution(1280, 720); // 3840, 2160 / 1920, 1080
+                    config.setVideoCaptureResolution(1280, 704); //1280, 720 / 640x480
+                    config.setVideoEncodeResolution(1280, 704); // 3840, 2160 / 1920, 1080
                     config.setVideoFPS(15);
                     config.setVideoBitrate(1200000);
                     mZegoLiveRoom.setAVConfig(config);
@@ -1059,6 +1059,8 @@ public class LivePlayActivity extends BaseActivity implements
         videoCaptureFactory.setContext(this);
         //设置外部采集工厂对象
         ZegoExternalVideoCapture.setVideoCaptureFactory(videoCaptureFactory, ZegoConstants.PublishChannelIndex.MAIN);  // videoCapture 是 ZegoExternalVideoCapture实例
+        //支持本地预览
+        ZegoLiveRoom.setConfig("vcap_external_support_preview=true");
     }
 
     String mPublishStreamID = null;
@@ -2477,10 +2479,6 @@ public class LivePlayActivity extends BaseActivity implements
 //        }
         LogUtils.d("LivePlayActivity initSDKAndLoginRoom starta mInitSDKSuccess : " + mInitSDKSuccess + " mIsLoginRoomSuccess : " + mIsLoginRoomSuccess + "  isLive :" + isLive + " isUsbDevice : " + isUsbDevice);
         // TODO: 2020/5/15
-
-        if (BuildConfig.channel_id == Constants.CHANNEL_ID_SUN_NET) {
-            ZegoLiveRoom.setConfig("vcap_external_support_preview=true");
-        }
         ZegoLiveRoom.setTestEnv(true);
         mZegoLiveRoom.initSDK(GetAppIdConfig.appId, GetAppIdConfig.appSign,
                 new IZegoInitSDKCompletionCallback() {

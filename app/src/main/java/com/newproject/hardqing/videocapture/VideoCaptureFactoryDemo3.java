@@ -53,7 +53,7 @@ public class VideoCaptureFactoryDemo3 extends ZegoVideoCaptureFactory {
         //    mDevice = new VideoCaptureFromCamera3();
         //}
 
-        return mDevice = new VideoCaptureFromRtsp();
+        return mDevice = new VideoCaptureFromRtsp2();
     }
 
     // 销毁外部采集设备实例
