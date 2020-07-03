@@ -76,6 +76,7 @@ import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.PostRequest;
 import com.newproject.hardqing.BuildConfig;
 import com.newproject.hardqing.R;
+import com.newproject.hardqing.adapter.AudienceListAdapter;
 import com.newproject.hardqing.adapter.LiveMessageAdapter;
 import com.newproject.hardqing.adapter.UserIconPcAdapter;
 import com.newproject.hardqing.ai_effects.tf.Classifier;
@@ -114,21 +115,28 @@ import com.newproject.hardqing.ui.receivecmd.BaScreenEntity;
 import com.newproject.hardqing.ui.receivecmd.ChangeLiveStatusEntity;
 import com.newproject.hardqing.ui.receivecmd.CloseAllEntity;
 import com.newproject.hardqing.ui.receivecmd.CloseEntity;
+import com.newproject.hardqing.ui.receivecmd.CloseInductionEntity;
 import com.newproject.hardqing.ui.receivecmd.CurrencyEntity;
+import com.newproject.hardqing.ui.receivecmd.EntertainEntity;
 import com.newproject.hardqing.ui.receivecmd.ErrorEntity;
+import com.newproject.hardqing.ui.receivecmd.ExtractAudienceEntity;
 import com.newproject.hardqing.ui.receivecmd.GiftEntity;
 import com.newproject.hardqing.ui.receivecmd.HardwareFailureEntity;
 import com.newproject.hardqing.ui.receivecmd.InRoomEntity;
+import com.newproject.hardqing.ui.receivecmd.InductionEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteAgreedEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteNoticeEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteRefusedEntity;
 import com.newproject.hardqing.ui.receivecmd.KickEntity;
+import com.newproject.hardqing.ui.receivecmd.LianFeedEntity;
+import com.newproject.hardqing.ui.receivecmd.LuckyAudienceEntity;
 import com.newproject.hardqing.ui.receivecmd.ManageEntity;
 import com.newproject.hardqing.ui.receivecmd.MultiRoomMessageEntity;
 import com.newproject.hardqing.ui.receivecmd.MusicEntity;
 import com.newproject.hardqing.ui.receivecmd.OutRoomEntity;
 import com.newproject.hardqing.ui.receivecmd.PlayBillEntity;
+import com.newproject.hardqing.ui.receivecmd.RandomLuckyEntity;
 import com.newproject.hardqing.ui.receivecmd.ReceiveLeadRedEntity;
 import com.newproject.hardqing.ui.receivecmd.ReceiveRedEntity;
 import com.newproject.hardqing.ui.receivecmd.RedCurrencyEntity;
@@ -178,6 +186,7 @@ import com.newproject.hardqing.view.ViewLive;
 import com.newproject.hardqing.view.ball.CommonUtils;
 import com.newproject.hardqing.view.ball.TagCloudAdapter;
 import com.newproject.hardqing.view.ball.TagCloudView;
+import com.opensource.svgaplayer.SVGACallback;
 import com.opensource.svgaplayer.SVGADrawable;
 import com.opensource.svgaplayer.SVGADynamicEntity;
 import com.opensource.svgaplayer.SVGAImageView;
@@ -309,6 +318,26 @@ public class LivePlayActivity extends BaseActivity implements
     SVGAImageView mSivSubject;
     ViewLive tvAudience1;
     ViewLive mLocalPreview;
+    //    轮盘附近对应id
+    SVGAImageView mSvgaExtractAudience;
+    RelativeLayout mRlShowLuck;//控制轮盘是否显示
+    ImageView mLpLuckPan;
+    ImageView mImgStart;
+    RelativeLayout mRlSvga;//控制svga区域是否显示
+    SVGAImageView mSvgaLuckResult;
+    RelativeLayout mRlLuckP;
+    //    这一块是特效消失后展示的轮盘结果
+    TextView mTvLuckResult;
+    TextView mTvExtractName;
+    TextView mTvExtractLian;
+    RelativeLayout mRlNameLian;
+    //   自我介绍
+    RelativeLayout mRlShowInduction;
+    RecyclerView mRlAudienceList;
+    TextView mTvWaitAudience;
+
+    private TextureView mMVTextureView;
+
     TextureView mMVTextureView;
     LinearLayout llSubtitles;
     TextView tvSubtitles;
@@ -809,6 +838,20 @@ public class LivePlayActivity extends BaseActivity implements
         mRoll3DView = findViewById(R.id.roll_view);
         mTagCloudView = findViewById(R.id.tag_cloud);
         mMVTextureView = findViewById(R.id.tv_mv_video_view);
+
+        mSvgaExtractAudience = findViewById(R.id.svga_extract_audience);
+        mRlShowLuck = findViewById(R.id.rl_show_luck);
+        mLpLuckPan = findViewById(R.id.lp_luckPan);
+        mImgStart = findViewById(R.id.img_start);
+        mRlSvga = findViewById(R.id.rl_svga);
+        mSvgaLuckResult = findViewById(R.id.svga_luck_result);
+        mRlLuckP = findViewById(R.id.rl_luckPan);
+        mTvLuckResult = findViewById(R.id.tv_luck_result);
+        mTvExtractName = findViewById(R.id.tv_extract_name);
+        mTvWaitAudience = findViewById(R.id.tv_wait_audience);
+        mRlNameLian = findViewById(R.id.rl_name_lian);
+        mRlShowInduction = findViewById(R.id.rl_show_induction);
+        mRlAudienceList = findViewById(R.id.rl_audience_list);
 
         mShowGifImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -3300,6 +3343,143 @@ public class LivePlayActivity extends BaseActivity implements
     public void stopRain() {
         stopRedRain();
         isRedRain = false;
+    }
+
+    @Override
+    public void showEntertainLuck(EntertainEntity entertainEntity) {
+///娱乐活动-轮盘显示
+        mRlShowLuck.setVisibility(View.VISIBLE);
+        mRlLuckP.setVisibility(View.VISIBLE);
+        mRlSvga.setVisibility(View.GONE);
+        mRlNameLian.setVisibility(View.GONE);
+        mTvWaitAudience.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showInduction(InductionEntity inductionEntity) {
+//显示自我介绍
+        mRlShowInduction.setVisibility(View.VISIBLE);
+        mRlShowLuck.setVisibility(View.GONE);
+        mRlLuckP.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showExtractAudience(ExtractAudienceEntity extractAudienceEntity) {
+//观众
+        mRlShowLuck.setVisibility(View.VISIBLE);
+        mRlLuckP.setVisibility(View.VISIBLE);
+        mRlSvga.setVisibility(View.GONE);
+        mRlNameLian.setVisibility(View.GONE);
+        mTvWaitAudience.setVisibility(View.VISIBLE);
+        mTvLuckResult.setText("");
+        mSvgaExtractAudience.setLoops(1);
+        SVGAParser parser = new SVGAParser(BaseApplication.getApp());
+        parser.decodeFromAssets("activity_get.svga", new SVGAParser.ParseCompletion() {
+            @Override
+            public void onComplete(@NotNull SVGAVideoEntity videoItem) {
+                SVGADrawable drawable = new SVGADrawable(videoItem);
+                mSvgaExtractAudience.setImageDrawable(drawable);
+                mSvgaExtractAudience.startAnimation();
+            }
+
+            @Override
+            public void onError() {
+                Log.e("TAG", "onError: ");
+            }
+        });
+        mSvgaExtractAudience.setCallback(new SVGACallback() {
+            @Override
+            public void onPause() {
+
+            }
+
+            @Override
+            public void onFinished() {
+                mRlNameLian.setVisibility(View.VISIBLE);
+                mTvWaitAudience.setVisibility(View.GONE);
+                mTvExtractName.setText(extractAudienceEntity.getUsername());
+            }
+
+            @Override
+            public void onRepeat() {
+
+            }
+
+            @Override
+            public void onStep(int i, double v) {
+
+            }
+        });
+    }
+
+    @Override
+    public void showCloseInduction(CloseInductionEntity closeInductionEntity) {
+        mRlShowLuck.setVisibility(View.GONE);
+        mRlShowInduction.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void FeedbackLucky(LuckyAudienceEntity luckyAudienceEntity) {
+//被抽到的幸运观众反馈
+        mRlSvga.setVisibility(View.VISIBLE);
+        mSvgaLuckResult.setVisibility(View.VISIBLE);
+        mRlLuckP.setVisibility(View.GONE);
+        mSvgaLuckResult.setLoops(1);
+        SVGAParser parser = new SVGAParser(BaseApplication.getApp());
+        parser.decodeFromAssets("luck.svga", new SVGAParser.ParseCompletion() {
+            @Override
+            public void onComplete(@NotNull SVGAVideoEntity videoItem) {
+                SVGADrawable drawable = new SVGADrawable(videoItem);
+                mSvgaLuckResult.setImageDrawable(drawable);
+                mSvgaLuckResult.startAnimation();
+            }
+
+            @Override
+            public void onError() {
+                Log.e("TAG", "onError: ");
+            }
+        });
+        mSvgaLuckResult.setCallback(new SVGACallback() {
+            @Override
+            public void onPause() {
+
+            }
+
+            @Override
+            public void onFinished() {
+                //被抽到的幸运观众反馈
+                mTvLuckResult.setText(luckyAudienceEntity.getContent());
+            }
+
+            @Override
+            public void onRepeat() {
+
+            }
+
+            @Override
+            public void onStep(int i, double v) {
+
+            }
+        });
+    }
+
+    @Override
+    public void FiveAudience(RandomLuckyEntity randomLuckyEntity) {
+        List<RandomLuckyEntity.UsersBean> usersBeansList = new ArrayList<>();
+        if (randomLuckyEntity.getUsers() != null)
+            usersBeansList.addAll(randomLuckyEntity.getUsers());
+        usersBeansList.addAll(randomLuckyEntity.getUsers());
+        //数据填充适配器
+        AudienceListAdapter audienceListAdapter = new AudienceListAdapter(R.layout.adapter_induction, usersBeansList);
+        LinearLayoutManager a = new LinearLayoutManager(this);
+        a.setOrientation(LinearLayoutManager.VERTICAL);
+        mRlAudienceList.setLayoutManager(a);
+        mRlAudienceList.setAdapter(audienceListAdapter);
+    }
+
+    @Override
+    public void lianFeedBack(LianFeedEntity lianFeedEntity) {
+
     }
 
     private String playerUrl, cover;

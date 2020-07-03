@@ -86,6 +86,20 @@ public class WebSocketFeedConst {
     //返回 全直播间的人
     public static final String red = "red";
 
+    //娱乐活动
+    public static final String entertainment = "open_turntable";
+    //抽到的幸运观众
+    public static final String extractAudience = "lucky_audience";
+    //关闭或者自我介绍
+    public static final String close_induction = "close_room_activity";
+    //打开自我介绍
+    public static final String open_room_introduction = "open_room_introduction";
+    //被抽到的幸运观众反馈
+    public static final String lucky_audience_feedback="lucky_audience_feedback";
+    //自我介绍随机抽几名幸运观众
+    public static final String self_introduction_random_users = "self_introduction_random_users";
+    //自我介绍连麦反馈
+    public static final String self_introduction = "self_introduction";
 
     //礼物特效
     //蛋糕出现

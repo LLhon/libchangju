@@ -5,21 +5,28 @@ import com.newproject.hardqing.ui.receivecmd.BaScreenEntity;
 import com.newproject.hardqing.ui.receivecmd.ChangeLiveStatusEntity;
 import com.newproject.hardqing.ui.receivecmd.CloseAllEntity;
 import com.newproject.hardqing.ui.receivecmd.CloseEntity;
+import com.newproject.hardqing.ui.receivecmd.CloseInductionEntity;
 import com.newproject.hardqing.ui.receivecmd.CurrencyEntity;
+import com.newproject.hardqing.ui.receivecmd.EntertainEntity;
 import com.newproject.hardqing.ui.receivecmd.ErrorEntity;
+import com.newproject.hardqing.ui.receivecmd.ExtractAudienceEntity;
 import com.newproject.hardqing.ui.receivecmd.GiftEntity;
 import com.newproject.hardqing.ui.receivecmd.HardwareFailureEntity;
 import com.newproject.hardqing.ui.receivecmd.InRoomEntity;
+import com.newproject.hardqing.ui.receivecmd.InductionEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteAgreedEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteNoticeEntity;
 import com.newproject.hardqing.ui.receivecmd.InviteRefusedEntity;
 import com.newproject.hardqing.ui.receivecmd.KickEntity;
+import com.newproject.hardqing.ui.receivecmd.LianFeedEntity;
+import com.newproject.hardqing.ui.receivecmd.LuckyAudienceEntity;
 import com.newproject.hardqing.ui.receivecmd.ManageEntity;
 import com.newproject.hardqing.ui.receivecmd.MultiRoomLianMaiEntity;
 import com.newproject.hardqing.ui.receivecmd.MultiRoomMessageEntity;
 import com.newproject.hardqing.ui.receivecmd.OutRoomEntity;
 import com.newproject.hardqing.ui.receivecmd.PlayBillEntity;
+import com.newproject.hardqing.ui.receivecmd.RandomLuckyEntity;
 import com.newproject.hardqing.ui.receivecmd.ReceiveLeadRedEntity;
 import com.newproject.hardqing.ui.receivecmd.ReceiveRedEntity;
 import com.newproject.hardqing.ui.receivecmd.RedCurrencyEntity;
@@ -128,7 +135,20 @@ public interface SocketReciveView {
     //60秒到了，停止红包雨动画
     void stopRain();
 
-
+    //娱乐活动
+    void showEntertainLuck(EntertainEntity entertainEntity);
+    //显示自我介绍
+    void showInduction(InductionEntity inductionEntity);
+    //展示抽中的观众
+    void showExtractAudience(ExtractAudienceEntity extractAudienceEntity);
+    //关闭或者自我介绍
+    void showCloseInduction(CloseInductionEntity closeInductionEntity);
+    //被抽到的幸运观众反馈
+    void FeedbackLucky(LuckyAudienceEntity luckyAudienceEntity);
+    //自我介绍随机抽几名幸运观众
+    void FiveAudience(RandomLuckyEntity randomLuckyEntity);
+    //自我介绍连麦反馈
+    void lianFeedBack(LianFeedEntity lianFeedEntity);
 
 
 
