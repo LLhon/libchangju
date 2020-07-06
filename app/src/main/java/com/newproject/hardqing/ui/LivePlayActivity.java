@@ -46,14 +46,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.LogUtils;
@@ -97,7 +94,6 @@ import com.newproject.hardqing.entity.UserDetailBean;
 import com.newproject.hardqing.giftlibrary.widget.GiftControl;
 import com.newproject.hardqing.giftlibrary.widget.GiftModel;
 import com.newproject.hardqing.listener.ICallback;
-import com.newproject.hardqing.listener.MySVGACallback;
 import com.newproject.hardqing.permission.BaseObserver;
 import com.newproject.hardqing.service.CommonUtil;
 import com.newproject.hardqing.service.LiveService;
@@ -109,7 +105,6 @@ import com.newproject.hardqing.ui.lala.LalaInteractor;
 import com.newproject.hardqing.ui.lala.LalaOnlineAdapter;
 import com.newproject.hardqing.ui.lala.LalaOnlineBean;
 import com.newproject.hardqing.ui.presenter.LivePushHandler;
-import com.newproject.hardqing.ui.presenter.PLVideoPresenter;
 import com.newproject.hardqing.ui.presenter.WatchPresenter;
 import com.newproject.hardqing.ui.receivecmd.BaScreenEntity;
 import com.newproject.hardqing.ui.receivecmd.ChangeLiveStatusEntity;
@@ -161,14 +156,12 @@ import com.newproject.hardqing.util.CustomPoPupAnim;
 import com.newproject.hardqing.util.DensityUtil;
 import com.newproject.hardqing.util.DeviceUtil;
 import com.newproject.hardqing.util.FileUtil;
-import com.newproject.hardqing.util.FrameAnimation;
 import com.newproject.hardqing.util.GlideUtil;
 import com.newproject.hardqing.util.GsonConverter;
 import com.newproject.hardqing.util.JsonUtil;
 import com.newproject.hardqing.util.LogUtil;
 import com.newproject.hardqing.util.NetWatchdog;
 import com.newproject.hardqing.util.NumShow;
-import com.newproject.hardqing.util.PictureInfoUtil;
 import com.newproject.hardqing.util.QRCodeUtil;
 import com.newproject.hardqing.util.ToastUtil;
 import com.newproject.hardqing.uvc.GetAppIdConfig;
@@ -188,12 +181,9 @@ import com.newproject.hardqing.view.ball.TagCloudAdapter;
 import com.newproject.hardqing.view.ball.TagCloudView;
 import com.opensource.svgaplayer.SVGACallback;
 import com.opensource.svgaplayer.SVGADrawable;
-import com.opensource.svgaplayer.SVGADynamicEntity;
 import com.opensource.svgaplayer.SVGAImageView;
 import com.opensource.svgaplayer.SVGAParser;
 import com.opensource.svgaplayer.SVGAVideoEntity;
-import com.pili.pldroid.player.widget.PLVideoTextureView;
-import com.xiuyukeji.pictureplayerview.PicturePlayerView;
 import com.zego.zegoavkit2.IZegoMediaPlayerWithIndexCallback;
 import com.zego.zegoavkit2.ZegoExternalVideoCapture;
 import com.zego.zegoavkit2.ZegoMediaPlayer;
@@ -209,7 +199,6 @@ import com.zego.zegoavkit2.mixstream.ZegoCompleteMixStreamInfo;
 import com.zego.zegoavkit2.mixstream.ZegoMixStreamInfo;
 import com.zego.zegoavkit2.mixstream.ZegoStreamMixer;
 import com.zego.zegoavkit2.soundlevel.ZegoSoundLevelMonitor;
-import com.zego.zegoavkit2.videorender.ZegoExternalVideoRender;
 import com.zego.zegoliveroom.ZegoLiveRoom;
 import com.zego.zegoliveroom.callback.IZegoAudioPrepCallback2;
 import com.zego.zegoliveroom.callback.IZegoAudioRecordCallback2;
@@ -861,6 +850,7 @@ public class LivePlayActivity extends BaseActivity implements
                 mGifView.startAnimation(mGifView.getWidth(), mGifView.getHeight());
             }
         });
+        showWelcomeGif();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -4757,7 +4747,7 @@ public class LivePlayActivity extends BaseActivity implements
                 mvZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypePlayer, ZegoMediaPlayer.PlayerIndex.Third);
                 mvZegoMediaPlayer.setView(mMVTextureView);
                 mvZegoMediaPlayer.setVolume(100);
-                mvZegoMediaPlayer.setPlayerType(ZegoMediaPlayer.PlayerTypePlayer);
+                mvZegoMediaPlayer.setPlayerType(ZegoMediaPlayer.PlayerTypeAux);
                 String path = FileUtil.getPath(LivePlayActivity.this, "sea.mp4");
                 Log.i("MVVideo", " path : " + path);
                 mvZegoMediaPlayer.start(path, true);
@@ -4791,6 +4781,20 @@ public class LivePlayActivity extends BaseActivity implements
 
         if (mvZegoMediaPlayer != null) {
             mvZegoMediaPlayer.pause();
+        }
+    }
+
+    public void showWelcomeGif() {
+        if (tvName != null) {
+            BaPingChatMessage baPingChatMessage = new BaPingChatMessage();
+            baPingChatMessage.setType(22);
+            baPingChatMessage.setGiftId("116");
+            baPingChatMessage.setGifImg1("https://resources.xiaoheshuo.com/uploads/gift/fc0e52020051410543283346.png'");
+            baPingChatMessage.setGifImg2("https://resources.xiaoheshuo.com/uploads/gift/3ea952020051410543299917.svga");
+            GiftEntity giftEntity = baPingChatMessage.getGiftEntity();
+            if (giftEntity != null) {
+                showAnim(giftEntity);
+            }
         }
     }
 }
