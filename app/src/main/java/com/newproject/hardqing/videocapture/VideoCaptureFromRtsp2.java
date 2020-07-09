@@ -257,7 +257,14 @@ public class VideoCaptureFromRtsp2 extends ZegoVideoCaptureDevice implements Tex
             }
             //Log.e(TAG, "******onFrame****** size:" + data.length + ", isKeyFrame:" + isKeyFrame + ", timeStamp:" + timeStamp);
 
-            decode(data);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (mAVCDecoder != null) {
+                    // 为解码提供视频数据，时间戳
+                    mAVCDecoder.inputFrameToDecoder(data, (long) timeStamp);
+                }
+            } else {
+                decode(data);
+            }
         }
     };
 
@@ -268,9 +275,10 @@ public class VideoCaptureFromRtsp2 extends ZegoVideoCaptureDevice implements Tex
     public void decode(byte[] h264Data) {
         //设置解码等待时间，0为不等待，-1为一直等待
         int inputBufferId = mAVCDecoder.getMediaCodec().dequeueInputBuffer(DEFAULT_TIMEOUT_US);
-        if (inputBufferId >= 0) {
+        Log.e("输入缓冲区索引", "inputBufferId=" + inputBufferId);
+        if (inputBufferId >= 0) { // 0
             ByteBuffer inputBuffer;
-            //获取MediaCodec的输入流
+            // 获取MediaCodec的输入流
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 inputBuffer = mAVCDecoder.getMediaCodec().getInputBuffer(inputBufferId);
             } else {
@@ -278,16 +286,18 @@ public class VideoCaptureFromRtsp2 extends ZegoVideoCaptureDevice implements Tex
             }
             if (inputBuffer != null) {
                 inputBuffer.clear();
-                //填充数据到输入流
+                // 填充数据到输入流
                 inputBuffer.put(h264Data, 0, h264Data.length);
+                // 入空数据进MediaCodec队列
                 mAVCDecoder.getMediaCodec().queueInputBuffer(inputBufferId, 0, h264Data.length, 0, 0);
             }
         }
 
         //获取MediaCodec的输出流
         int outputBufferId = mAVCDecoder.getMediaCodec().dequeueOutputBuffer(mAVCDecoder.getBufferInfo(), DEFAULT_TIMEOUT_US);
+        Log.e("输出缓冲区索引", "outputBufferId=" + outputBufferId);
         ByteBuffer outputBuffer;
-        while (outputBufferId > 0) {
+        while (outputBufferId > 0) { // -1
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 outputBuffer = mAVCDecoder.getMediaCodec().getOutputBuffer(outputBufferId);
             } else {
@@ -299,9 +309,40 @@ public class VideoCaptureFromRtsp2 extends ZegoVideoCaptureDevice implements Tex
                 byte[] yuvData = new byte[outputBuffer.remaining()];
                 outputBuffer.get(yuvData);
 
+                 MediaFormat outputFormat = mAVCDecoder.getMediaCodec().getOutputFormat();
+                switch (outputFormat.getInteger(MediaFormat.KEY_COLOR_FORMAT)) {
+                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV411Planar:
+                        Log.e("解码后的帧格式", "COLOR_FormatYUV411Planar");
+                        break;
+                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV411PackedPlanar:
+                        Log.e("解码后的帧格式", "COLOR_FormatYUV411PackedPlanar");
+                        break;
+                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedPlanar:
+                        Log.e("解码后的帧格式", "COLOR_FormatYUV420PackedPlanar");
+                        break;
+                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar:
+                        Log.e("解码后的帧格式", "COLOR_FormatYUV420SemiPlanar");
+                        break;
+                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar:
+                        Log.e("解码后的帧格式", "COLOR_FormatYUV420PackedSemiPlanar");
+                        break;
+                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar:
+                        //{image-data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=104], mime=video/raw, crop-top=0, crop-right=359, slice-height=640, color-format=19, height=704, width=1280, crop-bottom=639, crop-left=0, stride=360}
+                        Log.e("解码后的帧格式", "COLOR_FormatYUV420Planar");
+                        break;
+                    default:
+                        //{crop-right=1279, color-format=2141391876, slice-height=1024, image-data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=104], mime=video/raw, hdr-static-info=java.nio.HeapByteBuffer[pos=0 lim=25 cap=25], stride=1536, color-standard=2, color-transfer=3, crop-bottom=703, crop-left=0, width=1280, color-range=2, crop-top=0, height=704}
+                        Log.e("解码后的帧格式", outputFormat.toString()); //2141391876
+                        break;
+                }
+
                 //释放缓存区，并把缓存区发送到 Surface 渲染
                 long now = System.currentTimeMillis() * 1000;
-                mAVCDecoder.getMediaCodec().releaseOutputBuffer(outputBufferId, true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mAVCDecoder.getMediaCodec().releaseOutputBuffer(outputBufferId, now);
+                } else {
+                    mAVCDecoder.getMediaCodec().releaseOutputBuffer(outputBufferId, true);
+                }
                 outputBuffer.clear();
             }
             outputBufferId = mAVCDecoder.getMediaCodec().dequeueOutputBuffer(mAVCDecoder.getBufferInfo(), DEFAULT_TIMEOUT_US);

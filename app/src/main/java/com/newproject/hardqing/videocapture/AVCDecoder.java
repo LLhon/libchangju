@@ -128,7 +128,7 @@ public class AVCDecoder {
                  * YV12(I420) -> COLOR_FormatYUV420Planar
                  */
 
-                switch (outputFormat.getInteger(MediaFormat.KEY_COLOR_FORMAT)) {
+                /*switch (outputFormat.getInteger(MediaFormat.KEY_COLOR_FORMAT)) {
                     case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV411Planar:
                         Log.e("解码后的帧格式", "COLOR_FormatYUV411Planar...width=" + outputFormat.getInteger(MediaFormat.KEY_WIDTH)
                             + ", height=" + outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
@@ -144,7 +144,6 @@ public class AVCDecoder {
                     case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar:
                         Log.e("解码后的帧格式", "COLOR_FormatYUV420SemiPlanar...width=" + outputFormat.getInteger(MediaFormat.KEY_WIDTH)
                             + ", height=" + outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
-                        //yuvData = yuv420spToYuv420P(yuvData, outputFormat.getInteger(MediaFormat.KEY_WIDTH), outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
                         break;
                     case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar:
                         Log.e("解码后的帧格式", "COLOR_FormatYUV420PackedSemiPlanar...width=" + outputFormat.getInteger(MediaFormat.KEY_WIDTH)
@@ -154,38 +153,16 @@ public class AVCDecoder {
                         //{image-data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=104], mime=video/raw, crop-top=0, crop-right=359, slice-height=640, color-format=19, height=704, width=1280, crop-bottom=639, crop-left=0, stride=360}
                         Log.e("解码后的帧格式", "COLOR_FormatYUV420Planar...width=" + outputFormat.getInteger(MediaFormat.KEY_WIDTH)
                             + ", height=" + outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
-                        buffer = MediaCodecUtils.yuv420pToYuv420sp(buffer, outputFormat.getInteger(MediaFormat.KEY_WIDTH),
-                            outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
                         break;
                     default:
                         //{crop-right=1279, color-format=2141391876, slice-height=1024, image-data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=104], mime=video/raw, hdr-static-info=java.nio.HeapByteBuffer[pos=0 lim=25 cap=25], stride=1536, color-standard=2, color-transfer=3, crop-bottom=703, crop-left=0, width=1280, color-range=2, crop-top=0, height=704}
                         Log.e("解码后的帧格式", outputFormat.toString()); //2141391876
                         break;
-                }
-
-                // 使用采集视频帧信息构造VideoCaptureFormat
-                ZegoVideoCaptureDevice.VideoCaptureFormat format = new ZegoVideoCaptureDevice.VideoCaptureFormat();
-                format.width = mWidth;
-                format.height = mHeight;
-                format.strides[0] = mWidth;
-                format.strides[1] = mWidth;
-                format.rotation = mRotation;
-                format.pixel_format = ZegoVideoCaptureDevice.PIXEL_FORMAT_NV12; // camera的默认采集格式
-
-                long now = 0;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    now = SystemClock.elapsedRealtimeNanos();
-                } else {
-                    now = TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime());
-                }
-                mFrameSize = mWidth * mHeight * 3 / 2;
-                // 将采集的数据传给ZEGO SDK
-                mClient.onByteBufferFrameCaptured(buffer, mFrameSize, format, now, 1000000000);
+                }*/
             }
-
             boolean doRender = (bufferInfo.size != 0);
             // 处理完成，释放ByteBuffer数据
-            mMediaCodec.releaseOutputBuffer(id, false); // false 不做渲染
+            mMediaCodec.releaseOutputBuffer(id, true); // true 把缓冲区发送到 surface 渲染
         }
 
         @Override
@@ -231,7 +208,7 @@ public class AVCDecoder {
         mMediaFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, mWidth, mHeight);
         //mMediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, mWidth * mHeight);
         //mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, mFrameRate);
-        mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar);
+        mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
     }
 
     // 为解码器提供视频帧数据
@@ -252,8 +229,7 @@ public class AVCDecoder {
         Log.d(TAG, "startDecoder()");
         if(mMediaCodec != null && mSurface != null) {
             // 设置解码器的回调监听
-            // TODO: 2020/6/30 test
-            //mMediaCodec.setCallback(mCallback);  //5.0以后才支持异步解码
+            mMediaCodec.setCallback(mCallback);  //5.0以后才支持异步解码
             // 配置MediaCodec，选择采用解码器功能
             mMediaCodec.configure(mMediaFormat, mSurface, null, CONFIGURE_FLAG_DECODE);
             // 启动解码器

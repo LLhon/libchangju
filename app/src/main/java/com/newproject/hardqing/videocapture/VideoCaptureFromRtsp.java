@@ -43,7 +43,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 网络摄像头采集 -- 采用PIXEL_BUFFER_TYPE_MEM内存模式传递数据
+ * 网络摄像头采集 -- 采用PIXEL_BUFFER_TYPE_ENCODED_FRAME码流模式传递数据
  * Created by LLhon
  */
 public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements TextureView.SurfaceTextureListener {
@@ -71,9 +71,6 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
     private static final int NUMBER_OF_CAPTURE_BUFFERS = 3;
     private final Set<byte[]> queuedBuffers = new HashSet<byte[]>();
     private int mFrameSize = 0;
-    //  AVCANNEXB 模式解码器
-    private AVCDecoder mAVCDecoder = null;
-    private static final long DEFAULT_TIMEOUT_US = 1000 * 10;
 
     /**
      * 初始化资源，必须实现
@@ -89,13 +86,6 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
 
         // 设置视频帧回调监听
         RtspCameraHelper.sharedInstance().setFrameCallback(mIFrameCallback);
-
-        if (mAVCDecoder == null){
-            // 创建解码器
-            mAVCDecoder = new AVCDecoder(null, mWidth, mHeight, mClient);
-            // 启动解码器
-            mAVCDecoder.startDecoder();
-        }
     }
 
     /**
@@ -111,12 +101,6 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
 
         mClient.destroy();
         mClient = null;
-
-        // 释放MediaCodec
-        if (mAVCDecoder != null) {
-            mAVCDecoder.stopAndReleaseDecoder();
-            mAVCDecoder = null;
-        }
     }
 
     // 开始推流时，ZEGO SDK 调用 startCapture 通知外部采集设备开始工作，必须实现
@@ -140,9 +124,9 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
     @Override
     protected int supportBufferType() {
         //码流
-        //return PIXEL_BUFFER_TYPE_ENCODED_FRAME;
+        return PIXEL_BUFFER_TYPE_ENCODED_FRAME;
         // 内存拷贝，yuv格式
-        return PIXEL_BUFFER_TYPE_MEM;
+        //return PIXEL_BUFFER_TYPE_MEM;
     }
 
     @Override
@@ -249,15 +233,6 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
             }
             //Log.e(TAG, "******onFrame****** size:" + data.length + ", isKeyFrame:" + isKeyFrame + ", timeStamp:" + timeStamp);
 
-            // TODO: 2020/6/30 test
-            decode(data);
-
-            // TODO: 2020/6/30
-            //if (mAVCDecoder != null) {
-            //    // 为解码提供视频数据，时间戳
-            //    mAVCDecoder.inputFrameToDecoder(data, (long) timeStamp);
-            //}
-
             //已解码yuv方式
             /*// 使用采集视频帧信息构造VideoCaptureFormat
             VideoCaptureFormat format = new VideoCaptureFormat();
@@ -279,7 +254,7 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
             mClient.onByteBufferFrameCaptured(data, mFrameSize, format, now, 1000000000);*/
 
             //未解码码流方式
-           /* // 编码器相关信息
+            // 编码器相关信息
             VideoCodecConfig config = new VideoCodecConfig();
             // Android端的编码类型必须选用 ZegoVideoCodecTypeAVCANNEXB
             config.codec_type = ZegoVideoCodecType.ZegoVideoCodecTypeAVCANNEXB;
@@ -287,7 +262,7 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
             config.height = mHeight;
 
             if (mEncodedBuffer == null) {
-                mEncodedBuffer = ByteBuffer.allocateDirect(mWidth*mHeight*3/2);
+                mEncodedBuffer = ByteBuffer.allocateDirect(mWidth * mHeight * 3 / 2);
             }
             if (data.length > mEncodedBuffer.capacity()) {
                 mEncodedBuffer = ByteBuffer.allocateDirect(data.length);
@@ -297,120 +272,9 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
             mEncodedBuffer.put(data, 0, data.length);
 
             // 将编码后的视频数据传给ZEGO SDK，需要告知SDK当前传递帧是否为视频关键帧，以及当前视频帧的时间戳
-            mClient.onEncodedFrameCaptured(mEncodedBuffer, data.length, config, isKeyFrame, (double) timeStamp);*/
+            mClient.onEncodedFrameCaptured(mEncodedBuffer, data.length, config, isKeyFrame, (double) timeStamp);
         }
     };
-
-    /**
-     * h264 解码为 yuv
-     * @param h264Data
-     */
-    public void decode(byte[] h264Data) {
-        //设置解码等待时间，0为不等待，-1为一直等待
-        int inputBufferId = mAVCDecoder.getMediaCodec().dequeueInputBuffer(DEFAULT_TIMEOUT_US);
-        if (inputBufferId >= 0) {
-            ByteBuffer inputBuffer;
-            //获取MediaCodec的输入流
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                inputBuffer = mAVCDecoder.getMediaCodec().getInputBuffer(inputBufferId);
-            } else {
-                inputBuffer = mAVCDecoder.getMediaCodec().getInputBuffers()[inputBufferId];
-            }
-            if (inputBuffer != null) {
-                inputBuffer.clear();
-                //填充数据到输入流
-                inputBuffer.put(h264Data, 0, h264Data.length);
-                mAVCDecoder.getMediaCodec().queueInputBuffer(inputBufferId, 0, h264Data.length, 0, 0);
-            }
-        }
-
-        //获取MediaCodec的输出流
-        int outputBufferId = mAVCDecoder.getMediaCodec().dequeueOutputBuffer(mAVCDecoder.getBufferInfo(), DEFAULT_TIMEOUT_US);
-        ByteBuffer outputBuffer;
-        while (outputBufferId > 0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                outputBuffer = mAVCDecoder.getMediaCodec().getOutputBuffer(outputBufferId);
-            } else {
-                outputBuffer = mAVCDecoder.getMediaCodec().getOutputBuffers()[outputBufferId];
-            }
-            if (outputBuffer != null) {
-                outputBuffer.position(0);
-                outputBuffer.limit(mAVCDecoder.getBufferInfo().offset + mAVCDecoder.getBufferInfo().size);
-                byte[] yuvData = new byte[outputBuffer.remaining()];
-                outputBuffer.get(yuvData);
-
-               /* MediaFormat outputFormat = mAVCDecoder.getMediaCodec().getOutputFormat();
-                switch (outputFormat.getInteger(MediaFormat.KEY_COLOR_FORMAT)) {
-                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV411Planar:
-                        Log.e("解码后的帧格式", "COLOR_FormatYUV411Planar...width=" + outputFormat.getInteger(MediaFormat.KEY_WIDTH)
-                            + ", height=" + outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
-                        onFrame(yuvData, PIXEL_FORMAT_NV12);
-                        break;
-                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV411PackedPlanar:
-                        Log.e("解码后的帧格式", "COLOR_FormatYUV411PackedPlanar...width=" + outputFormat.getInteger(MediaFormat.KEY_WIDTH)
-                            + ", height=" + outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
-                        onFrame(yuvData, PIXEL_FORMAT_NV12);
-                        break;
-                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedPlanar:
-                        Log.e("解码后的帧格式", "COLOR_FormatYUV420PackedPlanar...width=" + outputFormat.getInteger(MediaFormat.KEY_WIDTH)
-                            + ", height=" + outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
-                        onFrame(yuvData, PIXEL_FORMAT_I420);
-                        break;
-                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar:
-                        Log.e("解码后的帧格式", "COLOR_FormatYUV420SemiPlanar...width=" + outputFormat.getInteger(MediaFormat.KEY_WIDTH)
-                            + ", height=" + outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
-                        //yuvData = yuv420spToYuv420P(yuvData, outputFormat.getInteger(MediaFormat.KEY_WIDTH), outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
-                        onFrame(yuvData, PIXEL_FORMAT_NV12);
-                        break;
-                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar:
-                        Log.e("解码后的帧格式", "COLOR_FormatYUV420PackedSemiPlanar...width=" + outputFormat.getInteger(MediaFormat.KEY_WIDTH)
-                            + ", height=" + outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
-                        onFrame(yuvData, PIXEL_FORMAT_NV12);
-                        break;
-                    case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar:
-                        //{image-data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=104], mime=video/raw, crop-top=0, crop-right=359, slice-height=640, color-format=19, height=704, width=1280, crop-bottom=639, crop-left=0, stride=360}
-                        Log.e("解码后的帧格式", "COLOR_FormatYUV420Planar...width=" + outputFormat.getInteger(MediaFormat.KEY_WIDTH)
-                            + ", height=" + outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
-                        //yuvData = MediaCodecUtils.yuv420pToYuv420sp(yuvData, outputFormat.getInteger(MediaFormat.KEY_WIDTH),
-                        //    outputFormat.getInteger(MediaFormat.KEY_HEIGHT));
-                        onFrame(yuvData, PIXEL_FORMAT_I420);
-                        break;
-                    default:
-                        //{crop-right=1279, color-format=2141391876, slice-height=1024, image-data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=104], mime=video/raw, hdr-static-info=java.nio.HeapByteBuffer[pos=0 lim=25 cap=25], stride=1536, color-standard=2, color-transfer=3, crop-bottom=703, crop-left=0, width=1280, color-range=2, crop-top=0, height=704}
-                        Log.e("解码后的帧格式", outputFormat.toString()); //2141391876
-                        onFrame(yuvData, PIXEL_FORMAT_NV12);
-                        break;
-                }*/
-
-                onFrame(yuvData);
-
-                mAVCDecoder.getMediaCodec().releaseOutputBuffer(outputBufferId, false);
-                outputBuffer.clear();
-            }
-            outputBufferId = mAVCDecoder.getMediaCodec().dequeueOutputBuffer(mAVCDecoder.getBufferInfo(), DEFAULT_TIMEOUT_US);
-        }
-    }
-
-    private void onFrame(byte[] yuvData) {
-        // 使用采集视频帧信息构造VideoCaptureFormat
-        ZegoVideoCaptureDevice.VideoCaptureFormat format = new ZegoVideoCaptureDevice.VideoCaptureFormat();
-        format.width = mWidth;
-        format.height = mHeight;
-        format.strides[0] = mWidth;
-        format.strides[1] = mWidth;
-        format.rotation = mRotation;
-        format.pixel_format = PIXEL_FORMAT_NV12; // camera的默认采集格式
-
-        long now = 0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            now = SystemClock.elapsedRealtimeNanos();
-        } else {
-            now = TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime());
-        }
-        mFrameSize = mWidth * mHeight * 3 / 2;
-        // 将采集的数据传给ZEGO SDK
-        mClient.onByteBufferFrameCaptured(yuvData, mFrameSize, format, now, 1000000000);
-    }
 
     // TextureView.SurfaceTextureListener 回调
     @Override public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {

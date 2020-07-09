@@ -686,8 +686,8 @@ public class LivePlayActivity extends BaseActivity implements
                 if (isUsbDevice) {
                     ZegoAvConfig config = new ZegoAvConfig(ZegoAvConfig.Level.High);
                     // 设置分辨率，注意此处设置的分辨率需要是uvccamera所支持的
-                    config.setVideoCaptureResolution(1280, 704); //1280, 720 / 640x480
-                    config.setVideoEncodeResolution(1280, 704); // 3840, 2160 / 1920, 1080
+                    config.setVideoCaptureResolution(1280, 720); //1280, 720 / 640x480
+                    config.setVideoEncodeResolution(1280, 720); // 3840, 2160 / 1920, 1080
                     config.setVideoFPS(15);
                     config.setVideoBitrate(1200000);
                     mZegoLiveRoom.setAVConfig(config);
@@ -850,7 +850,6 @@ public class LivePlayActivity extends BaseActivity implements
                 mGifView.startAnimation(mGifView.getWidth(), mGifView.getHeight());
             }
         });
-        showWelcomeGif();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -1092,7 +1091,7 @@ public class LivePlayActivity extends BaseActivity implements
         //设置外部采集工厂对象
         ZegoExternalVideoCapture.setVideoCaptureFactory(videoCaptureFactory, ZegoConstants.PublishChannelIndex.MAIN);  // videoCapture 是 ZegoExternalVideoCapture实例
         //支持本地预览
-        ZegoLiveRoom.setConfig("vcap_external_support_preview=true");
+        //ZegoLiveRoom.setConfig("vcap_external_support_preview=true");
     }
 
     String mPublishStreamID = null;
@@ -4781,20 +4780,6 @@ public class LivePlayActivity extends BaseActivity implements
 
         if (mvZegoMediaPlayer != null) {
             mvZegoMediaPlayer.pause();
-        }
-    }
-
-    public void showWelcomeGif() {
-        if (tvName != null) {
-            BaPingChatMessage baPingChatMessage = new BaPingChatMessage();
-            baPingChatMessage.setType(22);
-            baPingChatMessage.setGiftId("116");
-            baPingChatMessage.setGifImg1("https://resources.xiaoheshuo.com/uploads/gift/fc0e52020051410543283346.png'");
-            baPingChatMessage.setGifImg2("https://resources.xiaoheshuo.com/uploads/gift/3ea952020051410543299917.svga");
-            GiftEntity giftEntity = baPingChatMessage.getGiftEntity();
-            if (giftEntity != null) {
-                showAnim(giftEntity);
-            }
         }
     }
 }
