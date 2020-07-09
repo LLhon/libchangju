@@ -1066,7 +1066,8 @@ public class LivePlayActivity extends BaseActivity implements
         mBgZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypeAux, ZegoMediaPlayer.PlayerIndex.First);
         mChorusZegoMediaPlayer = new ZegoMediaPlayer();
         mChorusZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypeAux, ZegoMediaPlayer.PlayerIndex.Second);
-
+        mBgZegoMediaPlayer.setVolume(50);
+        mChorusZegoMediaPlayer.setVolume(50);
         initZegoListener();
         initZegoMediaPlayerListener();
     }
@@ -4212,7 +4213,7 @@ public class LivePlayActivity extends BaseActivity implements
             mChorusZegoMediaPlayer = new ZegoMediaPlayer();
             //使用推流播放模式，会将音频混流推流中，调用端和播放端都可以听到播放的声音
             mChorusZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypeAux, ZegoMediaPlayer.PlayerIndex.Second);
-            mChorusZegoMediaPlayer.setVolume(100);
+            mChorusZegoMediaPlayer.setVolume(50);
         } else {
             mChorusZegoMediaPlayer.stop();
         }
@@ -4745,7 +4746,7 @@ public class LivePlayActivity extends BaseActivity implements
                 mvZegoMediaPlayer = new ZegoMediaPlayer();
                 mvZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypePlayer, ZegoMediaPlayer.PlayerIndex.Third);
                 mvZegoMediaPlayer.setView(mMVTextureView);
-                mvZegoMediaPlayer.setVolume(100);
+                mvZegoMediaPlayer.setVolume(50);
                 mvZegoMediaPlayer.setPlayerType(ZegoMediaPlayer.PlayerTypeAux);
                 String path = FileUtil.getPath(LivePlayActivity.this, "sea.mp4");
                 Log.i("MVVideo", " path : " + path);
