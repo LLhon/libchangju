@@ -712,6 +712,10 @@ public class LivePlayActivity extends BaseActivity implements
                     mIsStartPublishing = mZegoLiveRoom.startPublishing(ZegoRoomUtil.getPublishStreamID(mHostUserId), mHostUserId, ZegoConstants.PublishFlag.MixStream);
                     Log.d(TAG, "推流是否成功: " + mIsStartPublishing);
                     mPublishStreamID = ZegoRoomUtil.getPublishStreamID(mHostUserId);
+                    // TODO: 2020/7/9 拉自己推的流作为本地预览画面
+                    mZegoLiveRoom.startPlayingStream(ZegoRoomUtil.getPublishStreamID(mHostUserId), mLocalPreview.getTextureView());
+                    mZegoLiveRoom.setPlayVolume(0, ZegoRoomUtil.getPublishStreamID(mHostUserId));
+                    mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, ZegoRoomUtil.getPublishStreamID(mHostUserId));
                 }
                 setBeauty();
             }
@@ -947,7 +951,10 @@ public class LivePlayActivity extends BaseActivity implements
             if (mIsLoginRoomSuccess && !mIsStartPublishing) {
                 mIsStartPublishing = mZegoLiveRoom.startPublishing(ZegoRoomUtil.getPublishStreamID(mHostUserId), mHostUserId, ZegoConstants.PublishFlag.MixStream);
                 mPublishStreamID = ZegoRoomUtil.getPublishStreamID(mHostUserId);
-                LogUtils.d("LivePlayActivity startPublishing initSDKAndLoginRoom  lisPushSuccess : " + mIsStartPublishing);
+                // TODO: 2020/7/9 拉自己推的流作为本地预览画面
+                mZegoLiveRoom.startPlayingStream(ZegoRoomUtil.getPublishStreamID(mHostUserId), mLocalPreview.getTextureView());
+                mZegoLiveRoom.setPlayVolume(0, ZegoRoomUtil.getPublishStreamID(mHostUserId));
+                mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, ZegoRoomUtil.getPublishStreamID(mHostUserId));
             }
             enableCamera(true);
         } else {
@@ -2203,7 +2210,7 @@ public class LivePlayActivity extends BaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        setLocalMVVideo();
+        //setLocalMVVideo();
         // step.2 register USB event broadcast
         UVCCameraHelper.sharedInstance().registerUSB();
     }

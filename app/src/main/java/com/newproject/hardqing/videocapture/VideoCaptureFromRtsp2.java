@@ -275,7 +275,7 @@ public class VideoCaptureFromRtsp2 extends ZegoVideoCaptureDevice implements Tex
     public void decode(byte[] h264Data) {
         //设置解码等待时间，0为不等待，-1为一直等待
         int inputBufferId = mAVCDecoder.getMediaCodec().dequeueInputBuffer(DEFAULT_TIMEOUT_US);
-        Log.e("输入缓冲区索引", "inputBufferId=" + inputBufferId);
+        //Log.e("输入缓冲区索引", "inputBufferId=" + inputBufferId);
         if (inputBufferId >= 0) { // 0
             ByteBuffer inputBuffer;
             // 获取MediaCodec的输入流
@@ -295,7 +295,7 @@ public class VideoCaptureFromRtsp2 extends ZegoVideoCaptureDevice implements Tex
 
         //获取MediaCodec的输出流
         int outputBufferId = mAVCDecoder.getMediaCodec().dequeueOutputBuffer(mAVCDecoder.getBufferInfo(), DEFAULT_TIMEOUT_US);
-        Log.e("输出缓冲区索引", "outputBufferId=" + outputBufferId);
+        //Log.e("输出缓冲区索引", "outputBufferId=" + outputBufferId);
         ByteBuffer outputBuffer;
         while (outputBufferId > 0) { // -1
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
