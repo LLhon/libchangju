@@ -91,4 +91,15 @@ public class SendMsgEntity {
         }
         return false;
     }
+
+    @Override public String toString() {
+        return "SendMsgEntity{" +
+            "cmd='" + cmd + '\'' +
+            ", userId='" + userId + '\'' +
+            ", username='" + username + '\'' +
+            ", avatar='" + avatar + '\'' +
+            ", content='" + content + '\'' +
+            ", is_manage='" + is_manage + '\'' +
+            '}';
+    }
 }

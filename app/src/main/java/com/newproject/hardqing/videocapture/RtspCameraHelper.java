@@ -172,7 +172,7 @@ public class RtspCameraHelper {
                 if (ipList == null || ipList.size() == 0) {
                     return;
                 }
-                Log.e(TAG, "RTSP_IP:" + ipList.toString()); //rtsp://192.168.101.159:8554/stream0
+                Log.e(TAG, "搜索到网络摄像头的IP地址:" + ipList.toString()); //rtsp://192.168.101.159:8554/stream0
                 mRtspClient.setH264FrameCallBack(mIFrameCallback);
                 mRtspClient.start(ipList.get(0));
             }

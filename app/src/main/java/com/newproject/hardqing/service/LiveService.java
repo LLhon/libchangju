@@ -224,8 +224,7 @@ public class LiveService extends Service implements NetStatusMonitor {
 
                     @Override
                     public void onOpen(ServerHandshake handshakedata) {
-                        LogUtil.d("livew", "打开通道" + handshakedata.getHttpStatus());
-                        LogUtil.d("livew", "isOpen  " + webSocketClient.isOpen());
+                        LogUtil.d(TAG, "打开通道" + handshakedata.getHttpStatus());
                         if (webSocketClient.isOpen()) {
                             CommonUtil.socketGetId(LiveService.this);
 //                            if (!TextUtils.isEmpty(roomId)) {
@@ -239,16 +238,14 @@ public class LiveService extends Service implements NetStatusMonitor {
 
                     @Override
                     public void onMessage(String message) {
-                        LogUtil.d("livew", "接收消息" + message);
+                        LogUtil.d(TAG, "收到socket消息:" + message);
                         //服务器web socket返回的json数据；
                         if (TextUtils.equals(JsonUtil.getCmd(message), "hardwareLaunch")) {
-                            LogUtil.d(TAG, "login inRoom" + message);
                             LivePlayMessage livePlayMessage = new LivePlayMessage();
                             livePlayMessage.setCode(4);
                             EventBus.getDefault().post(livePlayMessage);
                         } else if (TextUtils.equals(JsonUtil.getCmd(message), WebSocketFeedConst.hardware_room_command)) {
                             MusicEntity musicEntity = new Gson().fromJson(message, MusicEntity.class);
-                            LogUtil.d("livew", "接收消息  musicEntity " + musicEntity);
                             if (musicEntity != null) {
                                 EventBus.getDefault().post(musicEntity);
                             }
@@ -258,7 +255,7 @@ public class LiveService extends Service implements NetStatusMonitor {
 
                     @Override
                     public void onClose(int code, String reason, boolean remote) {
-                        LogUtil.d("livew", "通道关闭 code ： " + code + "   reason ： " + reason + "   remote ： " + remote);
+                        LogUtil.d(TAG, "通道关闭 code ： " + code + "   reason ： " + reason + "   remote ： " + remote);
                     }
 
                     @Override
@@ -268,7 +265,7 @@ public class LiveService extends Service implements NetStatusMonitor {
 
                     @Override
                     public void onError(Exception ex) {
-                        LogUtil.d("livew", "链接错误  ex ：" + ex);
+                        LogUtil.d(TAG, "链接错误  ex ：" + ex);
 //                        handler.sendEmptyMessage(RECONNECT);//断线重连
                         if (isFrist) {
                             handler.sendEmptyMessage(ERROR);
@@ -372,7 +369,6 @@ public class LiveService extends Service implements NetStatusMonitor {
 
     //直播间的socket消息；
     private void livePlayMsg(String jsonMsg) {
-        Log.e(TAG, "livePlayMsg: " + jsonMsg);
         LivePlayMessage livePlayMessage = new LivePlayMessage();
         livePlayMessage.setCode(200);
         livePlayMessage.setContent(jsonMsg);
@@ -410,7 +406,7 @@ public class LiveService extends Service implements NetStatusMonitor {
                 return;
             }
             String jsonMsg = intent.getStringExtra(SEND_MSG);
-            Log.e(TAG, "发送消息: " + jsonMsg);
+            Log.d(TAG, "发送socket消息:" + jsonMsg);
             switch (action) {
                 case ACTION_SEND_MSG:
                     sendMsg(jsonMsg);

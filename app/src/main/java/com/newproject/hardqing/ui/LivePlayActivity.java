@@ -225,6 +225,7 @@ import com.zego.zegoliveroom.entity.ZegoUserState;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import java.util.Iterator;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -545,17 +546,17 @@ public class LivePlayActivity extends BaseActivity implements
         } else if ("-1".equals(musicEntity.getId())) {
             //暂停点歌/合唱音乐
             pauseChorusZegoMediaPlayer();
-            if (!isLianMai) {
-                resumeBgMediaPlayer();
-            }
+            //if (!isLianMai) {
+            //    resumeBgMediaPlayer();
+            //}
         } else if ("-2".equals(musicEntity.getId())) {
             //恢复点歌/合唱音乐
             resumeChorusZegoMediaPlayer();
             startChorusTimerTaskManager();
-            pauseBgMediaPlayer();
+            //pauseBgMediaPlayer();
         } else if ("-3".equals(musicEntity.getId())) {
             //切换主题音乐
-            startBgMediaPlayer(musicEntity.getSongUrl(), true);
+            //startBgMediaPlayer(musicEntity.getSongUrl(), true);
         } else if ("-4".equals(musicEntity.getId())) {
             //切换为伴唱音乐
             if (mChorusZegoMediaPlayer != null) {
@@ -571,10 +572,10 @@ public class LivePlayActivity extends BaseActivity implements
             }
         } else if ("-6".equals(musicEntity.getId())) {
             //暂停背景音乐
-            pauseBgMediaPlayer();
+            //pauseBgMediaPlayer();
         } else if ("-7".equals(musicEntity.getId())) {
             //恢复背景音乐
-            resumeBgMediaPlayer();
+            //resumeBgMediaPlayer();
         } else if ("-8".equals(musicEntity.getId())) {
             //收到歌词进度的消息
             mTimeStamp = musicEntity.getLrcTimeStamp();
@@ -1123,15 +1124,14 @@ public class LivePlayActivity extends BaseActivity implements
      * 即构媒体播放器监听
      */
     private void initZegoMediaPlayerListener() {
-        mChorusZegoMediaPlayer.setEventWithIndexCallback(new IZegoMediaPlayerWithIndexCallback() {
-            @Override
-            public void onPlayStart(int i) {
+        IZegoMediaPlayerWithIndexCallback callback = new IZegoMediaPlayerWithIndexCallback() {
+            @Override public void onPlayStart(int i) {
                 switch (i) {
                     case ZegoMediaPlayer.PlayerIndex.First:
                         break;
                     case ZegoMediaPlayer.PlayerIndex.Second:
                         //暂停背景音乐
-                        pauseBgMediaPlayer();
+                        //pauseBgMediaPlayer();
                         if (mTimeStamp > 0) {
                             // 切换原唱伴奏的时候需要seek进度
                             mChorusZegoMediaPlayer.seekTo(mTimeStamp);
@@ -1139,7 +1139,7 @@ public class LivePlayActivity extends BaseActivity implements
 
                         //发送歌曲总时长到主播端和观众端，用于显示播放进度
                         PublicMessageSocket socket = new PublicMessageSocket("", "", 3,
-                                "", roomId);
+                            "", roomId);
                         socket.setDuration(mChorusZegoMediaPlayer.getDuration()); //269453
                         LiveSocketUtil.sendPublicMessage(LivePlayActivity.this, socket);
 
@@ -1147,7 +1147,7 @@ public class LivePlayActivity extends BaseActivity implements
                             //此时为多房间连麦情况下，发送歌曲总时长到对方房间
                             //{"aroom_id":"371","auser_id":"","cmd":"multiroom_public_message","lrc_progress":0,"room_id":"138","song_duration":269453,"type":2,"user_id":""}
                             MultiRoomMessageSocket socket3 = new MultiRoomMessageSocket("", "", roomId,
-                                    mMultiRoomId, 2);
+                                mMultiRoomId, 2);
                             socket3.setSongDuration(mChorusZegoMediaPlayer.getDuration());
                             LiveSocketUtil.sendMessageByMultiRoom(LivePlayActivity.this, socket3);
                         }
@@ -1155,39 +1155,7 @@ public class LivePlayActivity extends BaseActivity implements
                 }
             }
 
-            @Override
-            public void onPlayPause(int i) {
-                switch (i) {
-                    case ZegoMediaPlayer.PlayerIndex.First:
-                        break;
-                    case ZegoMediaPlayer.PlayerIndex.Second:
-                        //开始背景音乐
-                        if (!isLianMai) {
-                            resumeBgMediaPlayer();
-                        }
-                        break;
-                }
-            }
-
-            @Override
-            public void onPlayStop(int i) {
-
-            }
-
-            @Override
-            public void onPlayResume(int i) {
-                switch (i) {
-                    case ZegoMediaPlayer.PlayerIndex.First:
-                        break;
-                    case ZegoMediaPlayer.PlayerIndex.Second:
-                        //暂停背景音乐
-                        pauseBgMediaPlayer();
-                        break;
-                }
-            }
-
-            @Override
-            public void onPlayError(int i, int i1) {
+            @Override public void onPlayPause(int i) {
                 switch (i) {
                     case ZegoMediaPlayer.PlayerIndex.First:
                         break;
@@ -1200,20 +1168,47 @@ public class LivePlayActivity extends BaseActivity implements
                 }
             }
 
-            @Override
-            public void onVideoBegin(int i) {
+            @Override public void onPlayStop(int i) {
 
             }
 
-            @Override
-            public void onAudioBegin(int i) {
-
-            }
-
-            @Override
-            public void onPlayEnd(int i) {
+            @Override public void onPlayResume(int i) {
                 switch (i) {
                     case ZegoMediaPlayer.PlayerIndex.First:
+                        break;
+                    case ZegoMediaPlayer.PlayerIndex.Second:
+                        //暂停背景音乐
+                        //pauseBgMediaPlayer();
+                        break;
+                }
+            }
+
+            @Override public void onPlayError(int i, int i1) {
+                switch (i) {
+                    case ZegoMediaPlayer.PlayerIndex.First:
+                        break;
+                    case ZegoMediaPlayer.PlayerIndex.Second:
+                        //开始背景音乐
+                        //if (!isLianMai) {
+                        //    resumeBgMediaPlayer();
+                        //}
+                        break;
+                }
+            }
+
+            @Override public void onVideoBegin(int i) {
+
+            }
+
+            @Override public void onAudioBegin(int i) {
+
+            }
+
+            @Override public void onPlayEnd(int i) {
+                switch (i) {
+                    case ZegoMediaPlayer.PlayerIndex.First:
+                        //播放完一次就不需要再播放了
+                        releaseBgMediaPlayer();
                         break;
                     case ZegoMediaPlayer.PlayerIndex.Second:
                         //开始背景音乐
@@ -1224,55 +1219,51 @@ public class LivePlayActivity extends BaseActivity implements
                         mLrcChorusView.setVisibility(View.GONE);
                         //隐藏观众的歌词
                         PublicMessageSocket socket = new PublicMessageSocket("", "", 6,
-                                "", roomId);
+                            "", roomId);
                         LiveSocketUtil.sendPublicMessage(LivePlayActivity.this, socket);
 
                         //发送歌曲播放完成的消息到主播端
                         PublicMessageSocket socket2 = new PublicMessageSocket("", "", 7,
-                                "", roomId);
+                            "", roomId);
                         LiveSocketUtil.sendPublicMessage(LivePlayActivity.this, socket2);
 
                         if (!TextUtils.isEmpty(mMultiRoomId)) {
                             //此时为多房间连麦情况下，发送歌曲播放完成的消息到连麦房间，通知对方房间隐藏歌词
                             //{"aroom_id":"371","auser_id":"","cmd":"multiroom_public_message","lrc_progress":0,"room_id":"138","song_duration":0,"type":1,"user_id":""}
                             MultiRoomMessageSocket socket3 = new MultiRoomMessageSocket("", "", roomId,
-                                    mMultiRoomId, 1);
+                                mMultiRoomId, 1);
                             LiveSocketUtil.sendMessageByMultiRoom(LivePlayActivity.this, socket3);
                         }
                         break;
                 }
             }
 
-            @Override
-            public void onBufferBegin(int i) {
+            @Override public void onBufferBegin(int i) {
 
             }
 
-            @Override
-            public void onBufferEnd(int i) {
+            @Override public void onBufferEnd(int i) {
 
             }
 
-            @Override
-            public void onSeekComplete(int i, long l, int i1) {
+            @Override public void onSeekComplete(int i, long l, int i1) {
 
             }
 
-            @Override
-            public void onSnapshot(Bitmap bitmap, int i) {
+            @Override public void onSnapshot(Bitmap bitmap, int i) {
 
             }
 
-            @Override
-            public void onLoadComplete(int i) {
+            @Override public void onLoadComplete(int i) {
 
             }
 
-            @Override
-            public void onProcessInterval(long l, int i) {
+            @Override public void onProcessInterval(long l, int i) {
 
             }
-        });
+        };
+        mBgZegoMediaPlayer.setEventWithIndexCallback(callback);
+        mChorusZegoMediaPlayer.setEventWithIndexCallback(callback);
     }
 
     private final UVCCameraHelper.OnMyDevConnectListener myDevConnectListener = new UVCCameraHelper.OnMyDevConnectListener() {
@@ -1750,7 +1741,7 @@ public class LivePlayActivity extends BaseActivity implements
             isLianMai = false;
             setShowVideoWindow(false, false);
             //恢复背景音乐
-            resumeBgMediaPlayer();
+            //resumeBgMediaPlayer();
             //关闭合唱
             stopChorusMediaPlayer();
             setTextureViewAlpha60();
@@ -1893,7 +1884,7 @@ public class LivePlayActivity extends BaseActivity implements
                             isLianMai = true;
                             setShowVideoWindow(true, false);
                             stopChorusZegoMediaPlayer();
-                            pauseBgMediaPlayer();
+                            //pauseBgMediaPlayer();
                             mLrcChorusView.setVisibility(View.GONE);
                             setTextureViewAlpha100();
                             return;
@@ -2442,38 +2433,38 @@ public class LivePlayActivity extends BaseActivity implements
         LogUtils.d("extrasBean  categoryId : " + categoryId);
         if ("1".equals(categoryId)) {
             initBall("生日派对");
-            startBgMediaPlayer(FileUtil.getPath(this, "birthday.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "birthday.mp3"), false);
         } else if ("2".equals(categoryId)) {
             initBall("婚礼庆典");
-            startBgMediaPlayer(FileUtil.getPath(this, "wedding.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "wedding.mp3"), false);
         } else if ("4".equals(categoryId)) {
             initBall("喜庆聚会");
             // /storage/emulated/0/Android/data/com.newproject.hardqing/cache/jv_hui.mp3
-            startBgMediaPlayer(FileUtil.getPath(this, "jv_hui.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "jv_hui.mp3"), false);
         } else if ("5".equals(categoryId)) {
             initBall("商务庆典");
-            startBgMediaPlayer(FileUtil.getPath(this, "nianhui.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "nianhui.mp3"), false);
         } else if ("9".equals(categoryId)) {
             initBall("产品发布");
-            startBgMediaPlayer(FileUtil.getPath(this, "chanping_fabu.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "chanping_fabu.mp3"), false);
         } else if ("11".equals(categoryId)) {
             initBall("同学聚会");
-            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), false);
         } else if ("13".equals(categoryId)) {
             initBall("行业小聚");
-            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), false);
         } else if ("17".equals(categoryId)) {
             initBall("好友聚会");
-            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), false);
         } else if ("19".equals(categoryId)) {
             initBall("边唱边聚");
-            startBgMediaPlayer(FileUtil.getPath(this, "jv_hui.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "jv_hui.mp3"), false);
         } else if ("20".equals(categoryId)) {
             initBall("群友派对");
-            startBgMediaPlayer(FileUtil.getPath(this, "jv_hui.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "jv_hui.mp3"), false);
         } else {
             initBall("行业小聚");
-            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), true);
+            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), false);
         }
         getPermission();
     }
@@ -2671,7 +2662,7 @@ public class LivePlayActivity extends BaseActivity implements
         //连麦中
         isLianMai = true;
         //暂停背景音乐
-        pauseBgMediaPlayer();
+        //pauseBgMediaPlayer();
         stopChorusZegoMediaPlayer();
         mLrcChorusView.setVisibility(View.GONE);
         // 设置流信息
@@ -2807,9 +2798,16 @@ public class LivePlayActivity extends BaseActivity implements
                 userIconAdapter.remove(i);
             }
         }
-        //        if (outRoomEntity.getUserId().equals(mHostUserId)) {
-        //            out();
-        //        }
+
+        //观众退出直播间不再显示已发送的礼物
+        if (mGiftData.size() != 0) {
+            Iterator<GiftEntity> iterator = mGiftData.iterator();
+            while (iterator.hasNext()) {
+                if (outRoomEntity.getUserId().equals(iterator.next().getUserId())) {
+                    iterator.remove();
+                }
+            }
+        }
 
         if (!isLive) {
             if (outRoomEntity.getUserId().endsWith(mHostUserId)) {
@@ -2868,7 +2866,7 @@ public class LivePlayActivity extends BaseActivity implements
         mDanmuView.add(danmu);
     }
 
-    List<GiftEntity> data = new ArrayList<>();
+    List<GiftEntity> mGiftData = new ArrayList<>();
 
     @Override
     public void sendGift(GiftEntity giftEntity) {
@@ -2877,13 +2875,13 @@ public class LivePlayActivity extends BaseActivity implements
         if (giftEntity.getGiftStyle().equals("0")) {
             giftImage = giftEntity.getGiftImg();
         } else if (giftEntity.getGiftStyle().equals("1")) {
-            data.add(giftEntity);
+            mGiftData.add(giftEntity);
             giftImage = giftEntity.getGiftSamll();
-            showAnim(data.get(0));
+            showAnim(mGiftData.get(0));
         } else {
-            data.add(giftEntity);
+            mGiftData.add(giftEntity);
             giftImage = giftEntity.getGiftSamll();
-            showAnim(data.get(0));
+            showAnim(mGiftData.get(0));
         }
         GiftModel giftModel = new GiftModel();
         int giftNum = Integer.parseInt(giftEntity.getGiftNum());
@@ -2914,8 +2912,8 @@ public class LivePlayActivity extends BaseActivity implements
                     @Override
                     public void onFinish() {
                         isShow = false;
-                        if (data.size() > 0) {
-                            data.remove(0);
+                        if (mGiftData.size() > 0) {
+                            mGiftData.remove(0);
                         }
                         ifShowAnim();
 
@@ -2939,8 +2937,8 @@ public class LivePlayActivity extends BaseActivity implements
                                 public void run() {
                                     giftAnim.setVisibility(View.INVISIBLE);
                                     isShow = false;
-                                    if (data.size() > 0) {
-                                        data.remove(0);
+                                    if (mGiftData.size() > 0) {
+                                        mGiftData.remove(0);
                                     }
                                     ifShowAnim();
                                 }
@@ -2958,8 +2956,8 @@ public class LivePlayActivity extends BaseActivity implements
     }
 
     public void ifShowAnim() {
-        if (data.size() > 0) {
-            showAnim(data.get(0));
+        if (mGiftData.size() > 0) {
+            showAnim(mGiftData.get(0));
         }
     }
 
@@ -3182,7 +3180,7 @@ public class LivePlayActivity extends BaseActivity implements
         isLianMai = false;
         setShowVideoWindow(false, false);
         //恢复背景音乐
-        resumeBgMediaPlayer();
+        //resumeBgMediaPlayer();
         //关闭合唱
         stopChorusMediaPlayer();
 
@@ -4769,10 +4767,6 @@ public class LivePlayActivity extends BaseActivity implements
         }
         if (mvZegoMediaPlayer != null) {
             mvZegoMediaPlayer.resume();
-        }
-
-        if (mBgZegoMediaPlayer != null) {
-            mBgZegoMediaPlayer.pause();
         }
 
         if (mChorusZegoMediaPlayer != null) {

@@ -58,6 +58,7 @@ import org.json.JSONObject;
 
 public class LivePushHandler extends Handler {
 
+    public static final String TAG = "LivePushHandler";
     private static final int LIVE_ROOM_MSG = 0x123;
     public static final int showLight = 100;
     public static final int hiddenLight = 200;
@@ -128,16 +129,13 @@ public class LivePushHandler extends Handler {
                 try {
                     jsonObject = new JSONObject(str);
                     String cmd = jsonObject.getString("cmd");
-                    LogUtil.e("cmd:" + cmd);
-                    LogUtil.e("cmd:" + jsonObject.toString());
                     if (cmd.equals(WebSocketFeedConst.tourist_in)) {
                         TourInEntity tourInEntity = new Gson().fromJson(str, TourInEntity.class);
                         reciveView.tourIn(tourInEntity);
                     } else if (cmd.equals(WebSocketFeedConst.change_live_status)) {
                         ChangeLiveStatusEntity entity = new Gson().fromJson(str, ChangeLiveStatusEntity.class);
                         reciveView.ChangeLiveStatus(entity);
-                    }
-                    else if (cmd.equals(WebSocketFeedConst.hardwareFailure)) {
+                    } else if (cmd.equals(WebSocketFeedConst.hardwareFailure)) {
                         HardwareFailureEntity entity = new Gson().fromJson(str, HardwareFailureEntity.class);
                         reciveView.hardFailure(entity);
                     } else if (cmd.equals(WebSocketFeedConst.baping)) {
@@ -155,8 +153,7 @@ public class LivePushHandler extends Handler {
                     } else if (cmd.equals(WebSocketFeedConst.room_chat)) {
                         SendChatMsgEntity sendMsgEntity = new Gson().fromJson(str, SendChatMsgEntity.class);
                         reciveView.sendChatMsg(sendMsgEntity);
-                    }
-                    else if (cmd.equals(WebSocketFeedConst.gift9r)) {
+                    } else if (cmd.equals(WebSocketFeedConst.gift9r)) {
                         GiftEntity giftEntity = new Gson().fromJson(str, GiftEntity.class);
                         reciveView.sendGift(giftEntity);
                     } else if (cmd.equals(WebSocketFeedConst.currency)) {
