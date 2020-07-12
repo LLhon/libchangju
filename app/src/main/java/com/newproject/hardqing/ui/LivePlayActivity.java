@@ -58,6 +58,7 @@ import com.blankj.utilcode.util.PermissionUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
@@ -225,7 +226,6 @@ import com.zego.zegoliveroom.entity.ZegoUserState;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import java.util.Iterator;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -246,6 +246,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1074,8 +1075,8 @@ public class LivePlayActivity extends BaseActivity implements
         mBgZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypeAux, ZegoMediaPlayer.PlayerIndex.First);
         mChorusZegoMediaPlayer = new ZegoMediaPlayer();
         mChorusZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypeAux, ZegoMediaPlayer.PlayerIndex.Second);
-        mBgZegoMediaPlayer.setVolume(50);
-        mChorusZegoMediaPlayer.setVolume(50);
+        mBgZegoMediaPlayer.setVolume(100);
+        mChorusZegoMediaPlayer.setVolume(100);
         initZegoListener();
         initZegoMediaPlayerListener();
     }
@@ -1125,7 +1126,8 @@ public class LivePlayActivity extends BaseActivity implements
      */
     private void initZegoMediaPlayerListener() {
         IZegoMediaPlayerWithIndexCallback callback = new IZegoMediaPlayerWithIndexCallback() {
-            @Override public void onPlayStart(int i) {
+            @Override
+            public void onPlayStart(int i) {
                 switch (i) {
                     case ZegoMediaPlayer.PlayerIndex.First:
                         break;
@@ -1139,7 +1141,7 @@ public class LivePlayActivity extends BaseActivity implements
 
                         //发送歌曲总时长到主播端和观众端，用于显示播放进度
                         PublicMessageSocket socket = new PublicMessageSocket("", "", 3,
-                            "", roomId);
+                                "", roomId);
                         socket.setDuration(mChorusZegoMediaPlayer.getDuration()); //269453
                         LiveSocketUtil.sendPublicMessage(LivePlayActivity.this, socket);
 
@@ -1147,7 +1149,7 @@ public class LivePlayActivity extends BaseActivity implements
                             //此时为多房间连麦情况下，发送歌曲总时长到对方房间
                             //{"aroom_id":"371","auser_id":"","cmd":"multiroom_public_message","lrc_progress":0,"room_id":"138","song_duration":269453,"type":2,"user_id":""}
                             MultiRoomMessageSocket socket3 = new MultiRoomMessageSocket("", "", roomId,
-                                mMultiRoomId, 2);
+                                    mMultiRoomId, 2);
                             socket3.setSongDuration(mChorusZegoMediaPlayer.getDuration());
                             LiveSocketUtil.sendMessageByMultiRoom(LivePlayActivity.this, socket3);
                         }
@@ -1155,7 +1157,8 @@ public class LivePlayActivity extends BaseActivity implements
                 }
             }
 
-            @Override public void onPlayPause(int i) {
+            @Override
+            public void onPlayPause(int i) {
                 switch (i) {
                     case ZegoMediaPlayer.PlayerIndex.First:
                         break;
@@ -1168,11 +1171,13 @@ public class LivePlayActivity extends BaseActivity implements
                 }
             }
 
-            @Override public void onPlayStop(int i) {
+            @Override
+            public void onPlayStop(int i) {
 
             }
 
-            @Override public void onPlayResume(int i) {
+            @Override
+            public void onPlayResume(int i) {
                 switch (i) {
                     case ZegoMediaPlayer.PlayerIndex.First:
                         break;
@@ -1183,7 +1188,8 @@ public class LivePlayActivity extends BaseActivity implements
                 }
             }
 
-            @Override public void onPlayError(int i, int i1) {
+            @Override
+            public void onPlayError(int i, int i1) {
                 switch (i) {
                     case ZegoMediaPlayer.PlayerIndex.First:
                         break;
@@ -1196,15 +1202,18 @@ public class LivePlayActivity extends BaseActivity implements
                 }
             }
 
-            @Override public void onVideoBegin(int i) {
+            @Override
+            public void onVideoBegin(int i) {
 
             }
 
-            @Override public void onAudioBegin(int i) {
+            @Override
+            public void onAudioBegin(int i) {
 
             }
 
-            @Override public void onPlayEnd(int i) {
+            @Override
+            public void onPlayEnd(int i) {
                 switch (i) {
                     case ZegoMediaPlayer.PlayerIndex.First:
                         //播放完一次就不需要再播放了
@@ -1219,46 +1228,52 @@ public class LivePlayActivity extends BaseActivity implements
                         mLrcChorusView.setVisibility(View.GONE);
                         //隐藏观众的歌词
                         PublicMessageSocket socket = new PublicMessageSocket("", "", 6,
-                            "", roomId);
+                                "", roomId);
                         LiveSocketUtil.sendPublicMessage(LivePlayActivity.this, socket);
 
                         //发送歌曲播放完成的消息到主播端
                         PublicMessageSocket socket2 = new PublicMessageSocket("", "", 7,
-                            "", roomId);
+                                "", roomId);
                         LiveSocketUtil.sendPublicMessage(LivePlayActivity.this, socket2);
 
                         if (!TextUtils.isEmpty(mMultiRoomId)) {
                             //此时为多房间连麦情况下，发送歌曲播放完成的消息到连麦房间，通知对方房间隐藏歌词
                             //{"aroom_id":"371","auser_id":"","cmd":"multiroom_public_message","lrc_progress":0,"room_id":"138","song_duration":0,"type":1,"user_id":""}
                             MultiRoomMessageSocket socket3 = new MultiRoomMessageSocket("", "", roomId,
-                                mMultiRoomId, 1);
+                                    mMultiRoomId, 1);
                             LiveSocketUtil.sendMessageByMultiRoom(LivePlayActivity.this, socket3);
                         }
                         break;
                 }
             }
 
-            @Override public void onBufferBegin(int i) {
+            @Override
+            public void onBufferBegin(int i) {
 
             }
 
-            @Override public void onBufferEnd(int i) {
+            @Override
+            public void onBufferEnd(int i) {
 
             }
 
-            @Override public void onSeekComplete(int i, long l, int i1) {
+            @Override
+            public void onSeekComplete(int i, long l, int i1) {
 
             }
 
-            @Override public void onSnapshot(Bitmap bitmap, int i) {
+            @Override
+            public void onSnapshot(Bitmap bitmap, int i) {
 
             }
 
-            @Override public void onLoadComplete(int i) {
+            @Override
+            public void onLoadComplete(int i) {
 
             }
 
-            @Override public void onProcessInterval(long l, int i) {
+            @Override
+            public void onProcessInterval(long l, int i) {
 
             }
         };
@@ -2972,6 +2987,7 @@ public class LivePlayActivity extends BaseActivity implements
                 mGiftMediaPlayer.stop();
                 mGiftMediaPlayer.reset();
             }
+            mGiftMediaPlayer.setVolume(0.5f, 0.5f);
             AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
@@ -3010,6 +3026,7 @@ public class LivePlayActivity extends BaseActivity implements
             }
             mGiftMediaPlayer.setDataSource(path);
             mGiftMediaPlayer.setLooping(false);
+            mGiftMediaPlayer.setVolume(0.5f, 0.5f);
             mGiftMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
@@ -3522,7 +3539,7 @@ public class LivePlayActivity extends BaseActivity implements
                             }
                             return false;
                         }
-                    })
+                    }).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE))
                     .into(ivTemplate);
         } else if (TextUtils.equals(seeTemplateEntity.getType(), "1")) {
             playVideo(seeTemplateEntity, 0.5f);
@@ -3702,7 +3719,7 @@ public class LivePlayActivity extends BaseActivity implements
             mBaPinAll.setVisibility(View.VISIBLE);
             ivTemplate.setAlpha(0f);
             GlideUtil.setImage(ivTemplateBg, this, baScreenEntity.getUri());
-            Glide.with(this).asBitmap().load(baScreenEntity.getUri())
+            Glide.with(this).asBitmap().load(baScreenEntity.getUri()).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE))
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource,
@@ -3920,7 +3937,7 @@ public class LivePlayActivity extends BaseActivity implements
         mVideoViewBg.stopPlayback();
         try {
             Glide.with(this)
-                    .applyDefaultRequestOptions(new RequestOptions().placeholder(R.mipmap.bg))
+                    .applyDefaultRequestOptions(new RequestOptions().placeholder(R.mipmap.bg).diskCacheStrategy(DiskCacheStrategy.NONE))
                     .load(imgUrl)
                     .into(mLivePicImage);
         } catch (Exception e) {
@@ -3999,7 +4016,7 @@ public class LivePlayActivity extends BaseActivity implements
                     mBgZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypeAux, ZegoMediaPlayer.PlayerIndex.First);
                 }
                 mBgZegoMediaPlayer.start(path, repeat);
-                mBgZegoMediaPlayer.setVolume(50);
+                mBgZegoMediaPlayer.setVolume(100);
             }
         }, 500);
     }
@@ -4218,7 +4235,7 @@ public class LivePlayActivity extends BaseActivity implements
             mChorusZegoMediaPlayer = new ZegoMediaPlayer();
             //使用推流播放模式，会将音频混流推流中，调用端和播放端都可以听到播放的声音
             mChorusZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypeAux, ZegoMediaPlayer.PlayerIndex.Second);
-            mChorusZegoMediaPlayer.setVolume(50);
+            mChorusZegoMediaPlayer.setVolume(100);
         } else {
             mChorusZegoMediaPlayer.stop();
         }
@@ -4398,7 +4415,7 @@ public class LivePlayActivity extends BaseActivity implements
             Glide.with(BaseApplication.getApp())
                     .asBitmap()
                     .load(mPlayBillData.getImages().get(i))
-                    .apply(new RequestOptions().fitCenter())
+                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).fitCenter())
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource,
@@ -4438,6 +4455,7 @@ public class LivePlayActivity extends BaseActivity implements
             Glide.with(BaseApplication.getApp())
                     .asBitmap()
                     .load(mPlayBillData.getImages().get(i))
+                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE))
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource,
@@ -4751,7 +4769,7 @@ public class LivePlayActivity extends BaseActivity implements
                 mvZegoMediaPlayer = new ZegoMediaPlayer();
                 mvZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypePlayer, ZegoMediaPlayer.PlayerIndex.Third);
                 mvZegoMediaPlayer.setView(mMVTextureView);
-                mvZegoMediaPlayer.setVolume(50);
+                mvZegoMediaPlayer.setVolume(100);
                 mvZegoMediaPlayer.setPlayerType(ZegoMediaPlayer.PlayerTypeAux);
                 String path = FileUtil.getPath(LivePlayActivity.this, "sea.mp4");
                 Log.i("MVVideo", " path : " + path);

@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -28,11 +29,10 @@ public class GlideUtil {
 
 
     /**
-     * @param resource
-     * @return
+     *
      */
     public static RequestOptions createRp(int resource) {
-        RequestOptions options = new RequestOptions().centerCrop().priority(Priority.HIGH).centerCrop().error(resource);
+        RequestOptions options = new RequestOptions().centerCrop().priority(Priority.HIGH).diskCacheStrategy(DiskCacheStrategy.NONE).centerCrop().error(resource);
         return options.centerCrop();
     }
 
@@ -46,16 +46,16 @@ public class GlideUtil {
     }
 
     public static void setImage(ImageView view, Context context, int url) {
-        Glide.with(context).load(url).into(view);
+        Glide.with(context).load(url).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE)).into(view);
     }
+
     public static void setImage(ImageView view, Context context, String url) {
-        Glide.with(context).load(url).into(view);
+        Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.NONE).into(view);
     }
 
     public static void setImage(ImageView view, Context context, int url, RequestOptions op) {
         Glide.with(context).load(url).apply(op).into(view);
     }
-
 
 
     public interface BitmapCallBack {
@@ -67,7 +67,7 @@ public class GlideUtil {
         Glide.with(mContext)
                 .asBitmap()
                 .load(url)
-                .apply(new RequestOptions().error(R.mipmap.pic_33))
+                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).error(R.mipmap.pic_33))
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
@@ -83,7 +83,7 @@ public class GlideUtil {
         Glide.with(mContext)
                 .asBitmap()
                 .load(url)
-                .apply(new RequestOptions().error(R.mipmap.pic_33))
+                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).error(R.mipmap.pic_33))
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
