@@ -366,6 +366,52 @@ public class CustomPoPupAnim {
 
     }
 
+    public static void loadSvgaAnim(final SVGAImageView svgaAnim, String url, final AnimListener animListener) {
+        SVGAParser parser = new SVGAParser(BaseApplication.getApp());
+        svgaAnim.setLoops(1);
+        svgaAnim.setClearsAfterStop(true);
+        try {
+            parser.parse(url, new SVGAParser.ParseCompletion() {
+                @Override
+                public void onComplete(@NotNull SVGAVideoEntity videoItem) {
+                    Log.e("TAG", "onComplete: ");
+                    SVGADrawable drawable = new SVGADrawable(videoItem, new SVGADynamicEntity());
+                    svgaAnim.setImageDrawable(drawable);
+                    svgaAnim.startAnimation();
+                    svgaAnim.setCallback(new SVGACallback() {
+                        @Override
+                        public void onPause() {
+
+                        }
+
+                        @Override
+                        public void onFinished() {
+                            if (animListener != null) {
+                                animListener.onFinish();
+                            }
+                        }
+
+                        @Override
+                        public void onRepeat() {
+
+                        }
+
+                        @Override
+                        public void onStep(int i, double v) {
+
+                        }
+                    });
+                }
+                @Override
+                public void onError() {
+                    Log.e("TAG", "onError: ");
+                }
+            });
+        }catch (Exception e){
+            System.out.print(true);
+        }
+    }
+
     public static void loadSvga(final SVGAImageView svgaAnim, String url) {
         Log.e("TAG", "loadSvga: ");
 

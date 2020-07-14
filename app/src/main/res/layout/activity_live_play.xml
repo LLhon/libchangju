@@ -214,35 +214,39 @@
                                 android:src="@drawable/pan_start" />
 
                             <TextView
+                                android:id="@+id/tv_qi"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginTop="@dimen/dp_25"
                                 android:text="期"
                                 android:textColor="@color/black"
-                                android:textSize="12sp"/>
+                                android:textSize="12sp" />
 
                             <TextView
+                                android:id="@+id/tv_dai"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
                                 android:layout_marginTop="@dimen/dp_44"
                                 android:layout_marginRight="@dimen/dp_30"
-                                android:layout_alignParentRight="true"
                                 android:text="待"
                                 android:textColor="@color/white"
-                                android:textSize="12sp"/>
+                                android:textSize="12sp" />
 
                             <TextView
+                                android:id="@+id/tv_jing"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:layout_marginRight="@dimen/dp_33"
                                 android:layout_marginTop="@dimen/dp_75"
+                                android:layout_marginRight="@dimen/dp_33"
                                 android:text="精"
                                 android:textColor="@color/black"
                                 android:textSize="12sp" />
 
                             <TextView
+                                android:id="@+id/tv_cai"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerHorizontal="true"
@@ -252,19 +256,21 @@
                                 android:textSize="12sp" />
 
                             <TextView
+                                android:id="@+id/tv_biao"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/dp_75"
                                 android:layout_marginLeft="@dimen/dp_33"
+                                android:layout_marginTop="@dimen/dp_75"
                                 android:text="表"
                                 android:textColor="@color/black"
                                 android:textSize="12sp" />
 
                             <TextView
+                                android:id="@+id/tv_yan"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/dp_44"
                                 android:layout_marginLeft="@dimen/dp_30"
+                                android:layout_marginTop="@dimen/dp_44"
                                 android:text="演"
                                 android:textColor="@color/white"
                                 android:textSize="12sp" />

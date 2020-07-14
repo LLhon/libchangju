@@ -2,7 +2,6 @@ package com.newproject.hardqing.ui;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -14,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.drawable.AnimationDrawable;
@@ -51,7 +51,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
@@ -326,9 +325,10 @@ public class LivePlayActivity extends BaseActivity implements
     RelativeLayout mRlShowInduction;
     RecyclerView mRlAudienceList;
     TextView mTvWaitAudience;
+    //    //期待精彩表演
+    TextView tvQi, tvDai, tvJing, tvCai, tvBiao, tvYan;
 
-    private TextureView mMVTextureView;
-
+    TextureView mMVTextureView;
     LinearLayout llSubtitles;
     TextView tvSubtitles;
     private String yq_type;
@@ -415,6 +415,9 @@ public class LivePlayActivity extends BaseActivity implements
     private String mMultiRoomId;
     private UserDetailBean mLianMaiUserInfo;
     private String mLianMaiStreamID;
+    private AudienceListAdapter audienceListAdapter;
+    private Handler textColorHandler;
+    private Runnable runnable;
 
     private ZegoMediaPlayer mvZegoMediaPlayer;
 
@@ -846,6 +849,12 @@ public class LivePlayActivity extends BaseActivity implements
         mRlNameLian = findViewById(R.id.rl_name_lian);
         mRlShowInduction = findViewById(R.id.rl_show_induction);
         mRlAudienceList = findViewById(R.id.rl_audience_list);
+        tvQi = findViewById(R.id.tv_qi);
+        tvDai = findViewById(R.id.tv_dai);
+        tvJing = findViewById(R.id.tv_jing);
+        tvCai = findViewById(R.id.tv_cai);
+        tvBiao = findViewById(R.id.tv_biao);
+        tvYan = findViewById(R.id.tv_yan);
 
         mShowGifImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -886,6 +895,11 @@ public class LivePlayActivity extends BaseActivity implements
         lalaOnlineAdapter = new LalaOnlineAdapter(null, this);
         rvLalaOnline.setAdapter(lalaOnlineAdapter);
         initGiftView();
+        ChangeTextColor();
+        audienceListAdapter = new AudienceListAdapter(R.layout.adapter_induction, null);
+        LinearLayoutManager a = new LinearLayoutManager(this);
+        a.setOrientation(LinearLayoutManager.VERTICAL);
+        mRlAudienceList.setLayoutManager(a);
     }
 
     public void initGiftView() {
@@ -3356,6 +3370,25 @@ public class LivePlayActivity extends BaseActivity implements
         isRedRain = false;
     }
 
+    public void ChangeTextColor() {
+        textColorHandler = new Handler();
+        Random random = new Random();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                tvQi.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+                tvDai.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+                tvJing.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+                tvCai.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+                tvBiao.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+                tvYan.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+
+                textColorHandler.postDelayed(this, 200);
+            }
+        };
+    }
+
     @Override
     public void showEntertainLuck(EntertainEntity entertainEntity) {
 ///娱乐活动-轮盘显示
@@ -3364,7 +3397,10 @@ public class LivePlayActivity extends BaseActivity implements
         mRlSvga.setVisibility(View.GONE);
         mRlNameLian.setVisibility(View.GONE);
         mTvWaitAudience.setVisibility(View.VISIBLE);
+
+        textColorHandler.postDelayed(runnable, 200);//每0.2秒执行一次runnable.
     }
+
 
     @Override
     public void showInduction(InductionEntity inductionEntity) {
@@ -3383,42 +3419,12 @@ public class LivePlayActivity extends BaseActivity implements
         mRlNameLian.setVisibility(View.GONE);
         mTvWaitAudience.setVisibility(View.VISIBLE);
         mTvLuckResult.setText("");
-        mSvgaExtractAudience.setLoops(1);
-        SVGAParser parser = new SVGAParser(BaseApplication.getApp());
-        parser.decodeFromAssets("activity_get.svga", new SVGAParser.ParseCompletion() {
+        CustomPoPupAnim.loadSvgaAnim(mSvgaExtractAudience, "activity_get.svga", new CustomPoPupAnim.AnimListener() {
             @Override
-            public void onComplete(@NotNull SVGAVideoEntity videoItem) {
-                SVGADrawable drawable = new SVGADrawable(videoItem);
-                mSvgaExtractAudience.setImageDrawable(drawable);
-                mSvgaExtractAudience.startAnimation();
-            }
-
-            @Override
-            public void onError() {
-                Log.e("TAG", "onError: ");
-            }
-        });
-        mSvgaExtractAudience.setCallback(new SVGACallback() {
-            @Override
-            public void onPause() {
-
-            }
-
-            @Override
-            public void onFinished() {
+            public void onFinish() {
                 mRlNameLian.setVisibility(View.VISIBLE);
                 mTvWaitAudience.setVisibility(View.GONE);
                 mTvExtractName.setText(extractAudienceEntity.getUsername());
-            }
-
-            @Override
-            public void onRepeat() {
-
-            }
-
-            @Override
-            public void onStep(int i, double v) {
-
             }
         });
     }
@@ -3427,6 +3433,9 @@ public class LivePlayActivity extends BaseActivity implements
     public void showCloseInduction(CloseInductionEntity closeInductionEntity) {
         mRlShowLuck.setVisibility(View.GONE);
         mRlShowInduction.setVisibility(View.GONE);
+
+        usersBeansList.clear();
+        textColorHandler.removeCallbacks(runnable);//终止定时器
     }
 
     @Override
@@ -3435,62 +3444,45 @@ public class LivePlayActivity extends BaseActivity implements
         mRlSvga.setVisibility(View.VISIBLE);
         mSvgaLuckResult.setVisibility(View.VISIBLE);
         mRlLuckP.setVisibility(View.GONE);
-        mSvgaLuckResult.setLoops(1);
-        SVGAParser parser = new SVGAParser(BaseApplication.getApp());
-        parser.decodeFromAssets("luck.svga", new SVGAParser.ParseCompletion() {
+        CustomPoPupAnim.loadSvgaAnim(mSvgaLuckResult, "luck.svga", new CustomPoPupAnim.AnimListener() {
             @Override
-            public void onComplete(@NotNull SVGAVideoEntity videoItem) {
-                SVGADrawable drawable = new SVGADrawable(videoItem);
-                mSvgaLuckResult.setImageDrawable(drawable);
-                mSvgaLuckResult.startAnimation();
-            }
-
-            @Override
-            public void onError() {
-                Log.e("TAG", "onError: ");
-            }
-        });
-        mSvgaLuckResult.setCallback(new SVGACallback() {
-            @Override
-            public void onPause() {
-
-            }
-
-            @Override
-            public void onFinished() {
+            public void onFinish() {
                 //被抽到的幸运观众反馈
                 mTvLuckResult.setText(luckyAudienceEntity.getContent());
-            }
-
-            @Override
-            public void onRepeat() {
-
-            }
-
-            @Override
-            public void onStep(int i, double v) {
-
             }
         });
     }
 
+    List<RandomLuckyEntity.UsersBean> usersBeansList = new ArrayList<>();
+
     @Override
     public void FiveAudience(RandomLuckyEntity randomLuckyEntity) {
-        List<RandomLuckyEntity.UsersBean> usersBeansList = new ArrayList<>();
-        if (randomLuckyEntity.getUsers() != null)
+        usersBeansList.clear();
+        if (randomLuckyEntity.getUsers() != null) {
             usersBeansList.addAll(randomLuckyEntity.getUsers());
-        usersBeansList.addAll(randomLuckyEntity.getUsers());
-        //数据填充适配器
-        AudienceListAdapter audienceListAdapter = new AudienceListAdapter(R.layout.adapter_induction, usersBeansList);
-        LinearLayoutManager a = new LinearLayoutManager(this);
-        a.setOrientation(LinearLayoutManager.VERTICAL);
-        mRlAudienceList.setLayoutManager(a);
-        mRlAudienceList.setAdapter(audienceListAdapter);
+        }
+        CustomPoPupAnim.loadSvgaAnim(mSvgaExtractAudience, "activity_get.svga", new CustomPoPupAnim.AnimListener() {
+            @Override
+            public void onFinish() {
+                //数据填充适配器
+                audienceListAdapter.setNewData(usersBeansList);
+                mRlAudienceList.setAdapter(audienceListAdapter);
+            }
+        });
     }
 
     @Override
     public void lianFeedBack(LianFeedEntity lianFeedEntity) {
-
+//        自我介绍连麦反馈
+        if (usersBeansList.size() != 0 && lianFeedEntity != null) {
+            for (int i = 0; i < usersBeansList.size(); i++) {
+                if (lianFeedEntity.getUser_id().equals(usersBeansList.get(i).getUser_id() + ""))
+                    usersBeansList.get(i).setStatus(lianFeedEntity.getType());
+            }
+            //数据填充适配器
+            audienceListAdapter.setNewData(usersBeansList);
+            mRlAudienceList.setAdapter(audienceListAdapter);
+        }
     }
 
     private String playerUrl, cover;
