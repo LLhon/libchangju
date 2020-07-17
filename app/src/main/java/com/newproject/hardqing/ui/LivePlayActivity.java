@@ -1511,7 +1511,6 @@ public class LivePlayActivity extends BaseActivity implements
             tvAudience1.setFree();
             stopChorusMediaPlayer();
             isLianMai = false;
-            setTextureViewAlpha60();
         }
     }
 
@@ -1764,7 +1763,6 @@ public class LivePlayActivity extends BaseActivity implements
             //resumeBgMediaPlayer();
             //关闭合唱
             stopChorusMediaPlayer();
-            setTextureViewAlpha60();
         }
     }
 
@@ -3187,7 +3185,6 @@ public class LivePlayActivity extends BaseActivity implements
             tvAudience1.setFree();
             isLianMai = false;
             stopChorusMediaPlayer();
-            setTextureViewAlpha60();
         }
     }
 
@@ -3211,7 +3208,6 @@ public class LivePlayActivity extends BaseActivity implements
             mMultiRoomStreamId = "";
             mMultiRoomId = "";
         }
-        setTextureViewAlpha60();
     }
 
     @Override
@@ -3606,7 +3602,6 @@ public class LivePlayActivity extends BaseActivity implements
         tvAudience1.setFree();
         stopChorusMediaPlayer();
         isLianMai = false;
-        setTextureViewAlpha60();
     }
 
     private void stopPlay(String streamID) {
