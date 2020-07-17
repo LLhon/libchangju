@@ -8,6 +8,7 @@ import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -16,6 +17,7 @@ import android.view.TextureView;
 import android.view.View;
 import com.blankj.utilcode.util.LogUtils;
 import com.llhon.rtspdemo.H264FrameCallBack;
+import com.llhon.rtspdemo.YUVFrameCallback;
 import com.newproject.hardqing.base.BaseApplication;
 import com.newproject.hardqing.constant.PreConst;
 import com.newproject.hardqing.util.FileUtil;
@@ -34,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -86,6 +89,7 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
 
         // 设置视频帧回调监听
         RtspCameraHelper.sharedInstance().setFrameCallback(mIFrameCallback);
+        //RtspCameraHelper.sharedInstance().setFrameCallback2(mYUVFrameCallback);
     }
 
     /**
@@ -98,6 +102,7 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
         // 释放摄像头并处理采集线程
         RtspCameraHelper.sharedInstance().uninit();
         RtspCameraHelper.sharedInstance().setFrameCallback(null);
+        //RtspCameraHelper.sharedInstance().setFrameCallback2(null);
 
         mClient.destroy();
         mClient = null;
@@ -231,27 +236,7 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
             if (mClient == null) {
                 return;
             }
-            //Log.e(TAG, "******onFrame****** size:" + data.length + ", isKeyFrame:" + isKeyFrame + ", timeStamp:" + timeStamp);
-
-            //已解码yuv方式
-            /*// 使用采集视频帧信息构造VideoCaptureFormat
-            VideoCaptureFormat format = new VideoCaptureFormat();
-            format.width = mWidth;
-            format.height = mHeight;
-            format.strides[0] = mWidth * 4;
-            //format.strides[1] = mWidth;
-            format.rotation = mRotation;
-            format.pixel_format = PIXEL_FORMAT_RGBA32; // 采集格式
-
-            long now = 0;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                now = SystemClock.elapsedRealtimeNanos();
-            } else {
-                now = TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime());
-            }
-            mFrameSize = mWidth * mHeight * 4;
-            // 将采集的数据传给ZEGO SDK
-            mClient.onByteBufferFrameCaptured(data, mFrameSize, format, now, 1000000000);*/
+            Log.e("H264FrameCallBack", "******onFrame****** length:" + data.length + ", isKeyFrame:" + isKeyFrame + ", timeStamp:" + timeStamp);
 
             //未解码码流方式
             // 编码器相关信息
@@ -273,6 +258,57 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
 
             // 将编码后的视频数据传给ZEGO SDK，需要告知SDK当前传递帧是否为视频关键帧，以及当前视频帧的时间戳
             mClient.onEncodedFrameCaptured(mEncodedBuffer, data.length, config, isKeyFrame, (double) timeStamp);
+        }
+    };
+
+    public final YUVFrameCallback mYUVFrameCallback = new YUVFrameCallback() {
+        @Override
+        public void onFrameDataReceived(byte[] data, int length, int timeStamp, boolean isKeyFrame, String var) {
+            if (mClient == null || length == 0) {
+                return;
+            }
+            Log.e("YUVFrameCallback", "******onFrame****** length:" + data.length + ", isKeyFrame:" + isKeyFrame + ", timeStamp:" + timeStamp);
+
+            //已解码yuv方式
+            // 使用采集视频帧信息构造VideoCaptureFormat
+            VideoCaptureFormat format = new VideoCaptureFormat();
+            format.width = mWidth;
+            format.height = mHeight;
+            format.strides[0] = mWidth;
+            format.strides[1] = mWidth / 2;
+            format.strides[2] = mWidth / 2;
+            format.rotation = mRotation;
+            format.pixel_format = PIXEL_FORMAT_I420; // 颜色格式
+
+            long now = 0;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                now = SystemClock.elapsedRealtimeNanos();
+            } else {
+                now = TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime());
+            }
+            mFrameSize = mWidth * mHeight * 3 / 2;
+            // 将采集的数据传给ZEGO SDK
+            mClient.onByteBufferFrameCaptured(data, mFrameSize, format, now, 1000000000);
+
+            //已解码yuv方式
+            /*// 使用采集视频帧信息构造VideoCaptureFormat
+            VideoCaptureFormat format = new VideoCaptureFormat();
+            format.width = mWidth;
+            format.height = mHeight;
+            format.strides[0] = mWidth * 4;
+            //format.strides[1] = mWidth;
+            format.rotation = mRotation;
+            format.pixel_format = PIXEL_FORMAT_RGBA32; // 采集格式
+
+            long now = 0;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                now = SystemClock.elapsedRealtimeNanos();
+            } else {
+                now = TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime());
+            }
+            mFrameSize = mWidth * mHeight * 4;
+            // 将采集的数据传给ZEGO SDK
+            mClient.onByteBufferFrameCaptured(data, mFrameSize, format, now, 1000000000);*/
         }
     };
 

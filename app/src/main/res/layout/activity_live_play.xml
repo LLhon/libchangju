@@ -48,7 +48,8 @@
                     android:id="@+id/tv_local_preview"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:visibility="gone"/>
                 
                 <com.newproject.hardqing.view.ViewLive
                     android:id="@+id/tv_audience1"

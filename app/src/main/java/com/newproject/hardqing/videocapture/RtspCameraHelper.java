@@ -26,6 +26,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.llhon.rtspdemo.H264FrameCallBack;
 import com.llhon.rtspdemo.RtspClient;
+import com.llhon.rtspdemo.YUVFrameCallback;
 import com.newproject.hardqing.base.BaseApplication;
 import com.newproject.hardqing.util.FileUtil;
 import com.newproject.hardqing.uvc.ZegoUVCCamera;
@@ -55,6 +56,7 @@ public class RtspCameraHelper {
     private static RtspCameraHelper uvcCameraHelper = null;
 
     private H264FrameCallBack mIFrameCallback = null;
+    private YUVFrameCallback mYUVFrameCallback = null;
     private TextureView mCameraView = null;
     private final Object mSync = new Object();
     private RtspClient mRtspClient;
@@ -122,6 +124,10 @@ public class RtspCameraHelper {
         this.mIFrameCallback = callback;
     }
 
+    public void setFrameCallback2(YUVFrameCallback callback) {
+        mYUVFrameCallback = callback;
+    }
+
     // 设置采集预览视图
     public void setCameraView(TextureView view) {
         this.mCameraView = view;
@@ -174,6 +180,7 @@ public class RtspCameraHelper {
                 }
                 Log.e(TAG, "搜索到网络摄像头的IP地址:" + ipList.toString()); //rtsp://192.168.101.159:8554/stream0
                 mRtspClient.setH264FrameCallBack(mIFrameCallback);
+                //mRtspClient.setYUVFrameCallBack(mYUVFrameCallback);
                 mRtspClient.start(ipList.get(0));
             }
         });

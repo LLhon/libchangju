@@ -732,4 +732,11 @@ public class QingLrcView extends View {
     private void setFlag(Object flag) {
         this.mFlag = flag;
     }
+
+    public long getTotalTime() {
+        if (mLrcEntryList.size() != 0) {
+            return mLrcEntryList.get(mLrcEntryList.size() - 1).getTime();
+        }
+        return 0;
+    }
 }

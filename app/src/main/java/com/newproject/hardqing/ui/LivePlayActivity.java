@@ -691,8 +691,8 @@ public class LivePlayActivity extends BaseActivity implements
                 if (isUsbDevice) {
                     ZegoAvConfig config = new ZegoAvConfig(ZegoAvConfig.Level.High);
                     // 设置分辨率，注意此处设置的分辨率需要是uvccamera所支持的
-                    config.setVideoCaptureResolution(1280, 720); //1280, 720 / 640x480
-                    config.setVideoEncodeResolution(1280, 720); // 3840, 2160 / 1920, 1080
+                    config.setVideoCaptureResolution(1280, 704); //1280, 720 / 640x480
+                    config.setVideoEncodeResolution(1280, 704); // 3840, 2160 / 1920, 1080
                     config.setVideoFPS(15);
                     config.setVideoBitrate(1200000);
                     mZegoLiveRoom.setAVConfig(config);
@@ -706,7 +706,6 @@ public class LivePlayActivity extends BaseActivity implements
                     mZegoLiveRoom.enableCamera(true);
                 }
                 boolean isPreview = mZegoLiveRoom.setPreviewView(mLocalPreview.getTextureView());//设置预览；
-                setTextureViewAlpha60();
                 mZegoLiveRoom.setPreviewViewMode(ZegoVideoViewMode.ScaleAspectFill);
                 boolean previewSuccess = mZegoLiveRoom.startPreview();
                 Log.d(TAG, "预览是否成功：" + previewSuccess);
@@ -717,10 +716,6 @@ public class LivePlayActivity extends BaseActivity implements
                     mIsStartPublishing = mZegoLiveRoom.startPublishing(ZegoRoomUtil.getPublishStreamID(mHostUserId), mHostUserId, ZegoConstants.PublishFlag.MixStream);
                     Log.d(TAG, "推流是否成功: " + mIsStartPublishing);
                     mPublishStreamID = ZegoRoomUtil.getPublishStreamID(mHostUserId);
-                    // TODO: 2020/7/9 拉自己推的流作为本地预览画面
-                    mZegoLiveRoom.startPlayingStream(ZegoRoomUtil.getPublishStreamID(mHostUserId), mLocalPreview.getTextureView());
-                    mZegoLiveRoom.setPlayVolume(0, ZegoRoomUtil.getPublishStreamID(mHostUserId));
-                    mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, ZegoRoomUtil.getPublishStreamID(mHostUserId));
                 }
                 setBeauty();
             }
@@ -741,8 +736,8 @@ public class LivePlayActivity extends BaseActivity implements
         ZegoAvConfig currentConfig = ZegoLiveManager.getInstance().getZegoAvConfig();
         if (currentConfig != null) {
             // 设置分辨率，注意此处设置的分辨率需要是uvccamera所支持的
-            currentConfig.setVideoCaptureResolution(1280, 720); //1280, 720
-            currentConfig.setVideoEncodeResolution(1280, 720); // 3840, 2160 / 1920, 1080
+            currentConfig.setVideoCaptureResolution(1280, 704); //1280, 720
+            currentConfig.setVideoEncodeResolution(1280, 704); // 3840, 2160 / 1920, 1080
             currentConfig.setVideoFPS(15);
             currentConfig.setVideoBitrate(1200000);
             int videoWidth = currentConfig.getVideoEncodeResolutionWidth();
@@ -967,10 +962,6 @@ public class LivePlayActivity extends BaseActivity implements
             if (mIsLoginRoomSuccess && !mIsStartPublishing) {
                 mIsStartPublishing = mZegoLiveRoom.startPublishing(ZegoRoomUtil.getPublishStreamID(mHostUserId), mHostUserId, ZegoConstants.PublishFlag.MixStream);
                 mPublishStreamID = ZegoRoomUtil.getPublishStreamID(mHostUserId);
-                // TODO: 2020/7/9 拉自己推的流作为本地预览画面
-                mZegoLiveRoom.startPlayingStream(ZegoRoomUtil.getPublishStreamID(mHostUserId), mLocalPreview.getTextureView());
-                mZegoLiveRoom.setPlayVolume(0, ZegoRoomUtil.getPublishStreamID(mHostUserId));
-                mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, ZegoRoomUtil.getPublishStreamID(mHostUserId));
             }
             enableCamera(true);
         } else {
@@ -1156,7 +1147,7 @@ public class LivePlayActivity extends BaseActivity implements
                         //发送歌曲总时长到主播端和观众端，用于显示播放进度
                         PublicMessageSocket socket = new PublicMessageSocket("", "", 3,
                                 "", roomId);
-                        socket.setDuration(mChorusZegoMediaPlayer.getDuration()); //269453
+                        socket.setDuration(mLrcChorusView.getTotalTime()); //269453
                         LiveSocketUtil.sendPublicMessage(LivePlayActivity.this, socket);
 
                         if (!TextUtils.isEmpty(mMultiRoomId)) {
@@ -1164,7 +1155,7 @@ public class LivePlayActivity extends BaseActivity implements
                             //{"aroom_id":"371","auser_id":"","cmd":"multiroom_public_message","lrc_progress":0,"room_id":"138","song_duration":269453,"type":2,"user_id":""}
                             MultiRoomMessageSocket socket3 = new MultiRoomMessageSocket("", "", roomId,
                                     mMultiRoomId, 2);
-                            socket3.setSongDuration(mChorusZegoMediaPlayer.getDuration());
+                            socket3.setSongDuration(mLrcChorusView.getTotalTime());
                             LiveSocketUtil.sendMessageByMultiRoom(LivePlayActivity.this, socket3);
                         }
                         break;
@@ -1241,9 +1232,9 @@ public class LivePlayActivity extends BaseActivity implements
                         //隐藏自己的歌词
                         mLrcChorusView.setVisibility(View.GONE);
                         //隐藏观众的歌词
-                        PublicMessageSocket socket = new PublicMessageSocket("", "", 6,
+                       /* PublicMessageSocket socket = new PublicMessageSocket("", "", 6,
                                 "", roomId);
-                        LiveSocketUtil.sendPublicMessage(LivePlayActivity.this, socket);
+                        LiveSocketUtil.sendPublicMessage(LivePlayActivity.this, socket);*/
 
                         //发送歌曲播放完成的消息到主播端
                         PublicMessageSocket socket2 = new PublicMessageSocket("", "", 7,
@@ -1915,7 +1906,6 @@ public class LivePlayActivity extends BaseActivity implements
                             stopChorusZegoMediaPlayer();
                             //pauseBgMediaPlayer();
                             mLrcChorusView.setVisibility(View.GONE);
-                            setTextureViewAlpha100();
                             return;
                         case 21:
                             int alphaProgress = baPingChatMessage.getVoiceControlProgress();
@@ -2705,7 +2695,6 @@ public class LivePlayActivity extends BaseActivity implements
         LogUtil.e(" start play stream(" + streamID + ")");
         mZegoLiveRoom.startPlayingStream(streamID, tvAudience1.getTextureView());
         mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
-        setTextureViewAlpha100();
         getAnchorUserInfo(streamID);
         if (streamID.equals(ZegoRoomUtil.getMixStreamID(mHostUserId)) && isLive) {
             if (!TextUtils.isEmpty(yq_type)) {
