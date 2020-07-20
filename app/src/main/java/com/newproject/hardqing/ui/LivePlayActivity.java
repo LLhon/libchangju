@@ -303,7 +303,6 @@ public class LivePlayActivity extends BaseActivity implements
     TextView mWatchUserCount;
     LinearLayout mShowAllView;
     TextView mTvPartySubject;
-    ImageView mLivePicImage;
     FullScreenVideoView mVideoViewBg;
     SVGAImageView mSivSubject;
     ViewLive tvAudience1;
@@ -328,7 +327,6 @@ public class LivePlayActivity extends BaseActivity implements
     //    //期待精彩表演
     TextView tvQi, tvDai, tvJing, tvCai, tvBiao, tvYan;
 
-    TextureView mMVTextureView;
     LinearLayout llSubtitles;
     TextView tvSubtitles;
     private String yq_type;
@@ -816,7 +814,6 @@ public class LivePlayActivity extends BaseActivity implements
         mWatchUserCount = findViewById(R.id.tv_watch_user_count);
         mShowAllView = findViewById(R.id.ll_show_all_view);
         mTvPartySubject = findViewById(R.id.rtv_title);
-        mLivePicImage = findViewById(R.id.iv_live_pic);
         mVideoViewBg = findViewById(R.id.vv_bg);
         mSivSubject = findViewById(R.id.iv_tv_zhu_ti);
         tvAudience1 = findViewById(R.id.tv_audience1);
@@ -829,7 +826,6 @@ public class LivePlayActivity extends BaseActivity implements
         mRlPlayBillContainer = findViewById(R.id.rl_playbill_container);
         mRoll3DView = findViewById(R.id.roll_view);
         mTagCloudView = findViewById(R.id.tag_cloud);
-        mMVTextureView = findViewById(R.id.tv_mv_video_view);
 
         mSvgaExtractAudience = findViewById(R.id.svga_extract_audience);
         mRlShowLuck = findViewById(R.id.rl_show_luck);
@@ -2218,7 +2214,6 @@ public class LivePlayActivity extends BaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        //setLocalMVVideo();
         // step.2 register USB event broadcast
         UVCCameraHelper.sharedInstance().registerUSB();
     }
@@ -2439,49 +2434,31 @@ public class LivePlayActivity extends BaseActivity implements
             mTvPartySubject.setSelected(true);
             mTvPartySubject.setText(title);
         }
-        if (extrasBean.getCover().endsWith("mp4")) {
-            //主题背景图为动态视频
-            showDynamicBg(extrasBean.getCover());
-        } else {
-            //主题背景图为静态图片
-            showStaticBg(extrasBean.getCover());
-        }
         LogUtils.d("extrasBean  extrasBean : " + extrasBean);
         LogUtils.d("extrasBean  categoryId : " + categoryId);
         if ("1".equals(categoryId)) {
             initBall("生日派对");
-            startBgMediaPlayer(FileUtil.getPath(this, "birthday.mp3"), false);
         } else if ("2".equals(categoryId)) {
             initBall("婚礼庆典");
-            startBgMediaPlayer(FileUtil.getPath(this, "wedding.mp3"), false);
         } else if ("4".equals(categoryId)) {
             initBall("喜庆聚会");
             // /storage/emulated/0/Android/data/com.newproject.hardqing/cache/jv_hui.mp3
-            startBgMediaPlayer(FileUtil.getPath(this, "jv_hui.mp3"), false);
         } else if ("5".equals(categoryId)) {
             initBall("商务庆典");
-            startBgMediaPlayer(FileUtil.getPath(this, "nianhui.mp3"), false);
         } else if ("9".equals(categoryId)) {
             initBall("产品发布");
-            startBgMediaPlayer(FileUtil.getPath(this, "chanping_fabu.mp3"), false);
         } else if ("11".equals(categoryId)) {
             initBall("同学聚会");
-            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), false);
         } else if ("13".equals(categoryId)) {
             initBall("行业小聚");
-            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), false);
         } else if ("17".equals(categoryId)) {
             initBall("好友聚会");
-            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), false);
         } else if ("19".equals(categoryId)) {
             initBall("边唱边聚");
-            startBgMediaPlayer(FileUtil.getPath(this, "jv_hui.mp3"), false);
         } else if ("20".equals(categoryId)) {
             initBall("群友派对");
-            startBgMediaPlayer(FileUtil.getPath(this, "jv_hui.mp3"), false);
         } else {
             initBall("行业小聚");
-            startBgMediaPlayer(FileUtil.getPath(this, "hangye_xiaoju.mp3"), false);
         }
         getPermission();
     }
@@ -3904,48 +3881,48 @@ public class LivePlayActivity extends BaseActivity implements
      * 显示静态主题背景
      */
     private void showStaticBg(String imgUrl) {
-        if (mLivePicImage == null) {
-            return;
-        }
-
-        mLivePicImage.setVisibility(View.VISIBLE);
-        mVideoViewBg.setVisibility(View.GONE);
-        mVideoViewBg.stopPlayback();
-        try {
-            Glide.with(this)
-                    .applyDefaultRequestOptions(new RequestOptions().placeholder(R.mipmap.bg).diskCacheStrategy(DiskCacheStrategy.NONE))
-                    .load(imgUrl)
-                    .into(mLivePicImage);
-        } catch (Exception e) {
-
-        }
+        //if (mLivePicImage == null) {
+        //    return;
+        //}
+        //
+        //mLivePicImage.setVisibility(View.VISIBLE);
+        //mVideoViewBg.setVisibility(View.GONE);
+        //mVideoViewBg.stopPlayback();
+        //try {
+        //    Glide.with(this)
+        //            .applyDefaultRequestOptions(new RequestOptions().placeholder(R.mipmap.bg).diskCacheStrategy(DiskCacheStrategy.NONE))
+        //            .load(imgUrl)
+        //            .into(mLivePicImage);
+        //} catch (Exception e) {
+        //
+        //}
     }
 
     /**
      * 显示动态主题背景
      */
     private void showDynamicBg(String videoUrl) {
-        try {
-            if (mVideoViewBg == null) {
-                return;
-            }
-            mVideoViewBg.setVisibility(View.VISIBLE);
-            mLivePicImage.setVisibility(View.GONE);
-            //mVideoViewBg.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg));
-            mVideoViewBg.setVideoPath(Uri.parse(videoUrl).toString());
-            mVideoViewBg.start();
-            mVideoViewBg.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    if (mVideoViewBg == null) {
-                        return;
-                    }
-                    mVideoViewBg.start();
-                }
-            });
-        } catch (Exception e) {
-            showDynamicBg(videoUrl);
-        }
+        //try {
+        //    if (mVideoViewBg == null) {
+        //        return;
+        //    }
+        //    mVideoViewBg.setVisibility(View.VISIBLE);
+        //    mLivePicImage.setVisibility(View.GONE);
+        //    //mVideoViewBg.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg));
+        //    mVideoViewBg.setVideoPath(Uri.parse(videoUrl).toString());
+        //    mVideoViewBg.start();
+        //    mVideoViewBg.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        //        @Override
+        //        public void onCompletion(MediaPlayer mp) {
+        //            if (mVideoViewBg == null) {
+        //                return;
+        //            }
+        //            mVideoViewBg.start();
+        //        }
+        //    });
+        //} catch (Exception e) {
+        //    showDynamicBg(videoUrl);
+        //}
     }
 
     @Override
@@ -4728,31 +4705,6 @@ public class LivePlayActivity extends BaseActivity implements
                 });
             }
         }
-    }
-
-    public void setLocalMVVideo() {
-
-        mMVTextureView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (mBgZegoMediaPlayer != null) {
-                    mBgZegoMediaPlayer.pause();
-                }
-
-                if (mChorusZegoMediaPlayer != null) {
-                    mChorusZegoMediaPlayer.pause();
-                }
-                mvZegoMediaPlayer = new ZegoMediaPlayer();
-                mvZegoMediaPlayer.init(ZegoMediaPlayer.PlayerTypePlayer, ZegoMediaPlayer.PlayerIndex.Third);
-                mvZegoMediaPlayer.setView(mMVTextureView);
-                mvZegoMediaPlayer.setVolume(100);
-                mvZegoMediaPlayer.setPlayerType(ZegoMediaPlayer.PlayerTypeAux);
-                String path = FileUtil.getPath(LivePlayActivity.this, "sea.mp4");
-                Log.i("MVVideo", " path : " + path);
-                mvZegoMediaPlayer.start(path, true);
-            }
-        }, 3000);
-
     }
 
     public void setTextureViewAlpha60() {

@@ -439,6 +439,7 @@ public class QingMainActivity extends BaseActivity {
                     intent.putExtra(PreConst.RoomNo, roomNo);
                     intent.putExtra("uid", tourId);
                     startActivity(intent);
+                    finish();
                 }
                 break;
             default:

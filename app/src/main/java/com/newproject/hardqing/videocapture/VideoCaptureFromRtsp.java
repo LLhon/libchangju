@@ -233,7 +233,7 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
         @Override
         public void onFrameDataReceived(byte[] data, int length, int timeStamp, boolean isKeyFrame,
             String var) {
-            if (mClient == null) {
+            if (mClient == null || data.length == 0) {
                 return;
             }
             Log.e("H264FrameCallBack", "******onFrame****** length:" + data.length + ", isKeyFrame:" + isKeyFrame + ", timeStamp:" + timeStamp);

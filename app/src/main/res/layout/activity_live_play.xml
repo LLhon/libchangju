@@ -10,24 +10,13 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical"
     tools:ignore="MissingPrefix">
-    
-    <ImageView
-        android:id="@+id/iv_live_pic"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@mipmap/bg" />
+
     
     <com.newproject.hardqing.view.FullScreenVideoView
         android:id="@+id/vv_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-    
-    <TextureView
-        android:id="@+id/tv_mv_video_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
     
     <RelativeLayout
         android:layout_width="match_parent"

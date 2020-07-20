@@ -1,9 +1,10 @@
-apply plugin: 'com.android.application'
+//apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.newproject.hardqing"
+//        applicationId "com.newproject.hardqing"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 19
@@ -34,7 +35,7 @@ android {
         release {
             zipAlignEnabled true
             minifyEnabled true
-            shrinkResources true
+//            shrinkResources true
             debuggable true
             buildConfigField "Boolean", "DEBUG_MODE", "false"
             buildConfigField "Boolean", "ENABLE_LOG", "false"
@@ -43,7 +44,7 @@ android {
         }
         debug {
             minifyEnabled false
-            shrinkResources false
+//            shrinkResources false
             debuggable true
             buildConfigField "Boolean", "DEBUG_MODE", "true"
             buildConfigField "Boolean", "ENABLE_LOG", "true"
@@ -88,19 +89,19 @@ android {
     productFlavors {
         //阳光网络摄像头
         sunnet {
-            applicationId "com.newproject.hardqing"
+//            applicationId "com.newproject.hardqing"
             buildConfigField "int", "channel_id", '1'
         }
 
         //阳光USB摄像头
         sunusb {
-            applicationId "com.newproject.hardqing"
+//            applicationId "com.newproject.hardqing"
             buildConfigField "int", "channel_id", '2'
         }
 
         //音创设备
         yinchuang {
-            applicationId "com.newproject.hardqing"
+//            applicationId "com.newproject.hardqing"
             buildConfigField "int", "channel_id", '3'
         }
     }

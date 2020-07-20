@@ -34,25 +34,20 @@
         android:required="true" />
     
     <application
-        android:name=".base.BaseApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/icon_launcher"
-        android:label="@string/app_name"
         android:largeHeap="true"
-        android:roundIcon="@mipmap/icon_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.QingMainActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                -->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         
         <activity
