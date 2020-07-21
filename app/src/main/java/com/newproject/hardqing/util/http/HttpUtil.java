@@ -51,7 +51,7 @@ public class HttpUtil {
 
     public static void init() {
         // 初始化OkGo
-        OkGo.getInstance().init(BaseApplication.getApp());
+        OkGo.getInstance().init(BaseApplication.getInstance());
         setConfig(HttpConfig.DEFAULT_CONFIG);
     }
 

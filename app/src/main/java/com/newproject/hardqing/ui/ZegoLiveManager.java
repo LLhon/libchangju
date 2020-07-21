@@ -179,7 +179,7 @@ public class ZegoLiveManager {
             @NonNull
             @Override
             public Application getAppContext() {
-                return BaseApplication.getApp();
+                return BaseApplication.getInstance();
             }
         };
         ZegoLiveRoom.setSDKContext(sdkContext);

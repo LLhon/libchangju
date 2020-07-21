@@ -86,13 +86,13 @@ public class QingMainActivity extends BaseActivity {
     public static final String SEND_MSG = "socket_send_msg";
     public static final String ACTION_SEND_MSG = "action_send_msg";
 
-    static {
-        String libs[] = {"avcodec", "avformat", "avutil", "swresample", "swscale", "avfilter"};
-
-        for (int index = 0; index < libs.length; index++) {
-            System.loadLibrary(libs[index]);
-        }
-    }
+    //static {
+    //    String libs[] = {"avcodec", "avformat", "avutil", "swresample", "swscale", "avfilter"};
+    //
+    //    for (int index = 0; index < libs.length; index++) {
+    //        System.loadLibrary(libs[index]);
+    //    }
+    //}
 
     @Override
     public int getLayout() {

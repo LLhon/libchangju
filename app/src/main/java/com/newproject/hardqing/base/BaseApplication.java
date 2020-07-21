@@ -42,14 +42,6 @@ public class BaseApplication extends MultiDexApplication {
     }
 
     public static BaseApplication getInstance() {
-        return mInstance;
-    }
-
-    public BaseApplication() {
-        mInstance = this;
-    }
-
-    public static BaseApplication getApp() {
         if (mInstance != null) {
             return mInstance;
         } else {
@@ -57,6 +49,14 @@ public class BaseApplication extends MultiDexApplication {
             mInstance.onCreate();
             return mInstance;
         }
+    }
+
+    public static Context getApp() {
+        return getInstance().getApplicationContext();
+    }
+
+    public BaseApplication() {
+        mInstance = this;
     }
 
     @Override
