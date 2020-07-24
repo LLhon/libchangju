@@ -1,5 +1,8 @@
 package com.newproject.hardqing.ui;
 
+import android.hardware.display.DisplayManager;
+import android.provider.Settings;
+import android.view.Display;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import android.animation.Animator;
@@ -165,6 +168,7 @@ import com.newproject.hardqing.util.NumShow;
 import com.newproject.hardqing.util.QRCodeUtil;
 import com.newproject.hardqing.util.ToastUtil;
 import com.newproject.hardqing.uvc.GetAppIdConfig;
+import com.newproject.hardqing.uvc.IFrameCallback;
 import com.newproject.hardqing.uvc.UVCCameraHelper;
 import com.newproject.hardqing.uvc.VideoCaptureFactoryDemo;
 import com.newproject.hardqing.videocapture.VideoCaptureFactoryDemo3;
@@ -307,6 +311,7 @@ public class LivePlayActivity extends BaseActivity implements
     SVGAImageView mSivSubject;
     ViewLive tvAudience1;
     ViewLive mLocalPreview;
+    ImageView mIvLiveCover;
     //    轮盘附近对应id
     SVGAImageView mSvgaExtractAudience;
     RelativeLayout mRlShowLuck;//控制轮盘是否显示
@@ -329,7 +334,7 @@ public class LivePlayActivity extends BaseActivity implements
 
     LinearLayout llSubtitles;
     TextView tvSubtitles;
-    private String yq_type;
+    public String yq_type;
 
     ImageView mIvChorusTimer;
     SVGAImageView mSivRedPackets;
@@ -338,86 +343,85 @@ public class LivePlayActivity extends BaseActivity implements
     RelativeLayout mRlPlayBill;
     Roll3DView mRoll3DView;
 
-    private TagCloudAdapter mTagCloudAdapter;
-    private WatchPresenter watchPresenter;
-    private String mUrl;
-    String anchor;//主播名字
-    String anchorAvatar;
-    private GiftControl giftControl, giftControl2;
-    LivePushHandler handler;
-    private static final int LIVE_ROOM_MSG = 0x123;
-    private String currentBalance;
-    private ArrayList<Bitmap> mList;
-    private boolean mIsPopup;
-    private UserIconPcAdapter userIconAdapter;
-    private int start = 0;
-    private boolean isShowDialog = true;
-    String isLikes = "0";//是否关注主播
-    private LiveMessageAdapter messageAdapter;
-    private boolean isLianMai = false;//是否连麦状态，连麦状态要断掉连麦才能切换竖屏
-    private boolean isAnchor;//是否主播
-    private boolean canMai = true;//发起连麦后30s才能再操作
-    private boolean isRedRain;//是否在下红包雨
-    String url1, url2, url3;//三个窗口的推流
-    String aid1, aid2, aid3;//三个窗口的推流userid
-    String lmid1, lmid2, lmid3;//三个窗口的连麦userid
-    String mPushUrl;
-    String type;//直播类型，0派对机开播，1快速开播
+    public TagCloudAdapter mTagCloudAdapter;
+    public WatchPresenter watchPresenter;
+    public String mUrl;
+    public String anchor;//主播名字
+    public String anchorAvatar;
+    public GiftControl giftControl, giftControl2;
+    public LivePushHandler handler;
+    public static final int LIVE_ROOM_MSG = 0x123;
+    public String currentBalance;
+    public ArrayList<Bitmap> mList;
+    public boolean mIsPopup;
+    public UserIconPcAdapter userIconAdapter;
+    public int start = 0;
+    public boolean isShowDialog = true;
+    public String isLikes = "0";//是否关注主播
+    public LiveMessageAdapter messageAdapter;
+    public boolean isLianMai = false;//是否连麦状态，连麦状态要断掉连麦才能切换竖屏
+    public boolean isAnchor;//是否主播
+    public boolean canMai = true;//发起连麦后30s才能再操作
+    public boolean isRedRain;//是否在下红包雨
+    public String url1, url2, url3;//三个窗口的推流
+    public String aid1, aid2, aid3;//三个窗口的推流userid
+    public String lmid1, lmid2, lmid3;//三个窗口的连麦userid
+    public String mPushUrl;
+    public String type;//直播类型，0派对机开播，1快速开播
     //推流器
-    String roomNo;
-    String tourId;//游客id
-    private boolean isShowCake = false;
-    WindowManager wm;
-    int swidth, sheight;
+    public String roomNo;
+    public String tourId;//游客id
+    public boolean isShowCake = false;
+    public WindowManager wm;
+    public int swidth, sheight;
 
-    private MediaPlayer mEffectsMediaPlayer;
+    public MediaPlayer mEffectsMediaPlayer;
 
-    protected CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+    public CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
-    private LalaOnlineAdapter lalaOnlineAdapter;
-    private String mTopicURL;
-    private String mMusicURL;
-    private boolean mUpVideoViewShowing;
-    private MediaPlayer mGiftMediaPlayer;
-    private DownChorusMusicDialog mDownChorusMusicDialog;
-    private String mMusicPath; //原唱音乐地址
-    private String mChorusUserId;
-    private String mChorusUserName;
-    private boolean isDownLoadSuccess;
-    private boolean isReceiveDownLoadSuccess;
-    private TimerTaskManager mChorusTimerTaskManager;
-    private VideoCaptureFactoryDemo factoryDemo;
-    private boolean mIsLoginRoomSuccess;
-    private boolean mInitSDKSuccess;
-    private boolean mIsUsbConnected;
+    public LalaOnlineAdapter lalaOnlineAdapter;
+    public String mTopicURL;
+    public String mMusicURL;
+    public boolean mUpVideoViewShowing;
+    public MediaPlayer mGiftMediaPlayer;
+    public DownChorusMusicDialog mDownChorusMusicDialog;
+    public String mMusicPath; //原唱音乐地址
+    public String mChorusUserId;
+    public String mChorusUserName;
+    public boolean isDownLoadSuccess;
+    public boolean isReceiveDownLoadSuccess;
+    public TimerTaskManager mChorusTimerTaskManager;
+    public VideoCaptureFactoryDemo factoryDemo;
+    public boolean mIsLoginRoomSuccess;
+    public boolean mInitSDKSuccess;
+    public boolean mIsUsbConnected;
     //是否正在霸屏中
-    private boolean mIsBaping;
-    private ZegoLiveRoom mZegoLiveRoom;
-    private boolean isUsbDevice;
-    private ExplosionField mExplosionField;
-    private Disposable mExplosionDisposable;
-    private Disposable mJalousieDisposable;
-    private Disposable mRollDisposable;
-    private PlayBillEntity mPlayBillData;
-    private CountDownTimer mChorusProgressTimer;
-    private ZegoMediaPlayer mBgZegoMediaPlayer;
-    private ZegoMediaPlayer mChorusZegoMediaPlayer;
-    private int mChorusType;
-    private int mCurPlayMusicType; //音乐类型：0 背景音乐 1 点歌 2 合唱
-    private String mMp3BcPath; //伴唱音乐地址
-    private long mTimeStamp; //音乐播放进度时间戳
-    private boolean mIsStartPublishing; //是否开始启动推流
-    private int mIsEnableCamera; //开关播状态
-    private String mLrcUrl;
-    private String mMultiRoomStreamId;
-    private String mMultiRoomId;
-    private UserDetailBean mLianMaiUserInfo;
-    private String mLianMaiStreamID;
-    private AudienceListAdapter audienceListAdapter;
-    private Handler textColorHandler;
-    private Runnable runnable;
-
-    private ZegoMediaPlayer mvZegoMediaPlayer;
+    public boolean mIsBaping;
+    public ZegoLiveRoom mZegoLiveRoom;
+    public boolean isUsbDevice;
+    public ExplosionField mExplosionField;
+    public Disposable mExplosionDisposable;
+    public Disposable mJalousieDisposable;
+    public Disposable mRollDisposable;
+    public PlayBillEntity mPlayBillData;
+    public CountDownTimer mChorusProgressTimer;
+    public ZegoMediaPlayer mBgZegoMediaPlayer;
+    public ZegoMediaPlayer mChorusZegoMediaPlayer;
+    public int mChorusType;
+    public int mCurPlayMusicType; //音乐类型：0 背景音乐 1 点歌 2 合唱
+    public String mMp3BcPath; //伴唱音乐地址
+    public long mTimeStamp; //音乐播放进度时间戳
+    public boolean mIsStartPublishing; //是否开始启动推流
+    public int mIsEnableCamera; //开关播状态
+    public String mLrcUrl;
+    public String mMultiRoomStreamId;
+    public String mMultiRoomId;
+    public UserDetailBean mLianMaiUserInfo;
+    public String mLianMaiStreamID;
+    public AudienceListAdapter audienceListAdapter;
+    public Handler textColorHandler;
+    public Runnable runnable;
+    public LiveDisplay mPresentation;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void handleSomethingElse(LivePlayMessage event) {
@@ -499,6 +503,10 @@ public class LivePlayActivity extends BaseActivity implements
         }
         stopBapin();
         unDispose();
+
+        if (mPresentation != null) {
+            mPresentation.onCloseBaPingClicked();
+        }
     }
 
 
@@ -537,6 +545,9 @@ public class LivePlayActivity extends BaseActivity implements
                                 danmu.setUserName("");
                                 danmu.setInfo("霸屏主题：" + bapingText);
                                 mDanmuView.add(danmu);
+                                if (mPresentation != null) {
+                                    mPresentation.addDanmu(danmu);
+                                }
                             }
                             break;
 
@@ -582,6 +593,9 @@ public class LivePlayActivity extends BaseActivity implements
             //收到歌词进度的消息
             mTimeStamp = musicEntity.getLrcTimeStamp();
             mLrcChorusView.updateTime(mTimeStamp);
+            if (mPresentation != null) {
+                mPresentation.updateLrcTime(mTimeStamp);
+            }
         } else if (musicEntity.isDownSuccess() == 1) {
             //app看客端歌曲已下载完成，可以准备倒计时合唱
             Log.e("LLhon", "LivePlayActivity--收到app端已下载歌曲完成的消息...");
@@ -607,6 +621,9 @@ public class LivePlayActivity extends BaseActivity implements
             if (mChorusType == 0) {
                 //合唱
                 showChorusCountDown(mLrcUrl, mMusicPath);
+                if (mPresentation != null) {
+                    mPresentation.showChorusCountDown(mLrcUrl, mMusicPath);
+                }
             } else {
                 //点歌
                 //点歌，这条消息将发送到直播间内的所有观众端，用于显示歌词
@@ -615,6 +632,9 @@ public class LivePlayActivity extends BaseActivity implements
                 socket.setChorusType(1);
                 LiveSocketUtil.sendPublicMessage(this, socket);
                 playChorusMusic(mMusicPath, mLrcUrl);
+                if (mPresentation != null) {
+                    mPresentation.playChorusMusic(mMusicPath, mLrcUrl);
+                }
             }
 
             switch (musicEntity.getChorusType()) {
@@ -671,6 +691,10 @@ public class LivePlayActivity extends BaseActivity implements
                 }
             }, 60 * 1000);
 
+        }
+
+        if (mPresentation != null) {
+            mPresentation.showTopicAnim(uri);
         }
     }
 
@@ -826,7 +850,8 @@ public class LivePlayActivity extends BaseActivity implements
         mRlPlayBillContainer = findViewById(R.id.rl_playbill_container);
         mRoll3DView = findViewById(R.id.roll_view);
         mTagCloudView = findViewById(R.id.tag_cloud);
-
+        mIvLiveCover = findViewById(R.id.iv_live_cover);
+        mDanmuView = findViewById(R.id.danmu_view);
         mSvgaExtractAudience = findViewById(R.id.svga_extract_audience);
         mRlShowLuck = findViewById(R.id.rl_show_luck);
         mLpLuckPan = findViewById(R.id.lp_luckPan);
@@ -846,16 +871,6 @@ public class LivePlayActivity extends BaseActivity implements
         tvCai = findViewById(R.id.tv_cai);
         tvBiao = findViewById(R.id.tv_biao);
         tvYan = findViewById(R.id.tv_yan);
-
-        mShowGifImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mGifView == null) {
-                    return;
-                }
-                mGifView.startAnimation(mGifView.getWidth(), mGifView.getHeight());
-            }
-        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -880,7 +895,6 @@ public class LivePlayActivity extends BaseActivity implements
         initZegoLivePushListener();
         LoginUserManager.setLiveVideoSource("app");
         showTopicAnim(QingMainActivity.category_uri);
-        mDanmuView = (DanmuView) findViewById(R.id.danmu_view);
         //在线拉拉星
         rvLalaOnline.setLayoutManager(new LinearLayoutManager(this));
         lalaOnlineAdapter = new LalaOnlineAdapter(null, this);
@@ -891,6 +905,31 @@ public class LivePlayActivity extends BaseActivity implements
         LinearLayoutManager a = new LinearLayoutManager(this);
         a.setOrientation(LinearLayoutManager.VERTICAL);
         mRlAudienceList.setLayoutManager(a);
+
+        showLiveDisplay();
+    }
+
+    /**
+     * 副屏显示第二个内容
+     */
+    private void showLiveDisplay() {
+        DisplayManager dm = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
+        Display[] displays = dm.getDisplays();
+        if (displays.length > 1) {
+            mPresentation = new LiveDisplay(getApplicationContext(), displays[1], this);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(this)) {
+                    ToastUtil.showShort(this, "SYSTEM_ALERT_WINDOW 权限被拒绝");
+                    return;
+                }
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mPresentation.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+            } else {
+                mPresentation.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            }
+            mPresentation.show();
+        }
     }
 
     public void initGiftView() {
@@ -1001,6 +1040,10 @@ public class LivePlayActivity extends BaseActivity implements
                 tvAudience1.setVisibility(View.GONE);
             }
         }
+
+        if (mPresentation != null) {
+            mPresentation.setShowVideoWindow(isVisible, isChangeLiveStatus);
+        }
     }
 
     private boolean isShowVideoWindow() {
@@ -1030,10 +1073,14 @@ public class LivePlayActivity extends BaseActivity implements
                 ivQRCode.setImageBitmap(QRCodeUtil.createQRCodeBitmap(new Gson().toJson(qrcodeBean), ivQRCode.getWidth(), ivQRCode.getHeight()));
             }
         });
+
+        if (mPresentation != null) {
+            mPresentation.setQRCode(qrcodeBean);
+        }
     }
 
-    private int llwidth;//霸屏消息
-    private int screenWidth;
+    public int llwidth;//霸屏消息
+    public int screenWidth;
 
     private void initUi() {
         wm = this.getWindowManager();
@@ -1227,6 +1274,9 @@ public class LivePlayActivity extends BaseActivity implements
                         //}
                         //隐藏自己的歌词
                         mLrcChorusView.setVisibility(View.GONE);
+                        if (mPresentation != null) {
+                            mPresentation.setLrcViewVisibility(false);
+                        }
                         //隐藏观众的歌词
                        /* PublicMessageSocket socket = new PublicMessageSocket("", "", 6,
                                 "", roomId);
@@ -1507,6 +1557,11 @@ public class LivePlayActivity extends BaseActivity implements
             tvAudience1.setFree();
             stopChorusMediaPlayer();
             isLianMai = false;
+
+            if (mPresentation != null) {
+                mPresentation.setShowVideoWindow(false, false);
+                mPresentation.releaseLiveView();
+            }
         }
     }
 
@@ -1759,6 +1814,10 @@ public class LivePlayActivity extends BaseActivity implements
             //resumeBgMediaPlayer();
             //关闭合唱
             stopChorusMediaPlayer();
+
+            if (mPresentation != null) {
+                mPresentation.setShowVideoWindow(false, false);
+            }
         }
     }
 
@@ -1836,6 +1895,9 @@ public class LivePlayActivity extends BaseActivity implements
                 return;
             }
             mGifView.startAnimation(mGifView.getWidth(), mGifView.getHeight());
+            if (mPresentation != null) {
+                mPresentation.showGifAnimation();
+            }
         } else {
             String itemContent = sendMsgEntity.getContent();
             if (!TextUtils.isEmpty(itemContent) && GsonConverter.isJson(itemContent)) {
@@ -1849,6 +1911,9 @@ public class LivePlayActivity extends BaseActivity implements
                                 danmu.setUserName(null);
                                 danmu.setInfo(baPingChatMessage.getMusicName());
                                 mDanmuView.add(danmu);
+                                if (mPresentation != null) {
+                                    mPresentation.addDanmu(danmu);
+                                }
                             }
                             return;
                         case 7:
@@ -1890,16 +1955,21 @@ public class LivePlayActivity extends BaseActivity implements
                         case 20:
                             mMultiRoomStreamId = baPingChatMessage.getStreamID();
                             mMultiRoomId = baPingChatMessage.getAroom_id();
-                            mShowAllView.setVisibility(View.VISIBLE);
-                            tvAudience1.setVisibility(View.VISIBLE);
-                            tvAudience1.setStreamID(mMultiRoomStreamId);
-                            tvAudience1.setUserAvatarViewGone();
-                            mZegoLiveRoom.startPlayingStream(mMultiRoomStreamId, tvAudience1.getTextureView());
+
                             isLianMai = true;
-                            setShowVideoWindow(true, false);
                             stopChorusZegoMediaPlayer();
-                            //pauseBgMediaPlayer();
-                            mLrcChorusView.setVisibility(View.GONE);
+                            setShowVideoWindow(true, false);
+
+                            if (mPresentation != null) {
+                                mPresentation.startPlayingStream(mMultiRoomStreamId);
+                            } else {
+                                mLrcChorusView.setVisibility(View.GONE);
+                                tvAudience1.setVisibility(View.VISIBLE);
+                                tvAudience1.setStreamID(mMultiRoomStreamId);
+                                tvAudience1.setUserAvatarViewGone();
+                                mZegoLiveRoom.startPlayingStream(mMultiRoomStreamId, tvAudience1.getTextureView());
+                                mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, mMultiRoomStreamId);
+                            }
                             return;
                         case 21:
                             int alphaProgress = baPingChatMessage.getVoiceControlProgress();
@@ -1916,6 +1986,10 @@ public class LivePlayActivity extends BaseActivity implements
                             GiftEntity giftEntity = baPingChatMessage.getGiftEntity();
                             if (giftEntity != null) {
                                 showAnim(giftEntity);
+
+                                if (mPresentation != null) {
+                                    mPresentation.showAnim(giftEntity);
+                                }
                             }
                             return;
                         default:
@@ -1928,12 +2002,20 @@ public class LivePlayActivity extends BaseActivity implements
                         danmu.setUserName(sendMsgEntity.getUsername());
                         danmu.setInfo("霸屏主题：" + bapingText);
                         mDanmuView.add(danmu);
+
+                        if (mPresentation != null) {
+                            mPresentation.addDanmu(danmu);
+                        }
                     }
                 }
             }
             messageAdapter.addData(sendMsgEntity);
             if (isScrollBottom) {
                 rvMesssage.scrollToPosition(messageAdapter.getData().size() - 1);
+
+                if (mPresentation != null) {
+                    mPresentation.scrollMessage(messageAdapter.getData().size() - 1);
+                }
             }
         }
     }
@@ -2222,6 +2304,9 @@ public class LivePlayActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         mDanmuView.startPlay(true);
+        if (mPresentation != null) {
+            mPresentation.startPlayDanmu();
+        }
         if (BuildConfig.channel_id == Constants.CHANNEL_ID_SUN_USB) {
             //阳光点歌机使用UVCCamera
             List<UsbDevice> usbDeviceList = UVCCameraHelper.sharedInstance().getDeviceList();
@@ -2286,6 +2371,11 @@ public class LivePlayActivity extends BaseActivity implements
     protected void onDestroy() {
         super.onDestroy();
         LogUtils.d("onDestroy");
+
+        if (mPresentation != null) {
+            mPresentation.cancel();
+        }
+
         LiveService.setRoomId("");
         clearAnim();
         //销毁礼物动画
@@ -2380,12 +2470,11 @@ public class LivePlayActivity extends BaseActivity implements
         this.giftMode = giftMode;
     }
 
-    private String roomId;
-    private int mWatchNum = 0;
-    private String mHostUserId = "";
-    private String mHostUserName;
-
-    private boolean isLive = false;
+    public String roomId;
+    public int mWatchNum = 0;
+    public String mHostUserId = "";
+    public String mHostUserName;
+    public boolean isLive = false;
 
     @Override
     public void getLiveView(LiveEntity liveEntity) {
@@ -2395,6 +2484,9 @@ public class LivePlayActivity extends BaseActivity implements
         LiveEntity.ExtrasBean extrasBean = liveEntity.getExtras();
         //        mWatchNum = Integer.parseInt(extrasBean.getWatch());
         mWatchUserCount.setText(NumShow.formatNum(String.valueOf(mWatchNum), false, this));
+        if (mPresentation != null) {
+            mPresentation.setWatchUserCount(NumShow.formatNum(String.valueOf(mWatchNum), false, this));
+        }
         watchPresenter.getRoomUser(TAG, String.valueOf(start), roomId);
         RequestOptions priority = new RequestOptions().priority(Priority.HIGH).error(R.mipmap.pic_3);
         if (extrasBean == null) {
@@ -2422,6 +2514,10 @@ public class LivePlayActivity extends BaseActivity implements
         }
         mZhuBoName.setText(extrasBean.getUsername());
 
+        if (mPresentation != null) {
+            mPresentation.setZhuBoInfo(extrasBean.getAvatar(), extrasBean.getUsername());
+        }
+
         //加载当前连麦的人的画面
         //        for (int i = 0; i < liveEntity.getData().size(); i++) {
         //            initInvite(liveEntity.getData().get(i).getMain_rtmp(), liveEntity.getData().get(i).getUser_id(), "", liveEntity.getData().get(i).getLara());
@@ -2433,9 +2529,20 @@ public class LivePlayActivity extends BaseActivity implements
         if (!TextUtils.isEmpty(title)) {
             mTvPartySubject.setSelected(true);
             mTvPartySubject.setText(title);
+
+            if (mPresentation != null) {
+                mPresentation.setTvPartySubject(title);
+            }
         }
-        LogUtils.d("extrasBean  extrasBean : " + extrasBean);
-        LogUtils.d("extrasBean  categoryId : " + categoryId);
+
+        if (extrasBean.getCover().endsWith("mp4")) {
+            //主题背景图为动态视频
+            showDynamicBg(extrasBean.getCover());
+        } else {
+            //主题背景图为静态图片
+            showStaticBg(extrasBean.getCover());
+        }
+
         if ("1".equals(categoryId)) {
             initBall("生日派对");
         } else if ("2".equals(categoryId)) {
@@ -2471,6 +2578,10 @@ public class LivePlayActivity extends BaseActivity implements
         }
         mTagCloudAdapter = new TagCloudAdapter(list);
         mTagCloudView.setAdapter(mTagCloudAdapter);
+
+        if (mPresentation != null) {
+            mPresentation.setTagCloudData();
+        }
     }
 
     protected List<ZegoStreamInfo> mListStreamOfRoom = new ArrayList<>();
@@ -2637,6 +2748,7 @@ public class LivePlayActivity extends BaseActivity implements
 
 
     private void startPlay(String streamID, ZegoStreamInfo streamInfo) {
+        Log.d(TAG, "startPlay:" + streamID);
         /**
          * 开始播放流.
          */
@@ -2658,18 +2770,23 @@ public class LivePlayActivity extends BaseActivity implements
         //暂停背景音乐
         //pauseBgMediaPlayer();
         stopChorusZegoMediaPlayer();
-        mLrcChorusView.setVisibility(View.GONE);
-        // 设置流信息
-        tvAudience1.setStreamID(streamID);
-        tvAudience1.setPlayView(true);
-        tvAudience1.setAuser_id(streamInfo.userID);
-        tvAudience1.SetUserName("");
-        tvAudience1.setVisibility(View.VISIBLE);
-        tvAudience1.setUserAvatarViewGone();
         setShowVideoWindow(true, false);
-        LogUtil.e(" start play stream(" + streamID + ")");
-        mZegoLiveRoom.startPlayingStream(streamID, tvAudience1.getTextureView());
-        mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
+
+        if (mPresentation != null) {
+            mPresentation.startPlayingStream(streamID);
+        } else {
+            // 设置流信息
+            tvAudience1.setStreamID(streamID);
+            tvAudience1.setPlayView(true);
+            tvAudience1.setAuser_id(streamInfo.userID);
+            tvAudience1.SetUserName("");
+            tvAudience1.setVisibility(View.VISIBLE);
+            tvAudience1.setUserAvatarViewGone();
+            mLrcChorusView.setVisibility(View.GONE);
+            mZegoLiveRoom.startPlayingStream(streamID, tvAudience1.getTextureView());
+            mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
+        }
+
         getAnchorUserInfo(streamID);
         if (streamID.equals(ZegoRoomUtil.getMixStreamID(mHostUserId)) && isLive) {
             if (!TextUtils.isEmpty(yq_type)) {
@@ -2845,6 +2962,10 @@ public class LivePlayActivity extends BaseActivity implements
             danmu.setInfo(sendChatMsgEntity.getContent());
             mDanmuView.add(danmu);
             Log.e(TAG, sendChatMsgEntity.getContent());
+
+            if (mPresentation != null) {
+                mPresentation.addDanmu(danmu);
+            }
         }
     }
 
@@ -2857,6 +2978,10 @@ public class LivePlayActivity extends BaseActivity implements
         danmu.setUserName(sendMsgEntity.getUsername());
         danmu.setInfo(sendMsgEntity.getContent());
         mDanmuView.add(danmu);
+
+        if (mPresentation != null) {
+            mPresentation.addDanmu(danmu);
+        }
     }
 
     List<GiftEntity> mGiftData = new ArrayList<>();
@@ -2892,6 +3017,9 @@ public class LivePlayActivity extends BaseActivity implements
             }
         });
 
+        if (mPresentation != null) {
+            mPresentation.sendGift(giftEntity);
+        }
     }
 
     private boolean isShow = false;
@@ -3162,6 +3290,10 @@ public class LivePlayActivity extends BaseActivity implements
             tvAudience1.setFree();
             isLianMai = false;
             stopChorusMediaPlayer();
+
+            if (mPresentation != null) {
+                mPresentation.releaseLiveView();
+            }
         }
     }
 
@@ -3184,6 +3316,10 @@ public class LivePlayActivity extends BaseActivity implements
             tvAudience1.setFree();
             mMultiRoomStreamId = "";
             mMultiRoomId = "";
+
+            if (mPresentation != null ){
+                mPresentation.releaseLiveView();
+            }
         }
     }
 
@@ -3240,6 +3376,10 @@ public class LivePlayActivity extends BaseActivity implements
         ivCloseRed.setVisibility(View.VISIBLE);
         playRedPacketVideoRaw();
         startRedRain(redEntity);
+
+        if (mPresentation != null) {
+            mPresentation.red(redEntity);
+        }
     }
 
     /**
@@ -3330,6 +3470,10 @@ public class LivePlayActivity extends BaseActivity implements
     public void stopRain() {
         stopRedRain();
         isRedRain = false;
+
+        if (mPresentation != null) {
+            mPresentation.stopRedRain();
+        }
     }
 
     public void ChangeTextColor() {
@@ -3346,6 +3490,10 @@ public class LivePlayActivity extends BaseActivity implements
                 tvBiao.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
                 tvYan.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
 
+                if (mPresentation != null) {
+                    mPresentation.ChangeTextColor(random);
+                }
+
                 textColorHandler.postDelayed(this, 200);
             }
         };
@@ -3361,6 +3509,10 @@ public class LivePlayActivity extends BaseActivity implements
         mTvWaitAudience.setVisibility(View.VISIBLE);
 
         textColorHandler.postDelayed(runnable, 200);//每0.2秒执行一次runnable.
+
+        if (mPresentation != null) {
+            mPresentation.showEntertainLuck();
+        }
     }
 
 
@@ -3370,6 +3522,10 @@ public class LivePlayActivity extends BaseActivity implements
         mRlShowInduction.setVisibility(View.VISIBLE);
         mRlShowLuck.setVisibility(View.GONE);
         mRlLuckP.setVisibility(View.GONE);
+
+        if (mPresentation != null) {
+            mPresentation.showInduction();
+        }
     }
 
     @Override
@@ -3389,6 +3545,10 @@ public class LivePlayActivity extends BaseActivity implements
                 mTvExtractName.setText(extractAudienceEntity.getUsername());
             }
         });
+
+        if (mPresentation != null) {
+            mPresentation.showExtractAudience(extractAudienceEntity);
+        }
     }
 
     @Override
@@ -3398,6 +3558,10 @@ public class LivePlayActivity extends BaseActivity implements
 
         usersBeansList.clear();
         textColorHandler.removeCallbacks(runnable);//终止定时器
+
+        if (mPresentation != null) {
+            mPresentation.showCloseInduction();
+        }
     }
 
     @Override
@@ -3413,6 +3577,10 @@ public class LivePlayActivity extends BaseActivity implements
                 mTvLuckResult.setText(luckyAudienceEntity.getContent());
             }
         });
+
+        if (mPresentation != null) {
+            mPresentation.feedbackLucky(luckyAudienceEntity);
+        }
     }
 
     List<RandomLuckyEntity.UsersBean> usersBeansList = new ArrayList<>();
@@ -3431,6 +3599,10 @@ public class LivePlayActivity extends BaseActivity implements
                 mRlAudienceList.setAdapter(audienceListAdapter);
             }
         });
+
+        if (mPresentation != null) {
+            mPresentation.fiveAudience();
+        }
     }
 
     @Override
@@ -3444,12 +3616,16 @@ public class LivePlayActivity extends BaseActivity implements
             //数据填充适配器
             audienceListAdapter.setNewData(usersBeansList);
             mRlAudienceList.setAdapter(audienceListAdapter);
+
+            if (mPresentation != null) {
+                mPresentation.lianFeedBack();
+            }
         }
     }
 
-    private String playerUrl, cover;
-    private String music;
-    private String svgaUrl;
+    public String playerUrl, cover;
+    public String music;
+    public String svgaUrl;
 
     @Override
     public void showTemplate(SeeTemplateEntity seeTemplateEntity) {
@@ -3579,6 +3755,10 @@ public class LivePlayActivity extends BaseActivity implements
         tvAudience1.setFree();
         stopChorusMediaPlayer();
         isLianMai = false;
+
+        if (mPresentation != null) {
+            mPresentation.releaseLiveView();
+        }
     }
 
     private void stopPlay(String streamID) {
@@ -3619,6 +3799,10 @@ public class LivePlayActivity extends BaseActivity implements
         } else {
             mWatchNum = 0;
             mWatchUserCount.setText(NumShow.formatLiveNum(mWatchNum + "", false, this));
+        }
+
+        if (mPresentation != null) {
+            mPresentation.setWatchNum();
         }
     }
 
@@ -3720,6 +3904,10 @@ public class LivePlayActivity extends BaseActivity implements
         }
         String text = baScreenEntity.getText();
         startHengFu(text);
+
+        if (mPresentation != null) {
+            mPresentation.bapin(baScreenEntity);
+        }
     }
 
     public void showBaScreenTimer(BaScreenEntity baScreenEntity) {
@@ -3752,6 +3940,10 @@ public class LivePlayActivity extends BaseActivity implements
                         } else {
                             mTvBaScreenTimer.setText(String.valueOf(aLong));
                             CustomPoPupAnim.startScaleAnimation(mTvBaScreenTimer);
+                        }
+
+                        if (mPresentation != null) {
+                            mPresentation.hideBaScreenTimer(aLong);
                         }
                     }
 
@@ -3824,6 +4016,10 @@ public class LivePlayActivity extends BaseActivity implements
         mTvBaScreenTimer.clearAnimation();
         mTvBaScreenTimer.setVisibility(View.GONE);
         mIsBaping = false;
+
+        if (mPresentation != null) {
+            mPresentation.stopBapin();
+        }
     }
 
     @Override
@@ -3881,48 +4077,48 @@ public class LivePlayActivity extends BaseActivity implements
      * 显示静态主题背景
      */
     private void showStaticBg(String imgUrl) {
-        //if (mLivePicImage == null) {
-        //    return;
-        //}
-        //
-        //mLivePicImage.setVisibility(View.VISIBLE);
-        //mVideoViewBg.setVisibility(View.GONE);
-        //mVideoViewBg.stopPlayback();
-        //try {
-        //    Glide.with(this)
-        //            .applyDefaultRequestOptions(new RequestOptions().placeholder(R.mipmap.bg).diskCacheStrategy(DiskCacheStrategy.NONE))
-        //            .load(imgUrl)
-        //            .into(mLivePicImage);
-        //} catch (Exception e) {
-        //
-        //}
+        if (mIvLiveCover == null) {
+            return;
+        }
+
+        mIvLiveCover.setVisibility(View.VISIBLE);
+        mVideoViewBg.setVisibility(View.GONE);
+        mVideoViewBg.stopPlayback();
+        try {
+            Glide.with(this)
+                    .applyDefaultRequestOptions(new RequestOptions().placeholder(R.mipmap.bg).diskCacheStrategy(DiskCacheStrategy.NONE))
+                    .load(imgUrl)
+                    .into(mIvLiveCover);
+        } catch (Exception e) {
+
+        }
     }
 
     /**
      * 显示动态主题背景
      */
     private void showDynamicBg(String videoUrl) {
-        //try {
-        //    if (mVideoViewBg == null) {
-        //        return;
-        //    }
-        //    mVideoViewBg.setVisibility(View.VISIBLE);
-        //    mLivePicImage.setVisibility(View.GONE);
-        //    //mVideoViewBg.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg));
-        //    mVideoViewBg.setVideoPath(Uri.parse(videoUrl).toString());
-        //    mVideoViewBg.start();
-        //    mVideoViewBg.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-        //        @Override
-        //        public void onCompletion(MediaPlayer mp) {
-        //            if (mVideoViewBg == null) {
-        //                return;
-        //            }
-        //            mVideoViewBg.start();
-        //        }
-        //    });
-        //} catch (Exception e) {
-        //    showDynamicBg(videoUrl);
-        //}
+        try {
+            if (mVideoViewBg == null) {
+                return;
+            }
+            mVideoViewBg.setVisibility(View.VISIBLE);
+            mIvLiveCover.setVisibility(View.GONE);
+            //mVideoViewBg.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg));
+            mVideoViewBg.setVideoPath(Uri.parse(videoUrl).toString());
+            mVideoViewBg.start();
+            mVideoViewBg.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    if (mVideoViewBg == null) {
+                        return;
+                    }
+                    mVideoViewBg.start();
+                }
+            });
+        } catch (Exception e) {
+            showDynamicBg(videoUrl);
+        }
     }
 
     @Override
@@ -4214,6 +4410,10 @@ public class LivePlayActivity extends BaseActivity implements
                     mTimeStamp = timeStamp;
                     mLrcChorusView.updateTime(mTimeStamp);
 
+                    if (mPresentation != null) {
+                        mPresentation.updateLrcTime(mTimeStamp);
+                    }
+
                     byte[] mediaSide = new byte[4];
                     mediaSide[0] = (byte) (mTimeStamp & 0xff);  // 低位(右边)的8个bit位
                     mediaSide[1] = (byte) ((mTimeStamp >> 8) & 0xff); //第二个8 bit位
@@ -4271,6 +4471,10 @@ public class LivePlayActivity extends BaseActivity implements
             //当前正在下载歌曲准备合唱，取消下载
             mDownChorusMusicDialog.dismiss();
             OkGo.getInstance().cancelTag("download_song");
+        }
+
+        if (mPresentation != null) {
+            mPresentation.setLrcViewVisibility(false);
         }
     }
 
@@ -4656,6 +4860,10 @@ public class LivePlayActivity extends BaseActivity implements
                 //此情况为对方房间合唱歌曲播放完成下，收到对方房间发来的隐藏歌词的消息
                 //{"cmd":"multiroom_public_message","user_id":"","auser_id":"","room_id":"138","aroom_id":"371","lrc_progress":0,"song_duration":0,"type":1}
                 mLrcChorusView.setVisibility(View.GONE);
+
+                if (mPresentation != null) {
+                    mPresentation.setLrcViewVisibility(false);
+                }
                 break;
         }
     }
@@ -4711,9 +4919,6 @@ public class LivePlayActivity extends BaseActivity implements
         if (mLocalPreview != null) {
             mLocalPreview.setTextureViewAlpha(0.4f);
         }
-        if (mvZegoMediaPlayer != null) {
-            mvZegoMediaPlayer.resume();
-        }
 
         if (mChorusZegoMediaPlayer != null) {
             mChorusZegoMediaPlayer.pause();
@@ -4724,10 +4929,6 @@ public class LivePlayActivity extends BaseActivity implements
     public void setTextureViewAlpha100() {
         if (mLocalPreview != null) {
             mLocalPreview.setTextureViewAlpha(1.0f);
-        }
-
-        if (mvZegoMediaPlayer != null) {
-            mvZegoMediaPlayer.pause();
         }
     }
 }

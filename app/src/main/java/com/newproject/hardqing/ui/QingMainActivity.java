@@ -1,5 +1,8 @@
 package com.newproject.hardqing.ui;
 
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import com.google.gson.Gson;
 
 import android.content.Intent;
@@ -30,6 +33,7 @@ import com.newproject.hardqing.BuildConfig;
 import com.newproject.hardqing.R;
 import com.newproject.hardqing.base.BaseActivity;
 import com.newproject.hardqing.base.BaseApplication;
+import com.newproject.hardqing.constant.Constants;
 import com.newproject.hardqing.constant.PreConst;
 import com.newproject.hardqing.constant.UrlConst;
 import com.newproject.hardqing.constant.WebSocketFeedConst;
@@ -153,6 +157,14 @@ public class QingMainActivity extends BaseActivity {
                         }
                     }
                 }).request();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, Constants.REQUEST_CODE_PERMISSION);
+            }
+        }
     }
 
 
@@ -575,6 +587,20 @@ public class QingMainActivity extends BaseActivity {
         } catch (MalformedURLException e) {
             e.printStackTrace();
             LogUtils.d("getGiftData loadSvgaTem  MalformedURLException()");
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case Constants.REQUEST_CODE_PERMISSION:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (!Settings.canDrawOverlays(this)) {
+                        ToastUtil.showShort(this, "SYSTEM_ALERT_WINDOW 权限被拒绝");
+                    }
+                }
+                break;
         }
     }
 

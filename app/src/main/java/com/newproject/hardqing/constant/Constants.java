@@ -36,4 +36,6 @@ public class Constants {
         }
         return companyId;
     }
+
+    public static final int REQUEST_CODE_PERMISSION = 10001;
 }

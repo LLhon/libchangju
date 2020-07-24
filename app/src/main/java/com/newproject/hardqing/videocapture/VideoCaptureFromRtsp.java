@@ -236,7 +236,7 @@ public class VideoCaptureFromRtsp extends ZegoVideoCaptureDevice implements Text
             if (mClient == null || data.length == 0) {
                 return;
             }
-            Log.e("H264FrameCallBack", "******onFrame****** length:" + data.length + ", isKeyFrame:" + isKeyFrame + ", timeStamp:" + timeStamp);
+            //Log.e("H264FrameCallBack", "******onFrame****** length:" + data.length + ", isKeyFrame:" + isKeyFrame + ", timeStamp:" + timeStamp);
 
             //未解码码流方式
             // 编码器相关信息
