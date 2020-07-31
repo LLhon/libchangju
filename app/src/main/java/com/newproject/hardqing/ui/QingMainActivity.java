@@ -160,6 +160,7 @@ public class QingMainActivity extends BaseActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
+                ToastUtil.showShort(this, "当前无悬浮窗权限，请授权");
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:" + getPackageName()));
                 startActivityForResult(intent, Constants.REQUEST_CODE_PERMISSION);
@@ -597,7 +598,7 @@ public class QingMainActivity extends BaseActivity {
             case Constants.REQUEST_CODE_PERMISSION:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (!Settings.canDrawOverlays(this)) {
-                        ToastUtil.showShort(this, "SYSTEM_ALERT_WINDOW 权限被拒绝");
+                        ToastUtil.showShort(this, "悬浮窗权限被拒绝");
                     }
                 }
                 break;

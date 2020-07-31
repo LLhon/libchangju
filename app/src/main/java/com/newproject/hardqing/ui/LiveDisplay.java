@@ -200,7 +200,9 @@ public class LiveDisplay extends Presentation {
     private boolean startAnimation = false;
     private List<GiftEntity> mGiftData = new ArrayList<>();
     private boolean isShow = false;
-    public boolean isRedRain;//是否在下红包雨
+    public boolean isRedRain;
+    public boolean mUpVideoViewShowing;
+    public boolean mIsBaping;
 
     public LiveDisplay(Context outerContext, Display display, LivePlayActivity activity) {
         super(outerContext, display);
@@ -220,7 +222,6 @@ public class LiveDisplay extends Presentation {
 
     private void initView() {
         initViewId();
-        //显示派对星球动画
         CustomPoPupAnim.loadSvga(mSivSubject, "xingqiu.svga");
         mActivity.giftControl2.setGiftLayout(false, giftLl2, 4);
         setLayout();
@@ -360,15 +361,6 @@ public class LiveDisplay extends Presentation {
 
     public void initGiftView() {
         List<Drawable> drawableList = new ArrayList<>();
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_indigo_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_deep_purple_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_cyan_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_blue_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_deep_purple_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_light_blue_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_lime_a200_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_pink_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_red_900_24dp));
         drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
         drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
         drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
@@ -392,7 +384,6 @@ public class LiveDisplay extends Presentation {
     }
 
     public void bapin(final BaScreenEntity baScreenEntity) {
-        // 0 图片 1 视频
         if (TextUtils.equals(baScreenEntity.getType(), "0")) {
             ivTemplate.setVisibility(View.VISIBLE);
             ivTemplateBg.setVisibility(View.VISIBLE);
@@ -453,7 +444,42 @@ public class LiveDisplay extends Presentation {
         if (mTvBaScreenTimer == null || baScreenEntity == null) {
             return;
         }
+        final long time = Long.parseLong(baScreenEntity.getTime());
+        Log.e(TAG, "bapin: " + (time * 1000));
+        mActivity.handler.sendEmptyMessageDelayed(LivePushHandler.stopBapin, time * 1000);
+        //显示霸屏倒计时
+        mIsBaping = true;
         mLlBaScreenTimer.setVisibility(View.VISIBLE);
+        Observable.interval(0, 1, TimeUnit.SECONDS)
+            .take(time + 1)
+            .map(new Function<Long, Long>() {
+                @Override
+                public Long apply(Long aLong) {
+                    return time - aLong;
+                }
+            })
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new BaseObserver<Long>() {
+                @Override
+                public void onNext(Long aLong) {
+                    if (mLlBaScreenTimer == null) {
+                        return;
+                    }
+                    if (aLong == 0) {
+                        mLlBaScreenTimer.setVisibility(View.GONE);
+                    } else {
+                        mTvBaScreenTimer.setText(String.valueOf(aLong));
+                        CustomPoPupAnim.startScaleAnimation(mTvBaScreenTimer);
+                    }
+
+                    hideBaScreenTimer(aLong);
+                }
+
+                @Override
+                public void onSubscribe(Disposable d) {
+                    mActivity.addDisposable(d);
+                }
+            });
     }
 
     public void hideBaScreenTimer(long time) {
@@ -581,7 +607,6 @@ public class LiveDisplay extends Presentation {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                //开始播放歌曲 显示歌词
                 mIvChorusTimer.setVisibility(View.GONE);
                 playChorusMusic(musicPath, lrcUrl);
             }
@@ -740,6 +765,10 @@ public class LiveDisplay extends Presentation {
 
                     }
                 });
+
+                //if (!TextUtils.isEmpty(giftEntity.getGiftSound())) {
+                //    mActivity.playGiftSound(giftEntity.getGiftSound());
+                //}
             } else {
                 isShow = true;
                 CustomPoPupAnim.down(giftEntity.getGiftImg(), new CustomPoPupAnim.DownGiftPathListener() {
@@ -801,6 +830,11 @@ public class LiveDisplay extends Presentation {
             if (mSivRedPackets == null) {
                 return;
             }
+            if (mShowAllView.getVisibility() == View.VISIBLE) {
+                mUpVideoViewShowing = true;
+            } else {
+                mUpVideoViewShowing = false;
+            }
             mSivRedPackets.setVisibility(View.VISIBLE);
             SVGAParser parser = new SVGAParser(BaseApplication.getApp());
             parser.decodeFromAssets("hongbao.svga", new SVGAParser.ParseCompletion() {
@@ -817,6 +851,8 @@ public class LiveDisplay extends Presentation {
                     Log.e("TAG", "onError: ");
                 }
             });
+            //播放红包背景音效
+            mActivity.playRedPacketSound(R.raw.redpacket);
         } catch (Exception e) {
             playRedPacketVideoRaw();
         }
@@ -829,7 +865,7 @@ public class LiveDisplay extends Presentation {
         if (mSivRedPackets == null) {
             return;
         }
-        if (mActivity.mUpVideoViewShowing) {
+        if (mUpVideoViewShowing) {
             mShowAllView.setVisibility(View.VISIBLE);
         }
         redPacketsView.stopRainNow();

@@ -5,7 +5,7 @@
     xmlns:toos="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/dp_3"
+    android:layout_marginTop="3dp"
     android:background="@color/transparent">
     
     <LinearLayout
@@ -19,6 +19,7 @@
             android:id="@+id/civ_icon"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/dp_6"
             android:background="@drawable/tv_top_head_frame3"
@@ -29,6 +30,7 @@
             android:id="@+id/iv_red_envelpopes"
             android:layout_width="30dp"
             android:layout_height="33dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:src="@mipmap/redpc"
             android:visibility="gone" />
@@ -38,14 +40,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:paddingLeft="5dp"
-            android:paddingTop="@dimen/dp_6"
-            android:paddingRight="5dp"
-            android:paddingBottom="@dimen/dp_6"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:layout_constraintLeft_toLeftOf="parent"
             toos:text="用户123：" />
     
     </LinearLayout>
@@ -74,10 +73,7 @@
             android:layout_centerVertical="true"
             android:gravity="center_vertical"
             android:layout_marginLeft="6dp"
-            android:paddingLeft="@dimen/dp_6"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_12"
             toos:text="用户123："

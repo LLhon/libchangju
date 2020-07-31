@@ -1,8 +1,14 @@
 package com.newproject.hardqing.ui;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.hardware.display.DisplayManager;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.view.Display;
+import android.view.animation.BounceInterpolator;
+import android.widget.Button;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import android.animation.Animator;
@@ -99,6 +105,7 @@ import com.newproject.hardqing.giftlibrary.widget.GiftModel;
 import com.newproject.hardqing.listener.ICallback;
 import com.newproject.hardqing.permission.BaseObserver;
 import com.newproject.hardqing.service.CommonUtil;
+import com.newproject.hardqing.service.FloatingAppService;
 import com.newproject.hardqing.service.LiveService;
 import com.newproject.hardqing.service.LiveSocketUtil;
 import com.newproject.hardqing.ui.dialog.DownChorusMusicDialog;
@@ -188,6 +195,11 @@ import com.opensource.svgaplayer.SVGADrawable;
 import com.opensource.svgaplayer.SVGAImageView;
 import com.opensource.svgaplayer.SVGAParser;
 import com.opensource.svgaplayer.SVGAVideoEntity;
+import com.yhao.floatwindow.FloatWindow;
+import com.yhao.floatwindow.MoveType;
+import com.yhao.floatwindow.PermissionListener;
+import com.yhao.floatwindow.Screen;
+import com.yhao.floatwindow.ViewStateListener;
 import com.zego.zegoavkit2.IZegoMediaPlayerWithIndexCallback;
 import com.zego.zegoavkit2.ZegoExternalVideoCapture;
 import com.zego.zegoavkit2.ZegoMediaPlayer;
@@ -268,38 +280,7 @@ public class LivePlayActivity extends BaseActivity implements
 
     private static final String TAG = "LivePlayActivity";
 
-    ImageView titleBack;
-    View topView;
-    LinearLayout giftLl2;
-    DivergeView zanViewh;
-    RelativeLayout rlTop;
-    TextView tvName;
-    ImageView ivShare;
-    ImageView ivLove;
-    ImageView ivSet;
     RelativeLayout rlContianer;
-    ImageView ivAudience;
-    RecyclerView rvIcon;
-    RecyclerView rvMesssage;
-    LinearLayout top;
-    ImageView ivTemplate;
-    ImageView ivTemplateBg;
-    RedPacketView redPacketsView;
-    SVGAImageView svgaAnim;
-    ImageView ivCloseRed;
-    ImageView ivRedEnvelpopes;
-    Toolbar toolbar;
-    SVGAImageView categoryui;
-    RelativeLayout rlAnim;
-    GifImageView giftAnim;
-    LinearLayout mLlBaScreenTimer;
-    TextView mTvBaScreenTimer;
-    QingLrcView mLrcChorusView;
-    ImageView ivQRCode;
-    RecyclerView rvLalaOnline;
-    RelativeLayout mBaPinAll;
-    GifView mGifView;
-    ImageView mShowGifImageView;
     CircleImageView mZhuBoAvatar;
     TextView mZhuBoName;
     TextView mZhuBoFansCount;
@@ -307,57 +288,25 @@ public class LivePlayActivity extends BaseActivity implements
     TextView mWatchUserCount;
     LinearLayout mShowAllView;
     TextView mTvPartySubject;
-    FullScreenVideoView mVideoViewBg;
-    SVGAImageView mSivSubject;
     ViewLive tvAudience1;
     ViewLive mLocalPreview;
     ImageView mIvLiveCover;
-    //    轮盘附近对应id
-    SVGAImageView mSvgaExtractAudience;
-    RelativeLayout mRlShowLuck;//控制轮盘是否显示
-    ImageView mLpLuckPan;
-    ImageView mImgStart;
-    RelativeLayout mRlSvga;//控制svga区域是否显示
-    SVGAImageView mSvgaLuckResult;
-    RelativeLayout mRlLuckP;
-    //    这一块是特效消失后展示的轮盘结果
-    TextView mTvLuckResult;
-    TextView mTvExtractName;
-    TextView mTvExtractLian;
-    RelativeLayout mRlNameLian;
-    //   自我介绍
-    RelativeLayout mRlShowInduction;
-    RecyclerView mRlAudienceList;
-    TextView mTvWaitAudience;
-    //    //期待精彩表演
-    TextView tvQi, tvDai, tvJing, tvCai, tvBiao, tvYan;
-
-    LinearLayout llSubtitles;
-    TextView tvSubtitles;
-    public String yq_type;
-
+    SVGAImageView mSivSubject;
+    QingLrcView mLrcChorusView;
     ImageView mIvChorusTimer;
-    SVGAImageView mSivRedPackets;
-    RelativeLayout mRlPlayBillContainer;
-    TagCloudView mTagCloudView;
-    RelativeLayout mRlPlayBill;
-    Roll3DView mRoll3DView;
 
+    public String yq_type;
     public TagCloudAdapter mTagCloudAdapter;
     public WatchPresenter watchPresenter;
     public String mUrl;
-    public String anchor;//主播名字
-    public String anchorAvatar;
     public GiftControl giftControl, giftControl2;
     public LivePushHandler handler;
     public static final int LIVE_ROOM_MSG = 0x123;
-    public String currentBalance;
     public ArrayList<Bitmap> mList;
     public boolean mIsPopup;
     public UserIconPcAdapter userIconAdapter;
     public int start = 0;
     public boolean isShowDialog = true;
-    public String isLikes = "0";//是否关注主播
     public LiveMessageAdapter messageAdapter;
     public boolean isLianMai = false;//是否连麦状态，连麦状态要断掉连麦才能切换竖屏
     public boolean isAnchor;//是否主播
@@ -366,12 +315,10 @@ public class LivePlayActivity extends BaseActivity implements
     public String url1, url2, url3;//三个窗口的推流
     public String aid1, aid2, aid3;//三个窗口的推流userid
     public String lmid1, lmid2, lmid3;//三个窗口的连麦userid
-    public String mPushUrl;
     public String type;//直播类型，0派对机开播，1快速开播
     //推流器
     public String roomNo;
     public String tourId;//游客id
-    public boolean isShowCake = false;
     public WindowManager wm;
     public int swidth, sheight;
 
@@ -381,7 +328,6 @@ public class LivePlayActivity extends BaseActivity implements
 
     public LalaOnlineAdapter lalaOnlineAdapter;
     public String mTopicURL;
-    public String mMusicURL;
     public boolean mUpVideoViewShowing;
     public MediaPlayer mGiftMediaPlayer;
     public DownChorusMusicDialog mDownChorusMusicDialog;
@@ -395,15 +341,8 @@ public class LivePlayActivity extends BaseActivity implements
     public boolean mIsLoginRoomSuccess;
     public boolean mInitSDKSuccess;
     public boolean mIsUsbConnected;
-    //是否正在霸屏中
-    public boolean mIsBaping;
     public ZegoLiveRoom mZegoLiveRoom;
     public boolean isUsbDevice;
-    public ExplosionField mExplosionField;
-    public Disposable mExplosionDisposable;
-    public Disposable mJalousieDisposable;
-    public Disposable mRollDisposable;
-    public PlayBillEntity mPlayBillData;
     public CountDownTimer mChorusProgressTimer;
     public ZegoMediaPlayer mBgZegoMediaPlayer;
     public ZegoMediaPlayer mChorusZegoMediaPlayer;
@@ -422,6 +361,9 @@ public class LivePlayActivity extends BaseActivity implements
     public Handler textColorHandler;
     public Runnable runnable;
     public LiveDisplay mPresentation;
+    public Intent mFloatingAppService;
+    private FloatingAppService.Binder mFloatingAppBinder;
+    private boolean mIsAppToBack;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void handleSomethingElse(LivePlayMessage event) {
@@ -498,10 +440,6 @@ public class LivePlayActivity extends BaseActivity implements
     }
 
     public void onCloseBaPingClicked() {
-        if (ivTemplate == null) {
-            return;
-        }
-        stopBapin();
         unDispose();
 
         if (mPresentation != null) {
@@ -539,12 +477,11 @@ public class LivePlayActivity extends BaseActivity implements
                         default:
                             bapin(baScreenEntity);
                             String bapingText = baScreenEntity.getText();
-                            if (!TextUtils.isEmpty(bapingText) && mDanmuView != null) {
+                            if (!TextUtils.isEmpty(bapingText)) {
                                 Danmu danmu = new Danmu();
                                 danmu.setHeaderUrl("");
                                 danmu.setUserName("");
                                 danmu.setInfo("霸屏主题：" + bapingText);
-                                mDanmuView.add(danmu);
                                 if (mPresentation != null) {
                                     mPresentation.addDanmu(danmu);
                                 }
@@ -574,7 +511,6 @@ public class LivePlayActivity extends BaseActivity implements
             //切换为伴唱音乐
             if (mChorusZegoMediaPlayer != null) {
                 mChorusZegoMediaPlayer.stop();
-                // 听说KTV用的是双音轨，原唱一个音轨，伴奏一个音轨，转换的时候切换音轨就行了
                 mChorusZegoMediaPlayer.start(mMp3BcPath, false);
             }
         } else if ("-5".equals(musicEntity.getId())) {
@@ -677,37 +613,13 @@ public class LivePlayActivity extends BaseActivity implements
     }
 
     private void showTopicAnim(final String uri) {
-        if (!TextUtils.isEmpty(uri) && mBaPinAll != null) {
-            mBaPinAll.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    subjectTransAnim();
-                    CustomPoPupAnim.loadSvga(categoryui, uri, new CustomPoPupAnim.AnimListener() {
-                        @Override
-                        public void onFinish() {
-                            showTopicAnim(mTopicURL);
-                        }
-                    });
-                }
-            }, 60 * 1000);
-
-        }
-
         if (mPresentation != null) {
             mPresentation.showTopicAnim(uri);
         }
     }
 
-    private void subjectTransAnim() {
-        if (categoryui == null) {
-            return;
-        }
-        Animation animation = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.live_type_animation);
-        categoryui.startAnimation(animation);
-    }
-
     public void startPreview() {
-        titleBack.postDelayed(new Runnable() {
+        mZhuBoName.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (isUsbDevice) {
@@ -799,38 +711,7 @@ public class LivePlayActivity extends BaseActivity implements
     }
 
     public void initViewId() {
-        titleBack = findViewById(R.id.title_back);
-        topView = findViewById(R.id.top_view);
-        giftLl2 = findViewById(R.id.gift_ll2);
-        zanViewh = findViewById(R.id.zan_viewh);
-        rlTop = findViewById(R.id.rl_top);
-        tvName = findViewById(R.id.tv_name);
-        ivShare = findViewById(R.id.iv_share);
-        ivLove = findViewById(R.id.iv_love);
-        ivSet = findViewById(R.id.iv_set);
         rlContianer = findViewById(R.id.rl_contianer);
-        ivAudience = findViewById(R.id.iv_audience);
-        rvIcon = findViewById(R.id.rv_icon);
-        rvMesssage = findViewById(R.id.rv);
-        top = findViewById(R.id.top);
-        ivTemplate = findViewById(R.id.iv_template);
-        ivTemplateBg = findViewById(R.id.iv_template_bg);
-        redPacketsView = findViewById(R.id.red_packets_view1);
-        svgaAnim = findViewById(R.id.svga_anim);
-        ivCloseRed = findViewById(R.id.iv_close_red);
-        ivRedEnvelpopes = findViewById(R.id.iv_red_envelpopes);
-        toolbar = findViewById(R.id.toolbar);
-        categoryui = findViewById(R.id.svga_categoryui);
-        rlAnim = findViewById(R.id.rl_anim);
-        giftAnim = findViewById(R.id.gift_anim);
-        mLlBaScreenTimer = findViewById(R.id.ll_bascreen_timer);
-        mTvBaScreenTimer = findViewById(R.id.tv_bascreen_timer);
-        mLrcChorusView = findViewById(R.id.lrc_chorus_view);
-        ivQRCode = findViewById(R.id.iv_QRCode);
-        rvLalaOnline = findViewById(R.id.rv_lalaOnline);
-        mBaPinAll = findViewById(R.id.rl_ba_pin_all);
-        mGifView = findViewById(R.id.gif_view);
-        mShowGifImageView = findViewById(R.id.iv_custom_gift_view);
         mZhuBoAvatar = findViewById(R.id.headicon);
         mZhuBoName = findViewById(R.id.tv_zhu_bo_name);
         mZhuBoFansCount = findViewById(R.id.tv_fans_num);
@@ -838,39 +719,12 @@ public class LivePlayActivity extends BaseActivity implements
         mWatchUserCount = findViewById(R.id.tv_watch_user_count);
         mShowAllView = findViewById(R.id.ll_show_all_view);
         mTvPartySubject = findViewById(R.id.rtv_title);
-        mVideoViewBg = findViewById(R.id.vv_bg);
         mSivSubject = findViewById(R.id.iv_tv_zhu_ti);
         tvAudience1 = findViewById(R.id.tv_audience1);
         mLocalPreview = findViewById(R.id.tv_local_preview);
-        llSubtitles = findViewById(R.id.ll_subtitles);
-        tvSubtitles = findViewById(R.id.tv_subtitles);
-        mIvChorusTimer = findViewById(R.id.iv_chorus_timer);
-        mSivRedPackets = findViewById(R.id.siv_red_packets);
-        mRlPlayBill = findViewById(R.id.rl_playbill);
-        mRlPlayBillContainer = findViewById(R.id.rl_playbill_container);
-        mRoll3DView = findViewById(R.id.roll_view);
-        mTagCloudView = findViewById(R.id.tag_cloud);
         mIvLiveCover = findViewById(R.id.iv_live_cover);
-        mDanmuView = findViewById(R.id.danmu_view);
-        mSvgaExtractAudience = findViewById(R.id.svga_extract_audience);
-        mRlShowLuck = findViewById(R.id.rl_show_luck);
-        mLpLuckPan = findViewById(R.id.lp_luckPan);
-        mImgStart = findViewById(R.id.img_start);
-        mRlSvga = findViewById(R.id.rl_svga);
-        mSvgaLuckResult = findViewById(R.id.svga_luck_result);
-        mRlLuckP = findViewById(R.id.rl_luckPan);
-        mTvLuckResult = findViewById(R.id.tv_luck_result);
-        mTvExtractName = findViewById(R.id.tv_extract_name);
-        mTvWaitAudience = findViewById(R.id.tv_wait_audience);
-        mRlNameLian = findViewById(R.id.rl_name_lian);
-        mRlShowInduction = findViewById(R.id.rl_show_induction);
-        mRlAudienceList = findViewById(R.id.rl_audience_list);
-        tvQi = findViewById(R.id.tv_qi);
-        tvDai = findViewById(R.id.tv_dai);
-        tvJing = findViewById(R.id.tv_jing);
-        tvCai = findViewById(R.id.tv_cai);
-        tvBiao = findViewById(R.id.tv_biao);
-        tvYan = findViewById(R.id.tv_yan);
+        mLrcChorusView = findViewById(R.id.lrc_chorus_view);
+        mIvChorusTimer = findViewById(R.id.iv_chorus_timer);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -895,18 +749,11 @@ public class LivePlayActivity extends BaseActivity implements
         initZegoLivePushListener();
         LoginUserManager.setLiveVideoSource("app");
         showTopicAnim(QingMainActivity.category_uri);
-        //在线拉拉星
-        rvLalaOnline.setLayoutManager(new LinearLayoutManager(this));
-        lalaOnlineAdapter = new LalaOnlineAdapter(null, this);
-        rvLalaOnline.setAdapter(lalaOnlineAdapter);
-        initGiftView();
+        //initGiftView();
         ChangeTextColor();
-        audienceListAdapter = new AudienceListAdapter(R.layout.adapter_induction, null);
-        LinearLayoutManager a = new LinearLayoutManager(this);
-        a.setOrientation(LinearLayoutManager.VERTICAL);
-        mRlAudienceList.setLayoutManager(a);
 
         showLiveDisplay();
+        showFloatWindow();
     }
 
     /**
@@ -919,7 +766,7 @@ public class LivePlayActivity extends BaseActivity implements
             mPresentation = new LiveDisplay(getApplicationContext(), displays[1], this);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (!Settings.canDrawOverlays(this)) {
-                    ToastUtil.showShort(this, "SYSTEM_ALERT_WINDOW 权限被拒绝");
+                    ToastUtil.showShort(this, "悬浮窗权限被拒绝");
                     return;
                 }
             }
@@ -932,29 +779,53 @@ public class LivePlayActivity extends BaseActivity implements
         }
     }
 
-    public void initGiftView() {
-        List<Drawable> drawableList = new ArrayList<>();
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_indigo_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_deep_purple_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_cyan_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_blue_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_deep_purple_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_light_blue_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_lime_a200_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_pink_900_24dp));
-        //drawableList.add(getResources().getDrawable(R.drawable.ic_favorite_red_900_24dp));
-        drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
-        drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
-        drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
-        drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
-        drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
-        drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
-        drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
-        drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
-        drawableList.add(getResources().getDrawable(R.drawable.ic_gif_heart));
-        mGifView.setDrawableList(drawableList);
-        mGifView.setItemViewWH(DensityUtil.dip2px(this, 96), DensityUtil.dip2px(this, 96));
+    public void showFloatWindow() {
+        ImageView imageView = new ImageView(getApplicationContext());
+        imageView.setImageResource(R.drawable.icon_edit);
+        FloatWindow
+            .with(getApplicationContext())
+            .setView(imageView)
+            .setWidth(500) //设置悬浮控件宽高
+            .setHeight(100)
+            .setX(Screen.width, 0.6f)
+            .setY(Screen.height, 0.3f)
+            .setMoveType(MoveType.slide,0,0)
+            .setMoveStyle(500, new BounceInterpolator())
+            .setFilter(true, LivePlayActivity.class)
+            .setPermissionListener(mPermissionListener)
+            .setDesktopShow(true)
+            .build();
+        imageView.setOnClickListener(v -> {
+            mIsAppToBack = !mIsAppToBack;
+            if (mIsAppToBack) {
+                ToastUtil.showShort(getApplicationContext(), "畅聚已退到后台运行");
+                moveTaskToBack(true);
+            } else {
+                ToastUtil.showShort(getApplicationContext(), "已打开畅聚");
+                ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(ACTIVITY_SERVICE);
+                List<ActivityManager.RunningTaskInfo> taskInfoList = activityManager.getRunningTasks(100);
+                for (ActivityManager.RunningTaskInfo taskInfo : taskInfoList) {
+                    if (taskInfo.topActivity.getPackageName().equals(getApplicationContext().getPackageName())) {
+                        activityManager.moveTaskToFront(taskInfo.id, ActivityManager.MOVE_TASK_WITH_HOME);
+                        break;
+                    }
+                }
+            }
+        });
     }
+
+    private PermissionListener mPermissionListener = new PermissionListener() {
+        @Override
+        public void onSuccess() {
+            Log.d(TAG, "悬浮窗权限已授权");
+        }
+
+        @Override
+        public void onFail() {
+            Log.d(TAG, "悬浮窗权限被拒绝");
+            ToastUtil.showShort(getApplicationContext(), "悬浮窗权限被拒绝");
+        }
+    };
 
     public void getPermission() {
         PermissionUtils.permission(PermissionConstants.STORAGE, PermissionConstants.CAMERA, PermissionConstants.MICROPHONE)
@@ -992,8 +863,6 @@ public class LivePlayActivity extends BaseActivity implements
         mIsEnableCamera = entity.getStatus();
         if (entity.getStatus() == 1) {
             setShowVideoWindow(true, true);
-            mRlPlayBill.setVisibility(View.GONE);
-            clearPlayBillAnimation();
             if (mIsLoginRoomSuccess && !mIsStartPublishing) {
                 mIsStartPublishing = mZegoLiveRoom.startPublishing(ZegoRoomUtil.getPublishStreamID(mHostUserId), mHostUserId, ZegoConstants.PublishFlag.MixStream);
                 mPublishStreamID = ZegoRoomUtil.getPublishStreamID(mHostUserId);
@@ -1006,10 +875,6 @@ public class LivePlayActivity extends BaseActivity implements
 //            }
             setShowVideoWindow(false, true);
             enableCamera(false);
-            if (mPlayBillData != null) {
-                mRlPlayBill.setVisibility(View.VISIBLE);
-                startPlayBillAnimation();
-            }
         }
     }
 
@@ -1022,7 +887,6 @@ public class LivePlayActivity extends BaseActivity implements
         } else if (BuildConfig.channel_id == Constants.CHANNEL_ID_YIN_CHUANG) {
             mZegoLiveRoom.enableCamera(isOpen);
         } else if (BuildConfig.channel_id == Constants.CHANNEL_ID_SUN_NET) {
-            // TODO: 2020/6/19 网络摄像头的开关
             mZegoLiveRoom.enableCamera(isOpen);
         }
     }
@@ -1059,20 +923,6 @@ public class LivePlayActivity extends BaseActivity implements
         final QrcodeBean qrcodeBean = new QrcodeBean();
         qrcodeBean.setType("1");
         qrcodeBean.setContent(roomNo);
-        listLalaOnline();
-//        getGiftData();
-        if (ivQRCode == null) {
-            return;
-        }
-        ivQRCode.post(new Runnable() {
-            @Override
-            public void run() {
-                if (ivQRCode == null) {
-                    return;
-                }
-                ivQRCode.setImageBitmap(QRCodeUtil.createQRCodeBitmap(new Gson().toJson(qrcodeBean), ivQRCode.getWidth(), ivQRCode.getHeight()));
-            }
-        });
 
         if (mPresentation != null) {
             mPresentation.setQRCode(qrcodeBean);
@@ -1093,19 +943,8 @@ public class LivePlayActivity extends BaseActivity implements
         handler = new LivePushHandler(this, this, false);
         // 礼物动画
         giftControl2 = new GiftControl(this);
-        giftControl2.setGiftLayout(false, giftLl2, 4);
-        mTagMode = new GiftMode();
-        CreateDataUtil.createTags(mTagMode);
         mList = new ArrayList<>();
         setLayout();
-
-        int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        llSubtitles.measure(w, h);
-        llwidth = llSubtitles.getMeasuredWidth();
-        screenWidth = getWindowManager().getDefaultDisplay().getWidth();
-
-        mExplosionField = ExplosionField.attach2Window(this);
     }
 
     private void initPlay() {
@@ -1873,28 +1712,15 @@ public class LivePlayActivity extends BaseActivity implements
         mList.add(((BitmapDrawable) Objects.requireNonNull(ResourcesCompat.getDrawable(getResources(), R.mipmap.heart4, null))).getBitmap());
         mList.add(((BitmapDrawable) Objects.requireNonNull(ResourcesCompat.getDrawable(getResources(), R.mipmap.heart7, null))).getBitmap());
         mList.add(((BitmapDrawable) Objects.requireNonNull(ResourcesCompat.getDrawable(getResources(), R.mipmap.heart8, null))).getBitmap());
-        zanViewh.post(new Runnable() {
-            @Override
-            public void run() {
-                zanViewh.setEndPoint(new PointF(zanViewh.getMeasuredWidth() / 2, 0));
-                zanViewh.setDivergeViewProvider(new Provider());
-            }
-        });
     }
 
     private void initMessageRv() {
-        rvMesssage.setLayoutManager(new LinearLayoutManager(this));
         messageAdapter = new LiveMessageAdapter(null, this, this);
-        rvMesssage.setAdapter(messageAdapter);
     }
 
     //横屏消息显示
     public void addMessage(SendMsgEntity sendMsgEntity, boolean isScrollBottom) {
         if (sendMsgEntity != null && sendMsgEntity.isClickGiftMessage()) {
-            if (mGifView == null) {
-                return;
-            }
-            mGifView.startAnimation(mGifView.getWidth(), mGifView.getHeight());
             if (mPresentation != null) {
                 mPresentation.showGifAnimation();
             }
@@ -1905,15 +1731,12 @@ public class LivePlayActivity extends BaseActivity implements
                 if (baPingChatMessage != null) {
                     switch (baPingChatMessage.getType()) {
                         case 6:
-                            if (mDanmuView != null) {
-                                Danmu danmu = new Danmu();
-                                danmu.setHeaderUrl(null);
-                                danmu.setUserName(null);
-                                danmu.setInfo(baPingChatMessage.getMusicName());
-                                mDanmuView.add(danmu);
-                                if (mPresentation != null) {
-                                    mPresentation.addDanmu(danmu);
-                                }
+                            Danmu danmu = new Danmu();
+                            danmu.setHeaderUrl(null);
+                            danmu.setUserName(null);
+                            danmu.setInfo(baPingChatMessage.getMusicName());
+                            if (mPresentation != null) {
+                                mPresentation.addDanmu(danmu);
                             }
                             return;
                         case 7:
@@ -1985,7 +1808,7 @@ public class LivePlayActivity extends BaseActivity implements
                         case 22:
                             GiftEntity giftEntity = baPingChatMessage.getGiftEntity();
                             if (giftEntity != null) {
-                                showAnim(giftEntity);
+                                //showAnim(giftEntity);
 
                                 if (mPresentation != null) {
                                     mPresentation.showAnim(giftEntity);
@@ -1996,12 +1819,11 @@ public class LivePlayActivity extends BaseActivity implements
                             break;
                     }
                     String bapingText = baPingChatMessage.getText();
-                    if (!TextUtils.isEmpty(bapingText) && mDanmuView != null) {
+                    if (!TextUtils.isEmpty(bapingText)) {
                         Danmu danmu = new Danmu();
                         danmu.setHeaderUrl(sendMsgEntity.getAvatar());
                         danmu.setUserName(sendMsgEntity.getUsername());
                         danmu.setInfo("霸屏主题：" + bapingText);
-                        mDanmuView.add(danmu);
 
                         if (mPresentation != null) {
                             mPresentation.addDanmu(danmu);
@@ -2011,7 +1833,6 @@ public class LivePlayActivity extends BaseActivity implements
             }
             messageAdapter.addData(sendMsgEntity);
             if (isScrollBottom) {
-                rvMesssage.scrollToPosition(messageAdapter.getData().size() - 1);
 
                 if (mPresentation != null) {
                     mPresentation.scrollMessage(messageAdapter.getData().size() - 1);
@@ -2083,149 +1904,9 @@ public class LivePlayActivity extends BaseActivity implements
         });
     }
 
-
-    private void showZan() {
-        Random random = new Random();
-        zanViewh.startDiverges(random.nextInt(6));
-    }
-
     @Override
     public void onFaceBox(int x, int y, int width) {
-        //        Log.e(TAG, "onFaceBox:  x = " + x + " y = " + y + " width  = " + width)
-       /* if (isShowTag) {
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) tags.getLayoutParams();
-            // 横坐标移动系数
-            int mWidth = 0;
-            // 纵坐标移动系数
-            int mHeight = 0;
-            // 宽
-            int mW = 0;
-            switch (pid) {
-                case "0":
-                    //小马
-                    Log.e(TAG, "onFaceBox: ");
-                    mWidth = (int) (width * 3);
-                    mHeight = -width / 4;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) + mHeight;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 2;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "1":
-                    //辫子 ok
-                    mWidth = (int) (width * 1.2);
-                    mHeight = -width / 4;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) + mHeight;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 20;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "2"://
-                    //恶魔头饰 ok
-                    mWidth = (int) (width * 1.8);
-                    mHeight = -width / 10;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) + mHeight;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 10;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "3":
-                    //狗狗
-                    mWidth = (int) (width * 2);
-                    mHeight = -width / 8;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) + mHeight;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 5;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth * 2;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "4":
-                    //鸡冠
-                    mWidth = (int) (width * 2);
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) - width / 2;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 5;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth * 2;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "5":
-                    //老虎
-                    mWidth = (int) (width * 1.5);
-                    mHeight = 0;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) + mHeight;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 20;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "6":
-                    //老鼠
-                    mWidth = (int) (width * 1.8);
-                    mHeight = mWidth / 20;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2);
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 8;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "7":
-                    //帽子
-                    mWidth = width;
-                    mHeight = width;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) - width * 3 / 4;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 15;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "8":
-                    //牛
-                    mWidth = (int) (width * 2);
-                    mHeight = -width / 4;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) + mHeight;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 20;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "9":
-                    //兔子
-                    mWidth = (int) (width * 1.5);
-                    mHeight = -width / 2;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) + mHeight;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 20;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "10":
-                    //羊头饰
-                    //羊头饰
-                    mWidth = (int) (width * 2);
-                    mHeight = 0;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) + mHeight;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 15;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth;
-                    tags.setLayoutParams(layoutParams);
-                    break;
-                case "11":
-                    //猪鼻
-                    mWidth = (int) (width * 1.3);
-                    mHeight = width / 10;
-                    layoutParams.topMargin = y - ((mWidth - width) / 2) - mHeight;
-                    layoutParams.leftMargin = x - ((mWidth - width) / 2) + width / 20;
-                    layoutParams.width = mWidth;
-                    layoutParams.height = mWidth;
-                    tags.setLayoutParams(layoutParams);
-                    break;
 
-            }
-
-        }*/
     }
 
     @Override
@@ -2251,42 +1932,22 @@ public class LivePlayActivity extends BaseActivity implements
     protected void initImmersionBar() {
         super.initImmersionBar();
         initViewId();
-        mImmersionBar
-                .keyboardEnable(true)
-                .statusBarView(topView)
-                .setOnKeyboardListener(new OnKeyboardListener() {    //软键盘监听回调
-                    @Override
-                    public void onKeyboardChange(boolean isPopup, int keyboardHeight) {
-                        //isPopup为true，软键盘弹出，为false，软键盘关闭
-                        if (!isPopup && keyboardHeight == 0) {
-
-                        } else {
-
-                        }
-                        mIsPopup = isPopup;
-                    }
-                })
-                .init();
-    }
-
-    //24 * 150
-    private void showCloseRed() {
-        AlertDialog alert = new AlertDialog.Builder(this).create();
-        alert.setMessage(getString(R.string.close_red));
-        alert.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        alert.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.confirm), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                stopRedRain();
-                isRedRain = false;
-            }
-        });
-        alert.show();
+        //mImmersionBar
+        //        .keyboardEnable(true)
+        //        .statusBarView(topView)
+        //        .setOnKeyboardListener(new OnKeyboardListener() {    //软键盘监听回调
+        //            @Override
+        //            public void onKeyboardChange(boolean isPopup, int keyboardHeight) {
+        //                //isPopup为true，软键盘弹出，为false，软键盘关闭
+        //                if (!isPopup && keyboardHeight == 0) {
+        //
+        //                } else {
+        //
+        //                }
+        //                mIsPopup = isPopup;
+        //            }
+        //        })
+        //        .init();
     }
 
 
@@ -2303,7 +1964,6 @@ public class LivePlayActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        mDanmuView.startPlay(true);
         if (mPresentation != null) {
             mPresentation.startPlayDanmu();
         }
@@ -2375,6 +2035,7 @@ public class LivePlayActivity extends BaseActivity implements
         if (mPresentation != null) {
             mPresentation.cancel();
         }
+        FloatWindow.destroy();
 
         LiveService.setRoomId("");
         clearAnim();
@@ -2393,7 +2054,6 @@ public class LivePlayActivity extends BaseActivity implements
         handler.removeCallbacksAndMessages(null);
         handler = null;
 
-        redPacketsView.stopRainNow();
         if (mChorusProgressTimer != null) {
             mChorusProgressTimer.cancel();
             mChorusProgressTimer = null;
@@ -2478,7 +2138,7 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void getLiveView(LiveEntity liveEntity) {
-        if (liveEntity == null || titleBack == null) {
+        if (liveEntity == null) {
             return;
         }
         LiveEntity.ExtrasBean extrasBean = liveEntity.getExtras();
@@ -2571,13 +2231,12 @@ public class LivePlayActivity extends BaseActivity implements
     }
 
     public void initBall(String titleString) {
-        mTagCloudView.setBackgroundColor(CommonUtils.getColor(R.color.transparent));
         List<String> list = new ArrayList<String>();
         for (int i = 0; i < 20; i++) {
             list.add(titleString);
         }
         mTagCloudAdapter = new TagCloudAdapter(list);
-        mTagCloudView.setAdapter(mTagCloudAdapter);
+        //mTagCloudView.setAdapter(mTagCloudAdapter);
 
         if (mPresentation != null) {
             mPresentation.setTagCloudData();
@@ -2844,7 +2503,7 @@ public class LivePlayActivity extends BaseActivity implements
     @Override
     public void joinSuccess(SendMsgEntity sendMsgEntity) {
         String nickname = getString(R.string.xitong);
-        String commentsOne = getString(R.string.welcome_to) + tvName.getText().toString() + getString(R.string.commmentsone);
+        String commentsOne = getString(R.string.welcome_to) + mZhuBoName.getText().toString() + getString(R.string.commmentsone);
         SendMsgEntity entity = new SendMsgEntity("", nickname, "", commentsOne, "2");
         LiveChatMessage liveChatMessage = new LiveChatMessage();
         liveChatMessage.setScroll(false);
@@ -2944,8 +2603,6 @@ public class LivePlayActivity extends BaseActivity implements
         addMessage(sendMsgEntity, true);
     }
 
-    DanmuView mDanmuView;
-
     @Override
     public void sendChatMsg(SendChatMsgEntity sendChatMsgEntity) {
         //{"room_id":"138","user_id":141,"content":"{\"gif_number\":0,\"message_value\":\"发出了一个拼手气红包给所有的在场朋友\",\"sound_effect\":0,\"type\":3,\"voice_control_progress\":0}","type":0,"cmd":"room_chat","is_manage":1,"fd":261,"device":"web","username":"我太难了","avatar":"\/uploads\/avatar\/20200414\/7a7934319c310e068b0ed5c737417f29822.jpg"}
@@ -2960,8 +2617,6 @@ public class LivePlayActivity extends BaseActivity implements
             danmu.setHeaderUrl(sendChatMsgEntity.getAvatar());
             danmu.setUserName(sendChatMsgEntity.getUsername());
             danmu.setInfo(sendChatMsgEntity.getContent());
-            mDanmuView.add(danmu);
-            Log.e(TAG, sendChatMsgEntity.getContent());
 
             if (mPresentation != null) {
                 mPresentation.addDanmu(danmu);
@@ -2970,14 +2625,10 @@ public class LivePlayActivity extends BaseActivity implements
     }
 
     public void playDanMu(SendMsgEntity sendMsgEntity) {
-        if (mDanmuView == null) {
-            return;
-        }
         Danmu danmu = new Danmu();
         danmu.setHeaderUrl(sendMsgEntity.getAvatar());
         danmu.setUserName(sendMsgEntity.getUsername());
         danmu.setInfo(sendMsgEntity.getContent());
-        mDanmuView.add(danmu);
 
         if (mPresentation != null) {
             mPresentation.addDanmu(danmu);
@@ -2988,104 +2639,16 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void sendGift(GiftEntity giftEntity) {
-        showZan();
-        String giftImage;
-        if (giftEntity.getGiftStyle().equals("0")) {
-            giftImage = giftEntity.getGiftImg();
-        } else if (giftEntity.getGiftStyle().equals("1")) {
-            mGiftData.add(giftEntity);
-            giftImage = giftEntity.getGiftSamll();
-            showAnim(mGiftData.get(0));
-        } else {
-            mGiftData.add(giftEntity);
-            giftImage = giftEntity.getGiftSamll();
-            showAnim(mGiftData.get(0));
-        }
-        GiftModel giftModel = new GiftModel();
-        int giftNum = Integer.parseInt(giftEntity.getGiftNum());
-        giftModel.setGiftId(giftEntity.getGiftId()).setGiftName(getString(R.string.zengsong) + giftEntity.getGiftName()).setGiftCount(0).setGiftPic(giftImage)
-                .setSendUserId(giftEntity.getUserId()).setSendUserName(giftEntity.getUsername()).setSendUserPic(giftEntity.getAvatar()).setSendGiftTime(System.currentTimeMillis())
-                .setCurrentStart(true).setVolleyNums(giftNum);
-        giftModel.setHitCombo(giftNum);
-
-        giftControl2.loadGift(giftModel, true);
-        giftControl2.setEndGiftCountListener(new GiftControl.EndGiftCountListener() {
-
-            @Override
-            public void dismiss(int count, String giftId, String giftPic) {
-
-            }
-        });
 
         if (mPresentation != null) {
             mPresentation.sendGift(giftEntity);
         }
     }
 
-    private boolean isShow = false;
-
-    private void showAnim(final GiftEntity giftEntity) {
-        if (!isShow) {
-            //            Log.e(TAG, "showAnim: " + data.get(0).getGiftStyle());
-            if (giftEntity.getGiftStyle().equals("1")) {
-                isShow = true;
-                CustomPoPupAnim.loadSvga(svgaAnim, giftEntity.getGiftImg(), new CustomPoPupAnim.AnimListener() {
-                    @Override
-                    public void onFinish() {
-                        isShow = false;
-                        if (mGiftData.size() > 0) {
-                            mGiftData.remove(0);
-                        }
-                        ifShowAnim();
-
-                    }
-                });
-                if (!TextUtils.isEmpty(giftEntity.getGiftSound())) {
-                    playGiftSound(giftEntity.getGiftSound());
-                }
-            } else {
-                isShow = true;
-                CustomPoPupAnim.down(giftEntity.getGiftImg(), new CustomPoPupAnim.DownGiftPathListener() {
-                    @Override
-                    public void path(String path) {
-                        try {
-                            GifDrawable gifDrawable = new GifDrawable(path);
-                            gifDrawable.setLoopCount(1);
-                            giftAnim.setVisibility(View.VISIBLE);
-                            giftAnim.setImageDrawable(gifDrawable);
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    giftAnim.setVisibility(View.INVISIBLE);
-                                    isShow = false;
-                                    if (mGiftData.size() > 0) {
-                                        mGiftData.remove(0);
-                                    }
-                                    ifShowAnim();
-                                }
-                            }, gifDrawable.getDuration());
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-
-        }
-
-    }
-
-    public void ifShowAnim() {
-        if (mGiftData.size() > 0) {
-            showAnim(mGiftData.get(0));
-        }
-    }
-
     /**
      * 播放红包背景音效
      */
-    private void playRedPacketSound(int resId) {
+    public void playRedPacketSound(int resId) {
         try {
             if (mGiftMediaPlayer == null) {
                 mGiftMediaPlayer = new MediaPlayer();
@@ -3122,13 +2685,13 @@ public class LivePlayActivity extends BaseActivity implements
     /**
      * 播放礼物音效
      */
-    private void playGiftSound(String path) {
+    public void playGiftSound(String path) {
         try {
             if (mGiftMediaPlayer == null) {
                 mGiftMediaPlayer = new MediaPlayer();
             } else {
-                mGiftMediaPlayer.stop();
-                mGiftMediaPlayer.reset();
+                mGiftMediaPlayer.pause();
+                mGiftMediaPlayer.seekTo(0);
             }
             mGiftMediaPlayer.setDataSource(path);
             mGiftMediaPlayer.setLooping(false);
@@ -3372,76 +2935,22 @@ public class LivePlayActivity extends BaseActivity implements
     //收到红包
     @Override
     public void red(RedEntity redEntity) {
-        redPacketsView.setVisibility(View.VISIBLE);
-        ivCloseRed.setVisibility(View.VISIBLE);
-        playRedPacketVideoRaw();
         startRedRain(redEntity);
-
         if (mPresentation != null) {
             mPresentation.red(redEntity);
         }
     }
 
-    /**
-     * 开始下红包雨
-     */
-    private void startRedRain(final RedEntity redEntity) {
-        if (!isRedRain) {
-            redPacketsView.startRain();
-            isRedRain = true;
-        }
+    public void startRedRain(RedEntity redEntity) {
         handler.removeMessages(LivePushHandler.stopRain);
         handler.sendEmptyMessageDelayed(LivePushHandler.stopRain, 6 * 1000);
 
-    }
-
-    private void playRedPacketVideoRaw() {
-        try {
-            if (mSivRedPackets == null) {
-                return;
-            }
-            if (mShowAllView.getVisibility() == View.VISIBLE) {
-                mUpVideoViewShowing = true;
-            } else {
-                mUpVideoViewShowing = false;
-            }
-            mSivRedPackets.setVisibility(View.VISIBLE);
-            SVGAParser parser = new SVGAParser(BaseApplication.getApp());
-            parser.decodeFromAssets("hongbao.svga", new SVGAParser.ParseCompletion() {
-                @Override
-                public void onComplete(@NotNull SVGAVideoEntity videoItem) {
-                    Log.e("TAG", "onComplete: ");
-                    SVGADrawable drawable = new SVGADrawable(videoItem);
-                    mSivRedPackets.setImageDrawable(drawable);
-                    mSivRedPackets.startAnimation();
-                }
-
-                @Override
-                public void onError() {
-                    Log.e("TAG", "onError: ");
-                }
-            });
-            //播放红包背景音效
-            playRedPacketSound(R.raw.redpacket);
-        } catch (Exception e) {
-            playRedPacketVideoRaw();
-        }
     }
 
     /**
      * 停止下红包雨
      */
     private void stopRedRain() {
-        if (mSivRedPackets == null) {
-            return;
-        }
-        if (mUpVideoViewShowing) {
-            mShowAllView.setVisibility(View.VISIBLE);
-        }
-        redPacketsView.stopRainNow();
-        redPacketsView.setVisibility(View.GONE);
-        ivCloseRed.setVisibility(View.INVISIBLE);
-        mSivRedPackets.setVisibility(View.GONE);
         releaseGiftMediaPlayer();
     }
 
@@ -3482,13 +2991,6 @@ public class LivePlayActivity extends BaseActivity implements
         runnable = new Runnable() {
             @Override
             public void run() {
-                // TODO Auto-generated method stub
-                tvQi.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
-                tvDai.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
-                tvJing.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
-                tvCai.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
-                tvBiao.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
-                tvYan.setTextColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
 
                 if (mPresentation != null) {
                     mPresentation.ChangeTextColor(random);
@@ -3501,12 +3003,6 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void showEntertainLuck(EntertainEntity entertainEntity) {
-///娱乐活动-轮盘显示
-        mRlShowLuck.setVisibility(View.VISIBLE);
-        mRlLuckP.setVisibility(View.VISIBLE);
-        mRlSvga.setVisibility(View.GONE);
-        mRlNameLian.setVisibility(View.GONE);
-        mTvWaitAudience.setVisibility(View.VISIBLE);
 
         textColorHandler.postDelayed(runnable, 200);//每0.2秒执行一次runnable.
 
@@ -3518,10 +3014,6 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void showInduction(InductionEntity inductionEntity) {
-//显示自我介绍
-        mRlShowInduction.setVisibility(View.VISIBLE);
-        mRlShowLuck.setVisibility(View.GONE);
-        mRlLuckP.setVisibility(View.GONE);
 
         if (mPresentation != null) {
             mPresentation.showInduction();
@@ -3530,21 +3022,6 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void showExtractAudience(ExtractAudienceEntity extractAudienceEntity) {
-//观众
-        mRlShowLuck.setVisibility(View.VISIBLE);
-        mRlLuckP.setVisibility(View.VISIBLE);
-        mRlSvga.setVisibility(View.GONE);
-        mRlNameLian.setVisibility(View.GONE);
-        mTvWaitAudience.setVisibility(View.VISIBLE);
-        mTvLuckResult.setText("");
-        CustomPoPupAnim.loadSvgaAnim(mSvgaExtractAudience, "activity_get.svga", new CustomPoPupAnim.AnimListener() {
-            @Override
-            public void onFinish() {
-                mRlNameLian.setVisibility(View.VISIBLE);
-                mTvWaitAudience.setVisibility(View.GONE);
-                mTvExtractName.setText(extractAudienceEntity.getUsername());
-            }
-        });
 
         if (mPresentation != null) {
             mPresentation.showExtractAudience(extractAudienceEntity);
@@ -3553,8 +3030,6 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void showCloseInduction(CloseInductionEntity closeInductionEntity) {
-        mRlShowLuck.setVisibility(View.GONE);
-        mRlShowInduction.setVisibility(View.GONE);
 
         usersBeansList.clear();
         textColorHandler.removeCallbacks(runnable);//终止定时器
@@ -3566,17 +3041,6 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void FeedbackLucky(LuckyAudienceEntity luckyAudienceEntity) {
-//被抽到的幸运观众反馈
-        mRlSvga.setVisibility(View.VISIBLE);
-        mSvgaLuckResult.setVisibility(View.VISIBLE);
-        mRlLuckP.setVisibility(View.GONE);
-        CustomPoPupAnim.loadSvgaAnim(mSvgaLuckResult, "luck.svga", new CustomPoPupAnim.AnimListener() {
-            @Override
-            public void onFinish() {
-                //被抽到的幸运观众反馈
-                mTvLuckResult.setText(luckyAudienceEntity.getContent());
-            }
-        });
 
         if (mPresentation != null) {
             mPresentation.feedbackLucky(luckyAudienceEntity);
@@ -3591,14 +3055,6 @@ public class LivePlayActivity extends BaseActivity implements
         if (randomLuckyEntity.getUsers() != null) {
             usersBeansList.addAll(randomLuckyEntity.getUsers());
         }
-        CustomPoPupAnim.loadSvgaAnim(mSvgaExtractAudience, "activity_get.svga", new CustomPoPupAnim.AnimListener() {
-            @Override
-            public void onFinish() {
-                //数据填充适配器
-                audienceListAdapter.setNewData(usersBeansList);
-                mRlAudienceList.setAdapter(audienceListAdapter);
-            }
-        });
 
         if (mPresentation != null) {
             mPresentation.fiveAudience();
@@ -3615,7 +3071,6 @@ public class LivePlayActivity extends BaseActivity implements
             }
             //数据填充适配器
             audienceListAdapter.setNewData(usersBeansList);
-            mRlAudienceList.setAdapter(audienceListAdapter);
 
             if (mPresentation != null) {
                 mPresentation.lianFeedBack();
@@ -3629,66 +3084,11 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void showTemplate(SeeTemplateEntity seeTemplateEntity) {
-        // 0 图片 1 视频
-        quitTemplate();
-        if (TextUtils.equals(seeTemplateEntity.getType(), "0")) {
-            ivTemplate.setVisibility(View.VISIBLE);
-            ivTemplateBg.setVisibility(View.VISIBLE);
-            mBaPinAll.setVisibility(View.VISIBLE);
-            ivTemplate.setAlpha(0f);
-            GlideUtil.setImage(ivTemplateBg, this, seeTemplateEntity.getUri());
-            Glide.with(this).load(seeTemplateEntity.getUri())
-                    .addListener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            return false;
-                        }
 
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            if (ivTemplate != null) {
-                                ivTemplate.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(ivTemplate, "alpha", 0.0f, 1.0f);
-                                        ObjectAnimator rotationAnimation = ObjectAnimator.ofFloat(ivTemplate, "rotation", 0f, 720f);
-                                        ObjectAnimator scaleXAnimation = ObjectAnimator.ofFloat(ivTemplate, "scaleX", 0f, 1f);
-                                        ObjectAnimator scaleYAnimation = ObjectAnimator.ofFloat(ivTemplate, "scaleY", 0f, 1f);
-                                        AnimatorSet animatorSet = new AnimatorSet();
-                                        animatorSet.play(alphaAnimation).with(rotationAnimation).with(scaleXAnimation).with(scaleYAnimation);
-                                        animatorSet.setDuration(1000);
-                                        animatorSet.start();
-                                        animatorSet.addListener(new AnimatorListenerAdapter() {
-                                            @Override
-                                            public void onAnimationEnd(Animator animation) {
-                                                super.onAnimationEnd(animation);
-                                            }
-                                        });
-                                    }
-                                }, 500);
-                            }
-                            return false;
-                        }
-                    }).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE))
-                    .into(ivTemplate);
-        } else if (TextUtils.equals(seeTemplateEntity.getType(), "1")) {
-            playVideo(seeTemplateEntity, 0.5f);
-        } else {
-            ivTemplate.setVisibility(View.INVISIBLE);
-            ivTemplateBg.setVisibility(View.INVISIBLE);
-            mBaPinAll.setVisibility(View.INVISIBLE);
-            svgaUrl = seeTemplateEntity.getUri();
-        }
     }
 
     private void playVideo(SeeTemplateEntity seeTemplateEntity, Float alpha) {
-        ivTemplate.setVisibility(View.VISIBLE);
-        ivTemplateBg.setVisibility(View.VISIBLE);
-        mBaPinAll.setVisibility(View.VISIBLE);
-        playerUrl = seeTemplateEntity.getUri();
-        cover = seeTemplateEntity.getCover();
-        GlideUtil.setImage(ivTemplate, this, cover);
-        GlideUtil.setImage(ivTemplateBg, this, cover);
+
     }
 
     @Override
@@ -3696,9 +3096,7 @@ public class LivePlayActivity extends BaseActivity implements
     }
 
     private void stopVideo() {
-        ivTemplate.setVisibility(View.INVISIBLE);
-        ivTemplateBg.setVisibility(View.INVISIBLE);
-        mBaPinAll.setVisibility(View.INVISIBLE);
+
     }
 
     private long endTime = 0;
@@ -3779,20 +3177,6 @@ public class LivePlayActivity extends BaseActivity implements
         }
     }
 
-    private void scrollMyListViewToBottom() {
-        if (messageAdapter.getItemCount() == 0) {
-            return;
-        }
-        rvMesssage.post(new Runnable() {
-            @Override
-            public void run() {
-                rvMesssage.smoothScrollToPosition(messageAdapter.getItemCount() - 1);
-                messageAdapter.notifyDataSetChanged();
-            }
-        });
-    }
-
-
     private void setWatchNum() {
         if (mWatchNum >= 0) {
             mWatchUserCount.setText(NumShow.formatLiveNum(mWatchNum + "", false, this));
@@ -3816,20 +3200,8 @@ public class LivePlayActivity extends BaseActivity implements
     }
 
     private void setLayout() {
-        //        bottomLayout2.setVisibility(View.VISIBLE);
-        tvName.setVisibility(View.VISIBLE);
-        if (isAnchor) {
-            ivSet.setVisibility(View.GONE);
-        }
-        if (!isAnchor) {
-            ivLove.setVisibility(View.GONE);
-        }
-        ivShare.setVisibility(View.VISIBLE);
-        ivAudience.setVisibility(View.GONE);
         mWatchUserRecyclerView.setVisibility(View.VISIBLE);
-        rvMesssage.setVisibility(View.VISIBLE);
     }
-
 
     @Override
     public void tourIn(TourInEntity tourInEntity) {
@@ -3849,109 +3221,10 @@ public class LivePlayActivity extends BaseActivity implements
 
     @Override
     public void bapin(final BaScreenEntity baScreenEntity) {
-        // 0 图片 1 视频
-        if (TextUtils.equals(baScreenEntity.getType(), "0")) {
-            ivTemplate.setVisibility(View.VISIBLE);
-            ivTemplateBg.setVisibility(View.VISIBLE);
-            mBaPinAll.setVisibility(View.VISIBLE);
-            ivTemplate.setAlpha(0f);
-            GlideUtil.setImage(ivTemplateBg, this, baScreenEntity.getUri());
-            Glide.with(this).asBitmap().load(baScreenEntity.getUri()).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE))
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource,
-                                                    @Nullable Transition<? super Bitmap> transition) {
-                            int width = resource.getWidth();
-                            int height = resource.getHeight();
-                            if (width > height) {
-                                //横屏
-                                ivTemplate.setScaleType(ImageView.ScaleType.FIT_XY);
-                            } else {
-                                //竖屏
-                                ivTemplate.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            }
-                            ivTemplate.setImageBitmap(resource);
-                            if (ivTemplate != null) {
-                                ivTemplate.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(ivTemplate, "alpha", 0.0f, 1.0f);
-                                        ObjectAnimator rotationAnimation = ObjectAnimator.ofFloat(ivTemplate, "rotation", 0f, 720f);
-                                        ObjectAnimator scaleXAnimation = ObjectAnimator.ofFloat(ivTemplate, "scaleX", 0f, 1f);
-                                        ObjectAnimator scaleYAnimation = ObjectAnimator.ofFloat(ivTemplate, "scaleY", 0f, 1f);
-                                        AnimatorSet animatorSet = new AnimatorSet();
-                                        animatorSet.play(alphaAnimation).with(rotationAnimation).with(scaleXAnimation).with(scaleYAnimation);
-                                        animatorSet.setDuration(1000);
-                                        animatorSet.start();
-                                        animatorSet.addListener(new AnimatorListenerAdapter() {
-                                            @Override
-                                            public void onAnimationEnd(Animator animation) {
-                                                super.onAnimationEnd(animation);
-                                            }
-                                        });
-                                    }
-                                }, 500);
-                            }
-                            showBaScreenTimer(baScreenEntity);
-                        }
-                    });
-        } else if (TextUtils.equals(baScreenEntity.getType(), "1")) {
-            ivTemplate.setVisibility(View.INVISIBLE);
-            ivTemplateBg.setVisibility(View.INVISIBLE);
-            mBaPinAll.setVisibility(View.INVISIBLE);
-            playerUrl = baScreenEntity.getUri();
-            showBaScreenTimer(baScreenEntity);
-        }
-        String text = baScreenEntity.getText();
-        startHengFu(text);
 
         if (mPresentation != null) {
             mPresentation.bapin(baScreenEntity);
         }
-    }
-
-    public void showBaScreenTimer(BaScreenEntity baScreenEntity) {
-        if (mTvBaScreenTimer == null || baScreenEntity == null) {
-            return;
-        }
-        final long time = Long.parseLong(baScreenEntity.getTime());
-        Log.e(TAG, "bapin: " + (time * 1000));
-        handler.sendEmptyMessageDelayed(LivePushHandler.stopBapin, time * 1000);
-        //显示霸屏倒计时
-        mIsBaping = true;
-        mLlBaScreenTimer.setVisibility(View.VISIBLE);
-        Observable.interval(0, 1, TimeUnit.SECONDS)
-                .take(time + 1)
-                .map(new Function<Long, Long>() {
-                    @Override
-                    public Long apply(Long aLong) {
-                        return time - aLong;
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver<Long>() {
-                    @Override
-                    public void onNext(Long aLong) {
-                        if (mLlBaScreenTimer == null) {
-                            return;
-                        }
-                        if (aLong == 0) {
-                            mLlBaScreenTimer.setVisibility(View.GONE);
-                        } else {
-                            mTvBaScreenTimer.setText(String.valueOf(aLong));
-                            CustomPoPupAnim.startScaleAnimation(mTvBaScreenTimer);
-                        }
-
-                        if (mPresentation != null) {
-                            mPresentation.hideBaScreenTimer(aLong);
-                        }
-                    }
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-                });
     }
 
     public void addDisposable(Disposable disposable) {
@@ -3969,54 +3242,11 @@ public class LivePlayActivity extends BaseActivity implements
     }
 
     private void startHengFu(String text) {
-        if (!TextUtils.isEmpty(text)) {
-            if (isFrist) {
-                animationUtils = new AnimationUtils(llSubtitles, llwidth, screenWidth, tvSubtitles, BaseApplication.getApp());
-                animationUtils.startAnimation();
-                isFrist = false;
-            }
-            animationUtils.addData(text);
-            //监听动画是否在播放
-            animationUtils.setAnimationListener(new AnimationUtils.AnimationListener() {
-                @Override
-                public void showCompelete() {
-                    startAnimation = true;
-                }
-            });
-            //播放完才可以 播放其他动画。
-            if (startAnimation) {
-                animationUtils.startAnimation();
-                startAnimation = false;
-            }
-        }
+
     }
 
     @Override
     public void stopBapin() {
-        if (ivTemplate.getVisibility() == View.VISIBLE) {
-            ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(ivTemplate, "alpha", 1f, 0.0f);
-            ObjectAnimator rotationAnimation =
-                    ObjectAnimator.ofFloat(ivTemplate, "rotation", 720f, 0f);
-            ObjectAnimator scaleXAnimation = ObjectAnimator.ofFloat(ivTemplate, "scaleX", 1f, 0f);
-            ObjectAnimator scaleYAnimation = ObjectAnimator.ofFloat(ivTemplate, "scaleY", 1f, 0f);
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.play(alphaAnimation).with(rotationAnimation).with(scaleXAnimation).with(scaleYAnimation);
-            animatorSet.setDuration(1500);
-            animatorSet.start();
-            animatorSet.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    ivTemplate.setVisibility(View.GONE);
-                    ivTemplateBg.setVisibility(View.GONE);
-                    mBaPinAll.setVisibility(View.GONE);
-                }
-            });
-        }
-        mTvBaScreenTimer.clearAnimation();
-        mTvBaScreenTimer.setVisibility(View.GONE);
-        mIsBaping = false;
-
         if (mPresentation != null) {
             mPresentation.stopBapin();
         }
@@ -4082,8 +3312,6 @@ public class LivePlayActivity extends BaseActivity implements
         }
 
         mIvLiveCover.setVisibility(View.VISIBLE);
-        mVideoViewBg.setVisibility(View.GONE);
-        mVideoViewBg.stopPlayback();
         try {
             Glide.with(this)
                     .applyDefaultRequestOptions(new RequestOptions().placeholder(R.mipmap.bg).diskCacheStrategy(DiskCacheStrategy.NONE))
@@ -4098,27 +3326,7 @@ public class LivePlayActivity extends BaseActivity implements
      * 显示动态主题背景
      */
     private void showDynamicBg(String videoUrl) {
-        try {
-            if (mVideoViewBg == null) {
-                return;
-            }
-            mVideoViewBg.setVisibility(View.VISIBLE);
-            mIvLiveCover.setVisibility(View.GONE);
-            //mVideoViewBg.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg));
-            mVideoViewBg.setVideoPath(Uri.parse(videoUrl).toString());
-            mVideoViewBg.start();
-            mVideoViewBg.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    if (mVideoViewBg == null) {
-                        return;
-                    }
-                    mVideoViewBg.start();
-                }
-            });
-        } catch (Exception e) {
-            showDynamicBg(videoUrl);
-        }
+
     }
 
     @Override
@@ -4257,9 +3465,7 @@ public class LivePlayActivity extends BaseActivity implements
     public void downloadSongSuccess(String userId, String userName, String songCode, String lrcUrl,
                                     String lrcPath, String songPath) {
         Log.e("LLhon", "发送下载完成的消息");
-        if (titleBack == null) {
-            return;
-        }
+
         //{"cmd":"private_message","lrc_path":"/storage/emulated/0/qingqing/3q8oFJoIbKrs%3D\u0026","songcode":"ToTFtzoiBNZ01mXKP5ZsvQ\u003d\u003d","type":4,"user_id":"-2","user_name":"-2"}
         if (mChorusType != 1) {
             //合唱类型，这条消息将发送到单一合唱目标观众端，用于通知对方歌曲已下载完成
@@ -4329,9 +3535,7 @@ public class LivePlayActivity extends BaseActivity implements
      */
     @Override
     public void downloadProgress(int progress) {
-        if (titleBack == null) {
-            return;
-        }
+
         if (mDownChorusMusicDialog == null) {
             mDownChorusMusicDialog = new DownChorusMusicDialog();
         }
@@ -4483,178 +3687,7 @@ public class LivePlayActivity extends BaseActivity implements
      */
     @Override
     public void showPlayBill(PlayBillEntity entity) {
-        mPlayBillData = entity;
-        mRlPlayBill.setVisibility(View.VISIBLE);
-        clearPlayBillAnimation();
-        startPlayBillAnimation();
-    }
 
-    private void startPlayBillAnimation() {
-        switch (mPlayBillData.getEffect_type()) {
-            case "1":
-                //粒子爆炸
-                showExplosionAnimation();
-                break;
-            case "2":
-                //水波纹
-                showRollAnimation();
-                break;
-            case "3":
-                //百叶窗
-                showShuttersAnimation();
-                break;
-            case "4":
-                //螺纹旋转
-                showRollAnimation();
-                break;
-        }
-    }
-
-    /**
-     * 粒子爆炸动画
-     */
-    private void showExplosionAnimation() {
-        mRlPlayBillContainer.setVisibility(View.VISIBLE);
-        mRoll3DView.setVisibility(View.GONE);
-        mRlPlayBillContainer.removeAllViews();
-        for (int i = 0; i < mPlayBillData.getImages().size(); i++) {
-            ImageView iv = new ImageView(BaseApplication.getApp());
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-            iv.setLayoutParams(params);
-            iv.setScaleType(ImageView.ScaleType.FIT_XY);
-            GlideUtil.setImage(iv, BaseApplication.getApp(), mPlayBillData.getImages().get(i));
-            mRlPlayBillContainer.addView(iv);
-        }
-        Observable.intervalRange(0, Integer.MAX_VALUE, 3, 3, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver<Long>() {
-                    @Override
-                    public void onNext(Long aLong) {
-                        try {
-                            int childIndex = mRlPlayBillContainer.getChildCount() - 1 - aLong.intValue() % mRlPlayBillContainer.getChildCount();
-                            View childView = mRlPlayBillContainer.getChildAt(childIndex);
-                            mExplosionField.explode(childView);
-                            if (aLong.intValue() != 0
-                                    && aLong.intValue() % mRlPlayBillContainer.getChildCount() == 2) {
-                                for (int i = 0; i < mRlPlayBillContainer.getChildCount(); i++) {
-                                    mRlPlayBillContainer.getChildAt(i)
-                                            .animate()
-                                            .setDuration(50)
-                                            .setStartDelay(0)
-                                            .scaleX(1f)
-                                            .scaleY(1f)
-                                            .alpha(1f)
-                                            .start();
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        mExplosionDisposable = d;
-                        addDisposable(mExplosionDisposable);
-                    }
-                });
-    }
-
-    /**
-     * 百叶窗动画
-     */
-    private void showShuttersAnimation() {
-        mRoll3DView.setVisibility(View.VISIBLE);
-        mRlPlayBillContainer.setVisibility(View.GONE);
-        //mRoll3DView.clear();
-        for (int i = 0; i < mPlayBillData.getImages().size(); i++) {
-            Glide.with(BaseApplication.getApp())
-                    .asBitmap()
-                    .load(mPlayBillData.getImages().get(i))
-                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).fitCenter())
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource,
-                                                    @Nullable Transition<? super Bitmap> transition) {
-                            mRoll3DView.addImageBitmap(resource);
-                        }
-                    });
-        }
-        mRoll3DView.setRollMode(Roll3DView.RollMode.Jalousie);
-        mRoll3DView.setRollDirection(-1);
-        mRoll3DView.setPartNumber(5);
-        mRoll3DView.setRollDuration(2000);
-        Observable.intervalRange(0, Integer.MAX_VALUE, 3, 3, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver<Long>() {
-                    @Override
-                    public void onNext(Long aLong) {
-                        mRoll3DView.toNext();
-                    }
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        mJalousieDisposable = d;
-                        addDisposable(mJalousieDisposable);
-                    }
-                });
-    }
-
-    /**
-     * 图片3D轮转效果
-     */
-    private void showRollAnimation() {
-        mRoll3DView.setVisibility(View.VISIBLE);
-        mRlPlayBillContainer.setVisibility(View.GONE);
-        //mRoll3DView.clear();
-        for (int i = 0; i < mPlayBillData.getImages().size(); i++) {
-            Glide.with(BaseApplication.getApp())
-                    .asBitmap()
-                    .load(mPlayBillData.getImages().get(i))
-                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE))
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource,
-                                                    @Nullable Transition<? super Bitmap> transition) {
-                            mRoll3DView.addImageBitmap(resource);
-                        }
-                    });
-        }
-        mRoll3DView.setRollMode(Roll3DView.RollMode.RollInTurn);
-        mRoll3DView.setRollDirection(1);
-        mRoll3DView.setPartNumber(6);
-        mRoll3DView.setRollDuration(1500);
-
-        Observable.intervalRange(0, Integer.MAX_VALUE, 3, 2, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver<Long>() {
-                    @Override
-                    public void onNext(Long aLong) {
-                        mRoll3DView.toNext();
-                    }
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        mRollDisposable = d;
-                        addDisposable(mRollDisposable);
-                    }
-                });
-    }
-
-    /**
-     * 清除节目单图片轮播动画
-     */
-    private void clearPlayBillAnimation() {
-        if (mExplosionDisposable != null && !mExplosionDisposable.isDisposed()) {
-            mExplosionDisposable.dispose();
-        }
-        if (mJalousieDisposable != null && !mJalousieDisposable.isDisposed()) {
-            mJalousieDisposable.dispose();
-        }
-        if (mRollDisposable != null && !mRollDisposable.isDisposed()) {
-            mRollDisposable.dispose();
-        }
     }
 
     public void getGiftData() {

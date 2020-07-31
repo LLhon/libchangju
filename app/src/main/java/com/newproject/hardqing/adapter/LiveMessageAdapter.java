@@ -1,6 +1,7 @@
 package com.newproject.hardqing.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.newproject.hardqing.util.GsonConverter;
 import com.newproject.hardqing.view.SocketReciveView;
 
 import java.util.List;
+import java.util.Random;
 
 public class LiveMessageAdapter extends BaseQuickAdapter<SendMsgEntity, BaseViewHolder> {
     private RequestOptions rp;
@@ -94,7 +96,8 @@ public class LiveMessageAdapter extends BaseQuickAdapter<SendMsgEntity, BaseView
             helper.setText(R.id.tv_message, item.getUsername() + ": " + itemContent);
             GlideUtil.setImage((ImageView) helper.getView(R.id.civ_icon), context, UrlConst.PICTURE_ADDRESS + item.getAvatar(), rp);
         }
-
+        helper.setTextColor(R.id.tv_message, Color.rgb(new Random().nextInt(256),
+            new Random().nextInt(256), new Random().nextInt(256)));
     }
 
 }

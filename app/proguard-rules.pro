@@ -384,3 +384,6 @@ public static java.lang.String TABLENAME;
 
 #================== rtspclient.jar ========================#
 -keep class com.llhon.rtspdemo.**{*;}
+
+#================== FloatWindow ========================#
+-keep class com.yhao.floatwindow.**{*;}
