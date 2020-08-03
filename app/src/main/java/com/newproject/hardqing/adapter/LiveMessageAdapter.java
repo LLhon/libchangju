@@ -77,15 +77,14 @@ public class LiveMessageAdapter extends BaseQuickAdapter<SendMsgEntity, BaseView
                         GlideUtil.setImage((ImageView) helper.getView(R.id.civ_avatar), context, item.getAvatar(), rp);
                         ImageView imageView = helper.getView(R.id.iv_image);
                         if (imageView != null) {
-                            GlideUtil.setImage(imageView, context, baPingChatMessage.getUri(), mImageRequestOptions);
-                            //imageView.setOnClickListener(new View.OnClickListener() {
-                            //    @Override
-                            //    public void onClick(View v) {
-                            //        if (mSocketReciveView != null) {
-                            //            mSocketReciveView.bapin(baPingChatMessage.getBaScreenEntity());
-                            //        }
-                            //    }
-                            //});
+                            String picUrl = baPingChatMessage.getUri();
+                            String[] picUrlList = picUrl.split(",");
+                            if (picUrlList == null || picUrlList.length < 1) {
+                                helper.getView(R.id.rl_image).setVisibility(View.GONE);
+                                return;
+                            } else {
+                                GlideUtil.setImage(imageView, context, picUrlList[0], mImageRequestOptions);
+                            }
                         }
                 }
             }

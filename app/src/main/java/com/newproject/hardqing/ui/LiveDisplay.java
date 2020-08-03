@@ -33,6 +33,7 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -60,6 +61,7 @@ import com.newproject.hardqing.ui.lala.LalaOnlineAdapter;
 import com.newproject.hardqing.ui.presenter.LivePushHandler;
 import com.newproject.hardqing.ui.presenter.WatchPresenter;
 import com.newproject.hardqing.ui.receivecmd.BaScreenEntity;
+import com.newproject.hardqing.ui.receivecmd.BaScreenValue;
 import com.newproject.hardqing.ui.receivecmd.EntertainEntity;
 import com.newproject.hardqing.ui.receivecmd.ExtractAudienceEntity;
 import com.newproject.hardqing.ui.receivecmd.GiftEntity;
@@ -67,6 +69,7 @@ import com.newproject.hardqing.ui.receivecmd.InRoomEntity;
 import com.newproject.hardqing.ui.receivecmd.LuckyAudienceEntity;
 import com.newproject.hardqing.ui.receivecmd.PlayBillEntity;
 import com.newproject.hardqing.ui.receivecmd.RedEntity;
+import com.newproject.hardqing.ui.receivecmd.SendChatMsgEntity;
 import com.newproject.hardqing.ui.receivecmd.UpdateRoomEntity;
 import com.newproject.hardqing.ui.view.Danmu;
 import com.newproject.hardqing.ui.view.DanmuView;
@@ -75,6 +78,7 @@ import com.newproject.hardqing.util.CreateDataUtil;
 import com.newproject.hardqing.util.CustomPoPupAnim;
 import com.newproject.hardqing.util.DensityUtil;
 import com.newproject.hardqing.util.GlideUtil;
+import com.newproject.hardqing.util.GsonConverter;
 import com.newproject.hardqing.util.LogUtil;
 import com.newproject.hardqing.util.NumShow;
 import com.newproject.hardqing.util.QRCodeUtil;
@@ -111,7 +115,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import org.jetbrains.annotations.NotNull;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 import tyrantgit.explosionfield.ExplosionField;
@@ -161,7 +164,7 @@ public class LiveDisplay extends Presentation {
     TextView mZhuBoFansCount;
     RecyclerView mWatchUserRecyclerView;
     TextView mWatchUserCount;
-    LinearLayout mShowAllView;
+    FrameLayout mShowAllView;
     TextView mTvPartySubject;
     FullScreenVideoView mVideoViewBg;
     SVGAImageView mSivSubject;
@@ -192,6 +195,10 @@ public class LiveDisplay extends Presentation {
     SVGAImageView mSivRedPackets;
     TagCloudView mTagCloudView;
     DanmuView mDanmuView;
+    CircleImageView mBaUserAvatarView;
+    TextView mBaUserNameView;
+    TextView mBaTitleView;
+    LinearLayout mBaUpAllView;
 
     private LivePlayActivity mActivity;
     private Context mContext;
@@ -203,6 +210,7 @@ public class LiveDisplay extends Presentation {
     public boolean isRedRain;
     public boolean mUpVideoViewShowing;
     public boolean mIsBaping;
+    private List<String> mBaPingUrlList = new ArrayList<>();
 
     public LiveDisplay(Context outerContext, Display display, LivePlayActivity activity) {
         super(outerContext, display);
@@ -310,6 +318,10 @@ public class LiveDisplay extends Presentation {
         tvCai = findViewById(R.id.tv_cai);
         tvBiao = findViewById(R.id.tv_biao);
         tvYan = findViewById(R.id.tv_yan);
+        mBaUpAllView = findViewById(R.id.ll_ba_up_all_view);
+        mBaUserAvatarView = findViewById(R.id.civ_ba_user_avatar);
+        mBaUserNameView = findViewById(R.id.tv_ba_user_name);
+        mBaTitleView = findViewById(R.id.tv_ba_title);
     }
 
     private void setLayout() {
@@ -388,56 +400,103 @@ public class LiveDisplay extends Presentation {
             ivTemplate.setVisibility(View.VISIBLE);
             ivTemplateBg.setVisibility(View.VISIBLE);
             mBaPinAll.setVisibility(View.VISIBLE);
+            mBaUpAllView.setVisibility(View.VISIBLE);
             ivTemplate.setAlpha(0f);
-            GlideUtil.setImage(ivTemplateBg, mContext, baScreenEntity.getUri());
-            Glide.with(mContext).asBitmap().load(baScreenEntity.getUri()).apply(new RequestOptions().diskCacheStrategy(
-                DiskCacheStrategy.NONE))
-                .into(new SimpleTarget<Bitmap>() {
+            String picUrl = baScreenEntity.getUri();
+            String[] picUrlList = picUrl.split(",");
+            LogUtils.d("BaScreenActivity showBaScreenAnim  picUrlList : " + picUrlList);
+            if (picUrlList == null || picUrlList.length < 1) {
+                return;
+            }
+            int length = picUrlList.length;
+            LogUtils.d("BaScreenActivity showBaScreenAnim  length : " + length);
+            mBaPingUrlList.clear();
+            for (int i = 0; i < length; i++) {
+                mBaPingUrlList.add(picUrlList[i]);
+            }
+            int picCount = mBaPingUrlList.size();
+            LogUtils.d("BaScreenActivity showBaScreenAnim  picCount : " + picCount);
+            if (picCount < 2) {
+                showBaPingPic(mBaPingUrlList.get(0), true);
+            } else {
+                showBaPingPic(mBaPingUrlList.remove(0), true);
+                long time = (Long.parseLong(baScreenEntity.getTime()) * 1000) / picCount;
+                LogUtils.d("BaScreenActivity showBaScreenAnim  time : " + time);
+                ivTemplateBg.postDelayed(new Runnable() {
                     @Override
-                    public void onResourceReady(@NonNull Bitmap resource,
-                        @Nullable Transition<? super Bitmap> transition) {
-                        int width = resource.getWidth();
-                        int height = resource.getHeight();
-                        if (width > height) {
-                            //横屏
-                            ivTemplate.setScaleType(ImageView.ScaleType.FIT_XY);
-                        } else {
-                            //竖屏
-                            ivTemplate.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                        }
-                        ivTemplate.setImageBitmap(resource);
-                        if (ivTemplate != null) {
-                            ivTemplate.postDelayed(new Runnable() {
+                    public void run() {
+                        LogUtils.d("BaScreenActivity showBaScreenAnim  postDelayed 01 ");
+                        showBaPingPic(mBaPingUrlList.remove(0), false);
+                        if (mBaPingUrlList != null && mBaPingUrlList.size() > 0) {
+                            ivTemplateBg.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(ivTemplate, "alpha", 0.0f, 1.0f);
-                                    ObjectAnimator rotationAnimation = ObjectAnimator.ofFloat(ivTemplate, "rotation", 0f, 720f);
-                                    ObjectAnimator scaleXAnimation = ObjectAnimator.ofFloat(ivTemplate, "scaleX", 0f, 1f);
-                                    ObjectAnimator scaleYAnimation = ObjectAnimator.ofFloat(ivTemplate, "scaleY", 0f, 1f);
-                                    AnimatorSet animatorSet = new AnimatorSet();
-                                    animatorSet.play(alphaAnimation).with(rotationAnimation).with(scaleXAnimation).with(scaleYAnimation);
-                                    animatorSet.setDuration(1000);
-                                    animatorSet.start();
-                                    animatorSet.addListener(new AnimatorListenerAdapter() {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation) {
-                                            super.onAnimationEnd(animation);
-                                        }
-                                    });
+                                    LogUtils.d("BaScreenActivity showBaScreenAnim  postDelayed 02 ");
+                                    showBaPingPic(mBaPingUrlList.remove(0), false);
                                 }
-                            }, 500);
+                            }, time);
                         }
-                        showBaScreenTimer(baScreenEntity);
                     }
-                });
+                }, time);
+            }
+
+            showBaScreenTimer(baScreenEntity);
         } else if (TextUtils.equals(baScreenEntity.getType(), "1")) {
             ivTemplate.setVisibility(View.INVISIBLE);
             ivTemplateBg.setVisibility(View.INVISIBLE);
             mBaPinAll.setVisibility(View.INVISIBLE);
+            mBaUpAllView.setVisibility(View.GONE);
             showBaScreenTimer(baScreenEntity);
         }
         String text = baScreenEntity.getText();
         startHengFu(text);
+    }
+
+    public void showBaPingPic(String pic, boolean isShowAnimation) {
+        if (ivTemplateBg == null) {
+            return;
+        }
+        GlideUtil.setImage(ivTemplateBg, mContext, pic);
+        Glide.with(mContext).asBitmap().load(pic).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE))
+            .into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    if (ivTemplate == null) {
+                        return;
+                    }
+                    int width = resource.getWidth();
+                    int height = resource.getHeight();
+                    if (width > height) {
+                        //横屏
+                        ivTemplate.setScaleType(ImageView.ScaleType.FIT_XY);
+                    } else {
+                        //竖屏
+                        ivTemplate.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    }
+                    ivTemplate.setImageBitmap(resource);
+                    if (ivTemplate != null && isShowAnimation) {
+                        ivTemplate.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(ivTemplate, "alpha", 0.0f, 1.0f);
+                                ObjectAnimator rotationAnimation = ObjectAnimator.ofFloat(ivTemplate, "rotation", 0f, 720f);
+                                ObjectAnimator scaleXAnimation = ObjectAnimator.ofFloat(ivTemplate, "scaleX", 0f, 1f);
+                                ObjectAnimator scaleYAnimation = ObjectAnimator.ofFloat(ivTemplate, "scaleY", 0f, 1f);
+                                AnimatorSet animatorSet = new AnimatorSet();
+                                animatorSet.play(alphaAnimation).with(rotationAnimation).with(scaleXAnimation).with(scaleYAnimation);
+                                animatorSet.setDuration(1000);
+                                animatorSet.start();
+                                animatorSet.addListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                    }
+                                });
+                            }
+                        }, 500);
+                    }
+                }
+            });
     }
 
     public void showBaScreenTimer(BaScreenEntity baScreenEntity) {
@@ -519,11 +578,34 @@ public class LiveDisplay extends Presentation {
                     ivTemplate.setVisibility(View.GONE);
                     ivTemplateBg.setVisibility(View.GONE);
                     mBaPinAll.setVisibility(View.GONE);
+                    mBaUpAllView.setVisibility(View.GONE);
                 }
             });
         }
         mTvBaScreenTimer.clearAnimation();
         mTvBaScreenTimer.setVisibility(View.GONE);
+    }
+
+    public void showBapinUserView(SendChatMsgEntity sendChatMsgEntity) {
+        if (sendChatMsgEntity == null || mBaUserNameView == null) {
+            return;
+        }
+        String content = sendChatMsgEntity.getContent();
+        if (!TextUtils.isEmpty(content) && GsonConverter.isJson(content)) {
+            BaScreenValue screenValue = GsonConverter.fromJson(content, BaScreenValue.class);
+            if (screenValue != null && screenValue.getType() == 1) {
+                Glide.with(mContext)
+                    .load(sendChatMsgEntity.getAvatar())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .apply(new RequestOptions()
+                        .placeholder(R.mipmap.pic_3)
+                        .fitCenter()
+                        .dontAnimate())
+                    .into(mBaUserAvatarView);
+                mBaUserNameView.setText(sendChatMsgEntity.getUsername());
+                mBaTitleView.setText(screenValue.getText());
+            }
+        }
     }
 
     private void startHengFu(String text) {

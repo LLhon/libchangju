@@ -117,6 +117,7 @@ import com.newproject.hardqing.ui.lala.LalaOnlineBean;
 import com.newproject.hardqing.ui.presenter.LivePushHandler;
 import com.newproject.hardqing.ui.presenter.WatchPresenter;
 import com.newproject.hardqing.ui.receivecmd.BaScreenEntity;
+import com.newproject.hardqing.ui.receivecmd.BaScreenValue;
 import com.newproject.hardqing.ui.receivecmd.ChangeLiveStatusEntity;
 import com.newproject.hardqing.ui.receivecmd.CloseAllEntity;
 import com.newproject.hardqing.ui.receivecmd.CloseEntity;
@@ -244,7 +245,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.jetbrains.annotations.NotNull;
 
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
@@ -476,16 +476,16 @@ public class LivePlayActivity extends BaseActivity implements
                             break;
                         default:
                             bapin(baScreenEntity);
-                            String bapingText = baScreenEntity.getText();
-                            if (!TextUtils.isEmpty(bapingText)) {
-                                Danmu danmu = new Danmu();
-                                danmu.setHeaderUrl("");
-                                danmu.setUserName("");
-                                danmu.setInfo("霸屏主题：" + bapingText);
-                                if (mPresentation != null) {
-                                    mPresentation.addDanmu(danmu);
-                                }
-                            }
+                            //String bapingText = baScreenEntity.getText();
+                            //if (!TextUtils.isEmpty(bapingText)) {
+                            //    Danmu danmu = new Danmu();
+                            //    danmu.setHeaderUrl("");
+                            //    danmu.setUserName("");
+                            //    danmu.setInfo("霸屏主题：" + bapingText);
+                            //    if (mPresentation != null) {
+                            //        mPresentation.addDanmu(danmu);
+                            //    }
+                            //}
                             break;
 
                     }
@@ -1818,17 +1818,17 @@ public class LivePlayActivity extends BaseActivity implements
                         default:
                             break;
                     }
-                    String bapingText = baPingChatMessage.getText();
-                    if (!TextUtils.isEmpty(bapingText)) {
-                        Danmu danmu = new Danmu();
-                        danmu.setHeaderUrl(sendMsgEntity.getAvatar());
-                        danmu.setUserName(sendMsgEntity.getUsername());
-                        danmu.setInfo("霸屏主题：" + bapingText);
-
-                        if (mPresentation != null) {
-                            mPresentation.addDanmu(danmu);
-                        }
-                    }
+                    //String bapingText = baPingChatMessage.getText();
+                    //if (!TextUtils.isEmpty(bapingText)) {
+                    //    Danmu danmu = new Danmu();
+                    //    danmu.setHeaderUrl(sendMsgEntity.getAvatar());
+                    //    danmu.setUserName(sendMsgEntity.getUsername());
+                    //    danmu.setInfo("霸屏主题：" + bapingText);
+                    //
+                    //    if (mPresentation != null) {
+                    //        mPresentation.addDanmu(danmu);
+                    //    }
+                    //}
                 }
             }
             messageAdapter.addData(sendMsgEntity);
@@ -2606,6 +2606,9 @@ public class LivePlayActivity extends BaseActivity implements
     @Override
     public void sendChatMsg(SendChatMsgEntity sendChatMsgEntity) {
         //{"room_id":"138","user_id":141,"content":"{\"gif_number\":0,\"message_value\":\"发出了一个拼手气红包给所有的在场朋友\",\"sound_effect\":0,\"type\":3,\"voice_control_progress\":0}","type":0,"cmd":"room_chat","is_manage":1,"fd":261,"device":"web","username":"我太难了","avatar":"\/uploads\/avatar\/20200414\/7a7934319c310e068b0ed5c737417f29822.jpg"}
+        if (mPresentation != null) {
+            mPresentation.showBapinUserView(sendChatMsgEntity);
+        }
         if (sendChatMsgEntity.getType() == 0) {
             LiveChatMessage liveChatMessage = new LiveChatMessage();
             liveChatMessage.setScroll(true);
@@ -3735,7 +3738,7 @@ public class LivePlayActivity extends BaseActivity implements
         try { // new URL needs try catch.
             parser.decodeFromURL(new URL(url), new SVGAParser.ParseCompletion() {
                 @Override
-                public void onComplete(@NotNull SVGAVideoEntity videoItem) {
+                public void onComplete(SVGAVideoEntity videoItem) {
                     LogUtils.d("getGiftData loadSvgaTem  onComplete()");
                 }
 

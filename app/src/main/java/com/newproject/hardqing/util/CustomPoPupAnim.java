@@ -32,8 +32,6 @@ import com.opensource.svgaplayer.SVGAImageView;
 import com.opensource.svgaplayer.SVGAParser;
 import com.opensource.svgaplayer.SVGAVideoEntity;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;

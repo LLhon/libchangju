@@ -22,6 +22,9 @@ public class SeeTemplateEntity {
     @SerializedName("lenth")
     private String lenth;
 
+    @SerializedName("time")
+    private String time;
+
     public String getCmd() {
         return cmd;
     }
@@ -68,5 +71,25 @@ public class SeeTemplateEntity {
 
     public void setLenth(String lenth) {
         this.lenth = lenth;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    @Override public String toString() {
+        return "SeeTemplateEntity{" +
+            "cmd='" + cmd + '\'' +
+            ", type='" + type + '\'' +
+            ", music='" + music + '\'' +
+            ", uri='" + uri + '\'' +
+            ", cover='" + cover + '\'' +
+            ", lenth='" + lenth + '\'' +
+            ", time='" + time + '\'' +
+            '}';
     }
 }
