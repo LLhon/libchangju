@@ -42,12 +42,12 @@
 
         <com.newproject.hardqing.view.ViewLive
             android:id="@+id/tv_audience1"
-            android:layout_width="240dp"
-            android:layout_height="160dp"
+            android:layout_width="450dp"
+            android:layout_height="300dp"
             android:layout_marginTop="30dp"
             android:layout_marginRight="30dp"
             android:layout_gravity="end|top"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
       </FrameLayout>
 
@@ -79,13 +79,6 @@
           android:layout_marginRight="121dp"
           android:layout_marginBottom="115dp"
           android:visibility="invisible" />
-
-      <pl.droidsonroids.gif.GifImageView
-          android:id="@+id/iv_star"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:scaleType="centerCrop" />
-
 
       <com.newproject.hardqing.view.ball.TagCloudView
           android:id="@+id/tag_cloud"
