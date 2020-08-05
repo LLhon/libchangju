@@ -9,6 +9,7 @@ import android.provider.Settings;
 import android.view.Display;
 import android.view.animation.BounceInterpolator;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import android.animation.Animator;
@@ -286,7 +287,7 @@ public class LivePlayActivity extends BaseActivity implements
     TextView mZhuBoFansCount;
     RecyclerView mWatchUserRecyclerView;
     TextView mWatchUserCount;
-    LinearLayout mShowAllView;
+    FrameLayout mShowAllView;
     TextView mTvPartySubject;
     ViewLive tvAudience1;
     ViewLive mLocalPreview;

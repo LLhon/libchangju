@@ -40,8 +40,8 @@ android {
             minifyEnabled true
 //            shrinkResources true
             debuggable true
-            buildConfigField "Boolean", "DEBUG_MODE", "false"
-            buildConfigField "Boolean", "ENABLE_LOG", "false"
+            buildConfigField "Boolean", "DEBUG_MODE", "true"
+            buildConfigField "Boolean", "ENABLE_LOG", "true"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/transparent"
+    android:background="@color/white"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/ll_show_all_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -41,12 +41,14 @@
                 
                 <com.newproject.hardqing.view.ViewLive
                     android:id="@+id/tv_audience1"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_width="450dp"
+                    android:layout_height="300dp"
+                    android:layout_gravity="end|top"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginRight="30dp"
                     android:visibility="gone" />
             
-            </LinearLayout>
+            </FrameLayout>
             
             <RelativeLayout
                 android:id="@+id/rl_head"
