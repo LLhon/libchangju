@@ -30,6 +30,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
+import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -38,6 +39,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.blankj.utilcode.util.LogUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -59,65 +62,48 @@ import com.newproject.hardqing.permission.BaseObserver;
 import com.newproject.hardqing.ui.dialog.DownChorusMusicDialog;
 import com.newproject.hardqing.ui.lala.LalaOnlineAdapter;
 import com.newproject.hardqing.ui.presenter.LivePushHandler;
-import com.newproject.hardqing.ui.presenter.WatchPresenter;
 import com.newproject.hardqing.ui.receivecmd.BaScreenEntity;
 import com.newproject.hardqing.ui.receivecmd.BaScreenValue;
-import com.newproject.hardqing.ui.receivecmd.EntertainEntity;
 import com.newproject.hardqing.ui.receivecmd.ExtractAudienceEntity;
 import com.newproject.hardqing.ui.receivecmd.GiftEntity;
-import com.newproject.hardqing.ui.receivecmd.InRoomEntity;
 import com.newproject.hardqing.ui.receivecmd.LuckyAudienceEntity;
-import com.newproject.hardqing.ui.receivecmd.PlayBillEntity;
 import com.newproject.hardqing.ui.receivecmd.RedEntity;
 import com.newproject.hardqing.ui.receivecmd.SendChatMsgEntity;
-import com.newproject.hardqing.ui.receivecmd.UpdateRoomEntity;
 import com.newproject.hardqing.ui.view.Danmu;
 import com.newproject.hardqing.ui.view.DanmuView;
 import com.newproject.hardqing.util.AnimationUtils;
-import com.newproject.hardqing.util.CreateDataUtil;
 import com.newproject.hardqing.util.CustomPoPupAnim;
 import com.newproject.hardqing.util.DensityUtil;
 import com.newproject.hardqing.util.GlideUtil;
 import com.newproject.hardqing.util.GsonConverter;
-import com.newproject.hardqing.util.LogUtil;
 import com.newproject.hardqing.util.NumShow;
 import com.newproject.hardqing.util.QRCodeUtil;
-import com.newproject.hardqing.uvc.VideoCaptureFactoryDemo;
 import com.newproject.hardqing.view.DivergeView;
 import com.newproject.hardqing.view.FullScreenVideoView;
 import com.newproject.hardqing.view.GifView;
 import com.newproject.hardqing.view.QingLrcView;
 import com.newproject.hardqing.view.RedPacketView;
-import com.newproject.hardqing.view.Roll3DView;
 import com.newproject.hardqing.view.ViewLive;
 import com.newproject.hardqing.view.ball.CommonUtils;
-import com.newproject.hardqing.view.ball.TagCloudAdapter;
 import com.newproject.hardqing.view.ball.TagCloudView;
 import com.opensource.svgaplayer.SVGADrawable;
 import com.opensource.svgaplayer.SVGAImageView;
 import com.opensource.svgaplayer.SVGAParser;
 import com.opensource.svgaplayer.SVGAVideoEntity;
-import com.zego.zegoavkit2.ZegoMediaPlayer;
-import com.zego.zegoavkit2.mediaside.ZegoMediaSideInfo;
-import com.zego.zegoliveroom.ZegoLiveRoom;
 import com.zego.zegoliveroom.constants.ZegoVideoViewMode;
+import org.jetbrains.annotations.NotNull;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
-import tyrantgit.explosionfield.ExplosionField;
 
 /**
  * 副屏只显示直播内容
@@ -768,6 +754,8 @@ public class LiveDisplay extends Presentation {
     }
 
     public void startPlayingStream(String streamId) {
+        Toast.makeText(mContext, "startPlayingStream---" + "mShowAllView:"
+                + (mShowAllView.getVisibility() == View.VISIBLE), Toast.LENGTH_LONG).show();
         mLrcChorusView.setVisibility(View.GONE);
         tvAudience1.setVisibility(View.VISIBLE);
         tvAudience1.setStreamID(streamId);

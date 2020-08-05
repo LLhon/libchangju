@@ -2431,19 +2431,34 @@ public class LivePlayActivity extends BaseActivity implements
         stopChorusZegoMediaPlayer();
         setShowVideoWindow(true, false);
 
+        ToastUtil.showShort(this, "startPlayingStream");
+        tvAudience1.setStreamID(streamID);
+        tvAudience1.setPlayView(true);
+        tvAudience1.setAuser_id(streamInfo.userID);
+        tvAudience1.SetUserName("");
+        tvAudience1.setVisibility(View.VISIBLE);
+        tvAudience1.setUserAvatarViewGone();
+        mLrcChorusView.setVisibility(View.GONE);
+        mZegoLiveRoom.startPlayingStream(streamID, tvAudience1.getTextureView());
+        mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
         if (mPresentation != null) {
-            mPresentation.startPlayingStream(streamID);
+//            mPresentation.mLrcChorusView.setVisibility(View.GONE);
+//            mPresentation.tvAudience1.setVisibility(View.VISIBLE);
+//            mPresentation.tvAudience1.setStreamID(streamID);
+//            mPresentation.tvAudience1.setUserAvatarViewGone();
+//            mZegoLiveRoom.startPlayingStream(streamID, mPresentation.tvAudience1.getTextureView());
+//            mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
         } else {
             // 设置流信息
-            tvAudience1.setStreamID(streamID);
-            tvAudience1.setPlayView(true);
-            tvAudience1.setAuser_id(streamInfo.userID);
-            tvAudience1.SetUserName("");
-            tvAudience1.setVisibility(View.VISIBLE);
-            tvAudience1.setUserAvatarViewGone();
-            mLrcChorusView.setVisibility(View.GONE);
-            mZegoLiveRoom.startPlayingStream(streamID, tvAudience1.getTextureView());
-            mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
+//            tvAudience1.setStreamID(streamID);
+//            tvAudience1.setPlayView(true);
+//            tvAudience1.setAuser_id(streamInfo.userID);
+//            tvAudience1.SetUserName("");
+//            tvAudience1.setVisibility(View.VISIBLE);
+//            tvAudience1.setUserAvatarViewGone();
+//            mLrcChorusView.setVisibility(View.GONE);
+//            mZegoLiveRoom.startPlayingStream(streamID, tvAudience1.getTextureView());
+//            mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
         }
 
         getAnchorUserInfo(streamID);
