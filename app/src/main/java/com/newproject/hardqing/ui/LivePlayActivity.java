@@ -782,7 +782,7 @@ public class LivePlayActivity extends BaseActivity implements
 
     public void showFloatWindow() {
         ImageView imageView = new ImageView(getApplicationContext());
-        imageView.setImageResource(R.drawable.icon_edit);
+        imageView.setImageResource(R.drawable.icon_floatapp);
         FloatWindow
             .with(getApplicationContext())
             .setView(imageView)
@@ -2279,7 +2279,7 @@ public class LivePlayActivity extends BaseActivity implements
                 new IZegoInitSDKCompletionCallback() {
                     @Override
                     public void onInitSDK(int errorcode) {
-                        LogUtils.d("LivePlayActivity  initSDKAndLoginRoom  onInitSDK  errorcode : " + errorcode);
+                        Log.d(TAG, "初始化ZegoSDK是否成功: " + (errorcode == 0));
                         if (errorcode == 0) {
                             mInitSDKSuccess = true;
                             loginRoom();
@@ -2408,10 +2408,7 @@ public class LivePlayActivity extends BaseActivity implements
 
 
     private void startPlay(String streamID, ZegoStreamInfo streamInfo) {
-        Log.d(TAG, "startPlay:" + streamID);
-        /**
-         * 开始播放流.
-         */
+        Log.d(TAG, "startPlay():" + streamID);
         if (TextUtils.isEmpty(streamID)) {
             return;
         }
@@ -2432,34 +2429,23 @@ public class LivePlayActivity extends BaseActivity implements
         stopChorusZegoMediaPlayer();
         setShowVideoWindow(true, false);
 
-        ToastUtil.showShort(this, "startPlayingStream");
-        tvAudience1.setStreamID(streamID);
-        tvAudience1.setPlayView(true);
-        tvAudience1.setAuser_id(streamInfo.userID);
-        tvAudience1.SetUserName("");
-        tvAudience1.setVisibility(View.VISIBLE);
-        tvAudience1.setUserAvatarViewGone();
-        mLrcChorusView.setVisibility(View.GONE);
-        mZegoLiveRoom.startPlayingStream(streamID, tvAudience1.getTextureView());
-        mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
         if (mPresentation != null) {
-//            mPresentation.mLrcChorusView.setVisibility(View.GONE);
-//            mPresentation.tvAudience1.setVisibility(View.VISIBLE);
-//            mPresentation.tvAudience1.setStreamID(streamID);
-//            mPresentation.tvAudience1.setUserAvatarViewGone();
-//            mZegoLiveRoom.startPlayingStream(streamID, mPresentation.tvAudience1.getTextureView());
-//            mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
+            mPresentation.mLrcChorusView.setVisibility(View.GONE);
+            mPresentation.tvAudience1.setVisibility(View.VISIBLE);
+            mPresentation.tvAudience1.setStreamID(streamID);
+            mPresentation.tvAudience1.setUserAvatarViewGone();
+            mZegoLiveRoom.startPlayingStream(streamID, mPresentation.tvAudience1.getTextureView());
+            mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
         } else {
-            // 设置流信息
-//            tvAudience1.setStreamID(streamID);
-//            tvAudience1.setPlayView(true);
-//            tvAudience1.setAuser_id(streamInfo.userID);
-//            tvAudience1.SetUserName("");
-//            tvAudience1.setVisibility(View.VISIBLE);
-//            tvAudience1.setUserAvatarViewGone();
-//            mLrcChorusView.setVisibility(View.GONE);
-//            mZegoLiveRoom.startPlayingStream(streamID, tvAudience1.getTextureView());
-//            mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
+            tvAudience1.setStreamID(streamID);
+            tvAudience1.setPlayView(true);
+            tvAudience1.setAuser_id(streamInfo.userID);
+            tvAudience1.SetUserName("");
+            tvAudience1.setVisibility(View.VISIBLE);
+            tvAudience1.setUserAvatarViewGone();
+            mLrcChorusView.setVisibility(View.GONE);
+            mZegoLiveRoom.startPlayingStream(streamID, tvAudience1.getTextureView());
+            mZegoLiveRoom.setViewMode(ZegoVideoViewMode.ScaleAspectFill, streamID);
         }
 
         getAnchorUserInfo(streamID);

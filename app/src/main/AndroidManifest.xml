@@ -41,7 +41,7 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:hardwareAccelerated="false"
+        android:hardwareAccelerated="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.QingMainActivity"
@@ -49,7 +49,7 @@
             android:screenOrientation="landscape">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                -->
+<!---->
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
         </activity>

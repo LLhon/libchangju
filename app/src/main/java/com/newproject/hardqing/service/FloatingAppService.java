@@ -94,7 +94,7 @@ public class FloatingAppService extends Service {
             }
         }
         mImageView = new ImageView(getApplicationContext());
-        mImageView.setImageResource(R.drawable.icon_edit);
+        mImageView.setImageResource(R.drawable.icon_floatapp);
         mImageView.setOnClickListener(v -> {
             mIsAppToBack = !mIsAppToBack;
             if (mCallback != null) {
