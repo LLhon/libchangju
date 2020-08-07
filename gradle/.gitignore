@@ -1,5 +1,5 @@
 *.iml
-.gradle
+#.gradle
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -18,11 +18,11 @@
 .DS_Store
 /.idea/
 /build/
-/gradlew.bat
+#/gradlew.bat
 /app/build/
 /local.properties
 /app/app.iml
-/gradlew
+#/gradlew
 /app/*.apk
 .gradle
 *.iml
