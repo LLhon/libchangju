@@ -347,6 +347,9 @@ public class GiftControl implements GiftFrameLayout.LeftGiftAnimationStatusListe
      * 清除所有礼物
      */
     public synchronized void cleanAll() {
+        if (mGiftLayoutParent == null) {
+            return;
+        }
         if (mGiftQueue != null) {
             mGiftQueue.clear();
         }

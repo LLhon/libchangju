@@ -44,8 +44,8 @@
             android:id="@+id/tv_audience1"
             android:layout_width="450dp"
             android:layout_height="300dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginRight="30dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginRight="60dp"
             android:layout_gravity="end|top"
             android:visibility="gone" />
 
