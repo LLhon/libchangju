@@ -763,6 +763,7 @@ public class LivePlayActivity extends BaseActivity implements
     private void showLiveDisplay() {
         DisplayManager dm = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         Display[] displays = dm.getDisplays();
+        Log.d(TAG, "displays:" + displays.length);
         if (displays.length > 1) {
             mPresentation = new LiveDisplay(getApplicationContext(), displays[1], this);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -956,7 +957,7 @@ public class LivePlayActivity extends BaseActivity implements
         tourId = getIntent().getStringExtra("uid");
         tvAudience1.setZegoLiveRoom(mZegoLiveRoom);
         // step.1 init USB
-        UVCCameraHelper.sharedInstance().initUSBMonitor(this, myDevConnectListener);
+        //UVCCameraHelper.sharedInstance().initUSBMonitor(this, myDevConnectListener);
 
         //用于播放背景音乐
         mBgZegoMediaPlayer = new ZegoMediaPlayer();
