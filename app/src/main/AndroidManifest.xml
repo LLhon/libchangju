@@ -23,6 +23,7 @@
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
     <uses-permission android:name="android.permission.REORDER_TASKS"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -46,6 +47,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.QingMainActivity"
+            android:exported="true"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="landscape">
 <!--            <intent-filter>-->
@@ -58,12 +60,6 @@
         <activity
             android:name=".ui.TestActivity"
             android:screenOrientation="landscape">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-            
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-        
         </activity>
         
         <service android:name=".service.LiveService" />
@@ -74,12 +70,6 @@
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="landscape" />
-        <!--
- <activity
-             android:name=".ai_effects.activity.AliPlayerActivity"
-             android:screenOrientation="landscape" />
-        -->
-    
     
     </application>
 

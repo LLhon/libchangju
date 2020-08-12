@@ -1,8 +1,10 @@
 package com.newproject.hardqing.ui;
 
+import android.app.ActivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.view.animation.BounceInterpolator;
 import com.google.gson.Gson;
 
 import android.content.Intent;
@@ -57,6 +59,10 @@ import com.newproject.hardqing.util.http.HttpUtil;
 import com.opensource.svgaplayer.SVGAParser;
 import com.opensource.svgaplayer.SVGAVideoEntity;
 
+import com.yhao.floatwindow.FloatWindow;
+import com.yhao.floatwindow.MoveType;
+import com.yhao.floatwindow.PermissionListener;
+import com.yhao.floatwindow.Screen;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
@@ -89,6 +95,8 @@ public class QingMainActivity extends BaseActivity {
     static String category_uri = "/static/upload/party/uri/20190117/2c6e4187559eedf5089041ab561ecd31431.svga";
     public static final String SEND_MSG = "socket_send_msg";
     public static final String ACTION_SEND_MSG = "action_send_msg";
+    private ImageView mIvFloatApp;
+    private boolean mIsAppToBack;
 
     //static {
     //    String libs[] = {"avcodec", "avformat", "avutil", "swresample", "swscale", "avfilter"};
@@ -123,6 +131,8 @@ public class QingMainActivity extends BaseActivity {
         ivCode.setLayoutParams(l);
         ivDownload.setLayoutParams(l);
         //ivDownload.setImageBitmap(QRCodeUtil.createQRCodeBitmap("https://sj.qq.com/myapp/detail.htm?apkName=com.qingqingparty", 500, 500));
+
+        showFloatWindow();
     }
 
     public void getPermission() {
@@ -158,16 +168,63 @@ public class QingMainActivity extends BaseActivity {
                     }
                 }).request();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(this)) {
-                ToastUtil.showShort(this, "当前无悬浮窗权限，请授权");
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, Constants.REQUEST_CODE_PERMISSION);
-            }
-        }
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        //    if (!Settings.canDrawOverlays(this)) {
+        //        ToastUtil.showShort(this, "当前无悬浮窗权限，请授权");
+        //        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+        //            Uri.parse("package:" + getPackageName()));
+        //        startActivityForResult(intent, Constants.REQUEST_CODE_PERMISSION);
+        //    }
+        //}
     }
 
+    public void showFloatWindow() {
+        mIvFloatApp = new ImageView(getApplicationContext());
+        mIvFloatApp.setImageResource(R.drawable.icon_floatapp);
+        FloatWindow
+            .with(getApplicationContext())
+            .setView(mIvFloatApp)
+            .setWidth(500) //设置悬浮控件宽高
+            .setHeight(100)
+            .setX(Screen.width, 0.6f)
+            .setY(Screen.height, 0.3f)
+            .setMoveType(MoveType.slide,0,0)
+            .setMoveStyle(500, new BounceInterpolator())
+            .setFilter(true, QingMainActivity.class, LivePlayActivity.class)
+            .setPermissionListener(mPermissionListener)
+            .setDesktopShow(true)
+            .build();
+        mIvFloatApp.setOnClickListener(v -> {
+            mIsAppToBack = !mIsAppToBack;
+            if (mIsAppToBack) {
+                ToastUtil.showShort(getApplicationContext(), "畅聚已退到后台运行");
+                moveTaskToBack(true);
+            } else {
+                ToastUtil.showShort(getApplicationContext(), "已打开畅聚");
+                ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(ACTIVITY_SERVICE);
+                List<ActivityManager.RunningTaskInfo> taskInfoList = activityManager.getRunningTasks(100);
+                for (ActivityManager.RunningTaskInfo taskInfo : taskInfoList) {
+                    if (taskInfo.topActivity.getPackageName().equals(getApplicationContext().getPackageName())) {
+                        activityManager.moveTaskToFront(taskInfo.id, ActivityManager.MOVE_TASK_WITH_HOME);
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    private PermissionListener mPermissionListener = new PermissionListener() {
+        @Override
+        public void onSuccess() {
+            Log.d(TAG, "悬浮窗权限已授权");
+        }
+
+        @Override
+        public void onFail() {
+            Log.d(TAG, "悬浮窗权限被拒绝");
+            ToastUtil.showShort(getApplicationContext(), "悬浮窗权限被拒绝");
+        }
+    };
 
     @Override
     protected void onResume() {

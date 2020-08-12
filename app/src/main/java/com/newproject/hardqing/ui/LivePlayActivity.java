@@ -362,8 +362,6 @@ public class LivePlayActivity extends BaseActivity implements
     public Handler textColorHandler;
     public Runnable runnable;
     public LiveDisplay mPresentation;
-    public Intent mFloatingAppService;
-    private FloatingAppService.Binder mFloatingAppBinder;
     private boolean mIsAppToBack;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -754,7 +752,7 @@ public class LivePlayActivity extends BaseActivity implements
         ChangeTextColor();
 
         showLiveDisplay();
-        showFloatWindow();
+        //showFloatWindow();
     }
 
     /**
